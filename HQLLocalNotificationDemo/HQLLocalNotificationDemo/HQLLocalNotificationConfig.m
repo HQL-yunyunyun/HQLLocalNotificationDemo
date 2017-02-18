@@ -11,11 +11,13 @@
 @implementation HQLLocalNotificationConfig
 
 // 通知授权
-- (void)replyNotificationAuthorization:(UIApplication *)application {
++ (void)replyNotificationAuthorization:(UIApplication *)application iOS10NotificationDelegate:(id <UNUserNotificationCenterDelegate>)notificationDelegate successComplete:(void(^)(BOOL isFirstGranted))successComplete failureComplete:(void(^)(BOOL isFirstGranted))failureComplete {
     // 每一个版本的系统的通知授权都有一点改变
     if (iOS10_OR_LATER) { // iOS 10 以后的版本
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        center.delegate = self;
+        if (notificationDelegate) {
+            center.delegate = notificationDelegate;
+        }
         [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
             // 获取授权状态
             if (settings.authorizationStatus == UNAuthorizationStatusNotDetermined) { // 第一次授权
@@ -25,14 +27,26 @@
                             completionHandler:^(BOOL granted, NSError * _Nullable error) {
                                 if (!error && granted) { // 同意授权
                                     NSLog(@"授权成功.");
+                                    if (successComplete) {
+                                        successComplete(YES);
+                                    }
                                 } else { // 授权失败 --- 弹框
                                     NSLog(@"授权失败,如果想开启通知,请到系统设置下更改.");
+                                    if (failureComplete) {
+                                        failureComplete(NO);
+                                    }
                                 }
                             }];
             } else if (settings.authorizationStatus == UNAuthorizationStatusDenied) { // 用户设置成不可通知
                 NSLog(@"如果想开启通知,请到系统设置下更改.");
+                if (failureComplete) {
+                    failureComplete(NO);
+                }
             } else if (settings.authorizationStatus == UNAuthorizationStatusAuthorized) { // 用户允许通知
                 NSLog(@"用户允许通知");
+                if (successComplete) {
+                    successComplete(NO);
+                }
             }
         }];
     } else if (iOS8_OR_LATER) { // iOS 8 以后的版本

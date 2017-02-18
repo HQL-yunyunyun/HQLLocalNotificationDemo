@@ -14,6 +14,7 @@
 		4A643EF61E5706D300F249B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A643EF51E5706D300F249B2 /* Assets.xcassets */; };
 		4A643EF91E5706D300F249B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A643EF71E5706D300F249B2 /* LaunchScreen.storyboard */; };
 		4A643F021E57071B00F249B2 /* HQLLocalNotificationConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A643F011E57071B00F249B2 /* HQLLocalNotificationConfig.m */; };
+		4A643F051E57FD0700F249B2 /* HQLLocalNotificationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A643F041E57FD0700F249B2 /* HQLLocalNotificationModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		4A643EFA1E5706D300F249B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A643F001E57071B00F249B2 /* HQLLocalNotificationConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationConfig.h; sourceTree = "<group>"; };
 		4A643F011E57071B00F249B2 /* HQLLocalNotificationConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationConfig.m; sourceTree = "<group>"; };
+		4A643F031E57FD0600F249B2 /* HQLLocalNotificationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationModel.h; sourceTree = "<group>"; };
+		4A643F041E57FD0700F249B2 /* HQLLocalNotificationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +75,8 @@
 				4A643EE91E5706D300F249B2 /* Supporting Files */,
 				4A643F001E57071B00F249B2 /* HQLLocalNotificationConfig.h */,
 				4A643F011E57071B00F249B2 /* HQLLocalNotificationConfig.m */,
+				4A643F031E57FD0600F249B2 /* HQLLocalNotificationModel.h */,
+				4A643F041E57FD0700F249B2 /* HQLLocalNotificationModel.m */,
 			);
 			path = HQLLocalNotificationDemo;
 			sourceTree = "<group>";
@@ -157,6 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A643F021E57071B00F249B2 /* HQLLocalNotificationConfig.m in Sources */,
+				4A643F051E57FD0700F249B2 /* HQLLocalNotificationModel.m in Sources */,
 				4A643EF11E5706D300F249B2 /* ViewController.m in Sources */,
 				4A643EEE1E5706D300F249B2 /* AppDelegate.m in Sources */,
 				4A643EEB1E5706D300F249B2 /* main.m in Sources */,
