@@ -17,6 +17,10 @@
 #define iOS8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 #define iOS7_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 
+#define HQLUserInfoIdentify @"HQLUserInfoIdentify"
+
+@class HQLLocalNotificationModel;
+
 @interface HQLLocalNotificationConfig : NSObject
 
 /**
@@ -28,5 +32,7 @@
  @param failureComplete 授权失败后的调用(iOS10以后版本才有用)
  */
 + (void)replyNotificationAuthorization:(UIApplication *)application iOS10NotificationDelegate:(id <UNUserNotificationCenterDelegate>)notificationDelegate successComplete:(void(^)(BOOL isFirstGranted))successComplete failureComplete:(void(^)(BOOL isFirstGranted))failureComplete;
+
++ (void)addLocalNotificationWithModel:(HQLLocalNotificationModel *)model;
 
 @end

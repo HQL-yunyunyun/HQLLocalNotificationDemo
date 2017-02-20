@@ -7,6 +7,7 @@
 //
 
 #import "HQLLocalNotificationConfig.h"
+#import "HQLLocalNotificationModel.h"
 
 @implementation HQLLocalNotificationConfig
 
@@ -72,4 +73,165 @@
         }
     }*/
 }
+
+#pragma mark - method 
+
++ (void)addLocalNotificationWithModel:(HQLLocalNotificationModel *)model {
+    
+    if (model.isActivity) {
+        for (NSDate *date in model.repeatDateArray) {
+            // iOS 10 新增了UserNotification类,该类与之前的通知都不一样
+            if (iOS10_OR_LATER) {
+                
+            } else {
+                
+            }
+        }
+    }
+}
+
++ (UNNotificationRequest *)setupUNNotificationRequestWithModel:(HQLLocalNotificationModel *)model date:(NSDate *)date identify:(NSString *)identify {
+    
+    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+    content.badge = @(model.content.applicationIconBadgeNumber); // 角标暂时为0
+    content.body = model.content.alertBody; // 内容体
+    content.launchImageName = model.content.alertLaunchImage; // 启动图片
+    if (![model.content.soundName isEqualToString:@""] && !model.content.soundName) {
+        // 不为空
+        content.sound = [UNNotificationSound soundNamed:model.content.soundName]; // 声音
+    } else { // 为空,则默认声音
+        content.sound = [UNNotificationSound defaultSound]; // 声音
+    }
+    content.title = model.content.alertTitle; // 标题
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo]; //
+    [userInfo setValue:identify forKey:HQLUserInfoIdentify];
+    content.userInfo = userInfo; // userInfo
+    
+    // 触发时机
+    UNNotificationTrigger *trigger = nil;
+    // 日历
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    
+    // 判断模式
+    switch (model.notificationMode) {
+        case HQLLocalNotificationAlarmMode: { // 闹钟模式
+            // 目标触发时机
+            NSDateComponents *targetMoment = nil;
+            BOOL isRepeat = NO;
+            switch (model.repeatMode) {
+                case HQLLocalNotificationNoneRepeat: { // 不循环
+                    targetMoment = [calendar components:NSCalendarUnitHour |
+                                                                                   NSCalendarUnitMinute
+                                                                                   fromDate:date];
+                    isRepeat = NO;
+                    break;
+                }
+                case HQLLocalNotificationDayRepeat: { // 每日循环
+                    targetMoment = [calendar components:NSCalendarUnitHour |
+                                                                                   NSCalendarUnitMinute
+                                                                                   fromDate:date];
+                    isRepeat = YES;
+                    break;
+                }
+                case HQLLocalNotificationWeekRepeat: { // 每周循环
+                    targetMoment = [calendar components:NSCalendarUnitWeekday |
+                                                                                   NSCalendarUnitHour |
+                                                                                   NSCalendarUnitMinute
+                                                                                   fromDate:date];
+                    isRepeat = YES;
+                    break;
+                }
+                    // 这两个是日程模式独有的
+                case HQLLocalNotificationMonthRepeat: { break; }
+                case HQLLocalNotificationYearRepeat: { break; }
+                default: { break; }
+            }
+            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:targetMoment repeats:isRepeat];
+        break;
+        }
+        case HQLLocalNotificationScheduleMode: { // 日程模式
+            NSDateComponents *targetMoment = nil;
+            BOOL isRepeat = NO;
+            switch (model.repeatMode) {
+                case HQLLocalNotificationNoneRepeat: { // 不循环
+                    targetMoment = [calendar components:NSCalendarUnitYear |
+                                                                                   NSCalendarUnitMonth |
+                                                                                   NSCalendarUnitDay |
+                                                                                   NSCalendarUnitHour |
+                                                                                   NSCalendarUnitMinute
+                                                                                   fromDate:date];
+                    isRepeat = NO;
+                    break;
+                }
+                case HQLLocalNotificationMonthRepeat: { // 月循环
+                    targetMoment = [calendar components:NSCalendarUnitMonth |
+                                                                                   NSCalendarUnitDay |
+                                                                                   NSCalendarUnitHour |
+                                                                                   NSCalendarUnitMinute
+                                                                                   fromDate:date];
+                    isRepeat = YES;
+                    break;
+                }
+                case HQLLocalNotificationYearRepeat: { // 年循环
+                    targetMoment = [calendar components:NSCalendarUnitYear |
+                                                                                   NSCalendarUnitMonth |
+                                                                                   NSCalendarUnitDay |
+                                                                                   NSCalendarUnitHour |
+                                                                                   NSCalendarUnitMinute
+                                                                                   fromDate:date];
+                    isRepeat = YES;
+                    break;
+                }
+                    // 这两个是闹钟模式独有的
+                case HQLLocalNotificationDayRepeat: { break; }
+                case HQLLocalNotificationWeekRepeat: { break; }
+                default: { break; }
+            }
+            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:targetMoment repeats:isRepeat];
+            break;
+        }
+        default: { break; }
+    }
+    
+    return [UNNotificationRequest requestWithIdentifier:identify content:content trigger:trigger];
+}
+
++ (NSDate *)getPriusDateFromDate:(NSDate *)date withDay:(NSInteger)day {
+    if (day < 1) {
+        return date;
+    }
+    NSDateComponents *comps = [[NSDateComponents alloc] init];
+    [comps setDay:day];
+    NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDate *mDate = [calender dateByAddingComponents:comps toDate:date options:0];
+    return mDate;
+}
+
+/*- (void)test {
+    NSComparisonResult result = [[NSDate date] compare:date];
+    
+    // 猜想 --- 直接赋值 xx时:xx分 并不重复
+    if (result == NSOrderedAscending) { // 还没过时间
+        targetMoment = [calendar components:NSCalendarUnitYear |
+                        NSCalendarUnitMonth |
+                        NSCalendarUnitDay |
+                        NSCalendarUnitHour |
+                        NSCalendarUnitMinute
+                                   fromDate:date];
+    } else {
+        NSDateComponents *moment = [calendar components:NSCalendarUnitHour |
+                                    NSCalendarUnitMinute
+                                               fromDate:date]; // 获取时刻
+        
+        targetMoment = [calendar components:NSCalendarUnitYear |
+                        NSCalendarUnitMonth |
+                        NSCalendarUnitDay
+                                   fromDate:[self getPriusDateFromDate:[NSDate date] withDay:1]]; // 目标日期
+        targetMoment.hour = moment.hour;
+        targetMoment.minute = moment.minute;
+        
+    }
+    isRepeat = NO;
+}*/
+
 @end
