@@ -32,15 +32,15 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)addNotification:(id)sender {
-    HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
-    content.alertBody = @"屠龙宝刀,一点就送";
-    content.alertTitle = @"传奇人物";
-    HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] initContent:content repeatDateArray:@[[NSDate dateWithTimeIntervalSinceNow:60.0]] identify:@"firtIdentify" subIdentify:@"subIdentify" repeatMode:HQLLocalNotificationNoneRepeat notificationMode:HQLLocalNotificationAlarmMode isActivity:YES];
-    [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
-        NSLog(@"%@", error);
-    }];
-}
+//- (IBAction)addNotification:(id)sender {
+//    HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
+//    content.alertBody = @"屠龙宝刀,一点就送";
+//    content.alertTitle = @"传奇人物";
+//    HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] initContent:content repeatDateArray:@[[NSDate dateWithTimeIntervalSinceNow:60.0]] identify:@"firtIdentify" subIdentify:@"subIdentify" repeatMode:HQLLocalNotificationNoneRepeat notificationMode:HQLLocalNotificationAlarmMode isActivity:YES];
+//    [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
+//        NSLog(@"%@", error);
+//    }];
+//}
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
     NSLog(@"收到通知");

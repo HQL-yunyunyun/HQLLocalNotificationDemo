@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D3FB1D41E5C954E00E77C0E /* HQLAddNotificationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D3FB1D21E5C954E00E77C0E /* HQLAddNotificationController.m */; };
 		4A643EEB1E5706D300F249B2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A643EEA1E5706D300F249B2 /* main.m */; };
 		4A643EEE1E5706D300F249B2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A643EED1E5706D300F249B2 /* AppDelegate.m */; };
 		4A643EF11E5706D300F249B2 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A643EF01E5706D300F249B2 /* ViewController.m */; };
@@ -19,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0D3FB1D11E5C954E00E77C0E /* HQLAddNotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLAddNotificationController.h; sourceTree = "<group>"; };
+		0D3FB1D21E5C954E00E77C0E /* HQLAddNotificationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLAddNotificationController.m; sourceTree = "<group>"; };
 		4A643EE61E5706D300F249B2 /* HQLLocalNotificationDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HQLLocalNotificationDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A643EEA1E5706D300F249B2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4A643EEC1E5706D300F249B2 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -82,6 +85,8 @@
 				4A643F041E57FD0700F249B2 /* HQLLocalNotificationModel.m */,
 				4A643F061E5C2A7900F249B2 /* HQLLocalNotificationManager.h */,
 				4A643F071E5C2A7A00F249B2 /* HQLLocalNotificationManager.m */,
+				0D3FB1D11E5C954E00E77C0E /* HQLAddNotificationController.h */,
+				0D3FB1D21E5C954E00E77C0E /* HQLAddNotificationController.m */,
 			);
 			path = HQLLocalNotificationDemo;
 			sourceTree = "<group>";
@@ -125,7 +130,7 @@
 				TargetAttributes = {
 					4A643EE51E5706D300F249B2 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = X8GXYMZ6FW;
+						DevelopmentTeam = 98B5P59X79;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -171,6 +176,7 @@
 				4A643F051E57FD0700F249B2 /* HQLLocalNotificationModel.m in Sources */,
 				4A643EF11E5706D300F249B2 /* ViewController.m in Sources */,
 				4A643EEE1E5706D300F249B2 /* AppDelegate.m in Sources */,
+				0D3FB1D41E5C954E00E77C0E /* HQLAddNotificationController.m in Sources */,
 				4A643EEB1E5706D300F249B2 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,11 +297,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = X8GXYMZ6FW;
+				DEVELOPMENT_TEAM = 98B5P59X79;
 				INFOPLIST_FILE = HQLLocalNotificationDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLLocalNotificationDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLLocalNotificationDemo1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -304,11 +310,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = X8GXYMZ6FW;
+				DEVELOPMENT_TEAM = 98B5P59X79;
 				INFOPLIST_FILE = HQLLocalNotificationDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLLocalNotificationDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = cn.weplus.HQLLocalNotificationDemo1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
