@@ -76,20 +76,160 @@
 
 #pragma mark - method 
 
-+ (void)addLocalNotificationWithModel:(HQLLocalNotificationModel *)model {
++ (void)addLocalNotificationWithModel:(HQLLocalNotificationModel *)model completeBlock:(void(^)(NSError *error))completeBlock{
     
-    if (model.isActivity) {
+    if (model.isActivity) { // 启用的
+        NSInteger index = 0;
         for (NSDate *date in model.repeatDateArray) {
             // iOS 10 新增了UserNotification类,该类与之前的通知都不一样
+            NSString *identify = [NSString stringWithFormat:@"%@_%@_%ld", model.identify, model.subIdentify, index];
+            // 取消已存在的通知
+            [self removeNotificationWithIdentify:identify];
             if (iOS10_OR_LATER) {
+                UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+                [center addNotificationRequest:[self setupUNNotificationRequestWithModel:model date:date identify:identify] withCompletionHandler:^(NSError * _Nullable error) {
+                    if (error) {
+                        NSLog(@"设置错误");
+                    } else {
+                        NSLog(@"设置成功");
+                    }
+                    if (completeBlock) {
+                        completeBlock(error);
+                    }
+                }];
+                
+                [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
+                    for (UNNotificationRequest *request in requests) {
+                        NSLog(@"id : %@", request.identifier);
+                    }
+                }];
                 
             } else {
-                
+                UIApplication *application = [UIApplication sharedApplication];
+                [application presentLocalNotificationNow:[self setupUILocalNotificationWithModel:model date:date identify:identify]];
             }
+            index++;
+        }
+    } else { // 不启用
+        
+    }
+}
+
++ (void)removeNotificationWithIdentify:(NSString *)identify {
+    if (iOS10_OR_LATER) {
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        [center removePendingNotificationRequestsWithIdentifiers:@[identify]]; // 移除还没有
+        [center removeDeliveredNotificationsWithIdentifiers:@[identify]];
+    } else {
+        UIApplication *application = [UIApplication sharedApplication];
+        UILocalNotification *targetNotification = nil;
+        for (UILocalNotification *notification in [application scheduledLocalNotifications]) {
+            if ([(NSString *)[notification.userInfo valueForKey:HQLUserInfoIdentify] isEqualToString:identify]) {
+                targetNotification = notification;
+                break; // 查找目标通知
+            }
+        }
+        if (!targetNotification) {
+            [application cancelLocalNotification:targetNotification]; // 取消通知
         }
     }
 }
 
+// iOS10 以前的做法
++ (UILocalNotification *)setupUILocalNotificationWithModel:(HQLLocalNotificationModel *)model date:(NSDate *)date identify:(NSString *)identify {
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.alertBody = model.content.alertBody; // 主要内容
+    notification.alertAction = model.content.alertAction; // 按钮
+    notification.hasAction = YES;
+    notification.alertTitle = model.content.alertTitle; // title
+    notification.alertLaunchImage = model.content.alertLaunchImage; // 启动图片
+    notification.applicationIconBadgeNumber = model.content.applicationIconBadgeNumber; // 角标
+    if (![model.content.soundName isEqualToString:@""] && !model.content.soundName) {
+        notification.soundName = model.content.soundName; // 自定义声音 --- 路径
+    } else {
+        notification.soundName = UILocalNotificationDefaultSoundName; // 默认声音
+    }
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo];
+    [userInfo setValue:identify forKey:HQLUserInfoIdentify];
+    notification.userInfo = userInfo; // userInfo
+    
+    switch (model.notificationMode) {
+        case HQLLocalNotificationAlarmMode: { // 闹钟模式
+            switch (model.repeatMode) {
+                case HQLLocalNotificationNoneRepeat: { // 不重复
+                    // 判断日期是否已经过了
+                    NSComparisonResult result = [[NSDate date] compare:date];
+                    if (result == NSOrderedAscending) { // 还没有过
+                        notification.fireDate = date;
+                    } else { // 已经过了
+                        // 下一天的这个时刻
+                        NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+                        NSDateComponents *moment = [calendar components:NSCalendarUnitHour |
+                                                                                                                 NSCalendarUnitMinute
+                                                                                                                 fromDate:date]; // 获取目标时刻
+                        NSDateComponents *targetDay = [calendar components:NSCalendarUnitYear |
+                                                                                                                    NSCalendarUnitMonth |
+                                                                                                                    NSCalendarUnitDay
+                                                                                                                    fromDate:[self getPriusDateFromDate:[NSDate date] withDay:1]]; // 获取下一天
+                        targetDay.hour = moment.hour;
+                        targetDay.minute = moment.minute;
+                        
+                        notification.fireDate = [calendar dateFromComponents:targetDay]; // 获取下一天的这个时刻
+                    }
+                    break;
+                }
+                case HQLLocalNotificationDayRepeat: { // 每日重复
+                    notification.fireDate = date;
+                    notification.repeatInterval = NSCalendarUnitDay;
+                    break;
+                }
+                case HQLLocalNotificationWeekRepeat: {
+                    notification.fireDate = date;
+                    notification.repeatInterval = NSCalendarUnitWeekday;
+                    break;
+                }
+                    // 这两种模式是 日程模式 独有
+                case HQLLocalNotificationMonthRepeat: { break; }
+                case HQLLocalNotificationYearRepeat: { break; }
+                default: { break; }
+            }
+            break;
+        }
+        case HQLLocalNotificationScheduleMode: { // 日程模式
+            switch (model.repeatMode) {
+                case HQLLocalNotificationNoneRepeat: { // 不重复
+                    NSComparisonResult result = [[NSDate date] compare:date];
+                    if (result == NSOrderedAscending) { // 还没有过时间
+                        notification.fireDate = date;
+                    } else { // 日程模式下,如果时间过了,则不会添加到日程当中,但UI还是可以显示
+                    
+                    }
+                    break;
+                }
+                case HQLLocalNotificationMonthRepeat: { // 每月重复
+                    notification.fireDate = date;
+                    notification.repeatInterval = NSCalendarUnitMonth;
+                    break;
+                }
+                case HQLLocalNotificationYearRepeat: { // 每年重复
+                    notification.fireDate = date;
+                    notification.repeatInterval = NSCalendarUnitYear;
+                    break;
+                }
+                    // 这两种模式是闹钟模式独有
+                case HQLLocalNotificationDayRepeat: { break; }
+                case HQLLocalNotificationWeekRepeat: { break; }
+                default: { break; }
+            }
+            break;
+        }
+        default: { break; }
+    }
+    
+    return notification;
+}
+
+// iOS10 以后的做法
 + (UNNotificationRequest *)setupUNNotificationRequestWithModel:(HQLLocalNotificationModel *)model date:(NSDate *)date identify:(NSString *)identify {
     
     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
@@ -103,7 +243,7 @@
         content.sound = [UNNotificationSound defaultSound]; // 声音
     }
     content.title = model.content.alertTitle; // 标题
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo]; //
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo]; 
     [userInfo setValue:identify forKey:HQLUserInfoIdentify];
     content.userInfo = userInfo; // userInfo
     

@@ -33,6 +33,19 @@
  */
 + (void)replyNotificationAuthorization:(UIApplication *)application iOS10NotificationDelegate:(id <UNUserNotificationCenterDelegate>)notificationDelegate successComplete:(void(^)(BOOL isFirstGranted))successComplete failureComplete:(void(^)(BOOL isFirstGranted))failureComplete;
 
-+ (void)addLocalNotificationWithModel:(HQLLocalNotificationModel *)model;
+/**
+ 添加通知
+
+ @param model 通知组的配置
+ @param completeBlock 只有在iOS10 以后的版本有用
+ */
++ (void)addLocalNotificationWithModel:(HQLLocalNotificationModel *)model completeBlock:(void(^)(NSError *error))completeBlock;
+
+/**
+ 移除通知
+
+ @param identify 通知的标识(一个)
+ */
++ (void)removeNotificationWithIdentify:(NSString *)identify;
 
 @end
