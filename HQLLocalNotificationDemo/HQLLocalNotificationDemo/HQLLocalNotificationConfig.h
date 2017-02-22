@@ -46,6 +46,6 @@
 
  @param identify 通知的标识(一个)
  */
-+ (void)removeNotificationWithIdentify:(NSString *)identify;
++ (void)removeNotificationWithNotificationIdentify:(NSString *)identify;
 
 @end

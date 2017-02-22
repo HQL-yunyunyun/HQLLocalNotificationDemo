@@ -11,6 +11,8 @@
 
 @implementation HQLLocalNotificationConfig
 
+#pragma mark - authorization method
+
 // 通知授权
 + (void)replyNotificationAuthorization:(UIApplication *)application iOS10NotificationDelegate:(id <UNUserNotificationCenterDelegate>)notificationDelegate successComplete:(void(^)(BOOL isFirstGranted))successComplete failureComplete:(void(^)(BOOL isFirstGranted))failureComplete {
     // 每一个版本的系统的通知授权都有一点改变
@@ -84,7 +86,7 @@
             // iOS 10 新增了UserNotification类,该类与之前的通知都不一样
             NSString *identify = [NSString stringWithFormat:@"%@_%@_%ld", model.identify, model.subIdentify, index];
             // 取消已存在的通知
-            [self removeNotificationWithIdentify:identify];
+            [self removeNotificationWithNotificationIdentify:identify];
             if (iOS10_OR_LATER) {
                 UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
                 [center addNotificationRequest:[self setupUNNotificationRequestWithModel:model date:date identify:identify] withCompletionHandler:^(NSError * _Nullable error) {
@@ -115,7 +117,7 @@
     }
 }
 
-+ (void)removeNotificationWithIdentify:(NSString *)identify {
++ (void)removeNotificationWithNotificationIdentify:(NSString *)identify {
     if (iOS10_OR_LATER) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         [center removePendingNotificationRequestsWithIdentifiers:@[identify]]; // 移除还没有
@@ -134,6 +136,8 @@
         }
     }
 }
+
+#pragma mark - private method
 
 // iOS10 以前的做法
 + (UILocalNotification *)setupUILocalNotificationWithModel:(HQLLocalNotificationModel *)model date:(NSDate *)date identify:(NSString *)identify {
