@@ -57,7 +57,7 @@
                                   badgeNumber:(NSInteger)badgeNumber
                                   isActivity:(BOOL)isActivity
 {
-    
+    // 首先 -> 判断是否可以启用
 }
 
 // 删
