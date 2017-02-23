@@ -65,4 +65,7 @@
 - (void)setNotificationActivity:(BOOL)isActivity notificationModel:(HQLLocalNotificationModel *)model;
 - (void)setNotificationActivity:(BOOL)isActivity identify:(NSString *)identify subIdentify:(NSString *)subIdentify;
 
+// 保存到本机
+- (void)saveNotification;
+
 @end

@@ -80,6 +80,21 @@
 
 + (void)addLocalNotificationWithModel:(HQLLocalNotificationModel *)model completeBlock:(void(^)(NSError *error))completeBlock{
     
+    // 首先 -> 判断是否可以启用, 如果是日程模式,且不循环,则如果日期都已经过去了,则不启用 isActivity = NO
+    if (model.isActivity) {
+        if (model.notificationMode == HQLLocalNotificationScheduleMode && model.repeatMode == HQLLocalNotificationNoneRepeat) {
+            for (NSDate *date in model.repeatDateArray) {
+                if ([date compare:[NSDate date]] == NSOrderedDescending) { // 日期大于现在
+                    model.isActivity = YES;
+                } else {
+                    model.isActivity = NO;
+                }
+            }
+        }
+    } else { // 原本不启用,则不用管
+        
+    }
+    
     if (model.isActivity) { // 启用的
         NSInteger index = 0;
         for (NSDate *date in model.repeatDateArray) {

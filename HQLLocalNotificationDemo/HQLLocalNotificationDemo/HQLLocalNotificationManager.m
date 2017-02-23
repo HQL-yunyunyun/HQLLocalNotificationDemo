@@ -8,6 +8,7 @@
 
 #import "HQLLocalNotificationManager.h"
 #import "HQLLocalNotificationConfig.h"
+#import "HQLLocalNotificationModel.h"
 
 #define HQLLocalNotificationArray @"HQLLocalNotificationArray"
 
@@ -57,25 +58,93 @@
                                   badgeNumber:(NSInteger)badgeNumber
                                   isActivity:(BOOL)isActivity
 {
-    // 首先 -> 判断是否可以启用
+    HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
+    content.alertBody = alertBody;
+    content.alertTitle = alertTitle;
+    content.userInfo = userInfo;
+    content.applicationIconBadgeNumber = badgeNumber;
+    HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] initContent:content repeatDateArray:repeatDateArray identify:self.identify subIdentify:subIdentify repeatMode:repeatMode notificationMode:notificationMode isActivity:isActivity];
+    
+    [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
+        if (error) {
+            // 添加错误
+            NSLog(@"add notification error : %@", error);
+        } else {
+            NSLog(@"add notification success");
+        }
+    }];
+    
+    [self.notificationArray addObject:model];
+    [self saveNotification]; // 保存到本机中
 }
 
 // 删
 - (void)deleteNotificationWithModel:(HQLLocalNotificationModel *)model {
-
+    // 先删除通知,再删除model
+    if (model) {
+        // 判断model是否在队列中
+        if (![self.notificationArray containsObject:model]) {
+            // 不在队列中
+            NSLog(@"model 不在队列中");
+            return;
+        }
+        [self removeNotificationWithIdentify:model.identify subIdentify:model.subIdentify];
+        [self.notificationArray removeObject:model];
+        [self saveNotification];
+    } else {
+        // model为空
+        NSLog(@"model不能为空");
+    }
 }
 
 - (void)deleteNotificationWithIdentify:(NSString *)identify subIdentify:(NSString *)subIdentify {
-
+    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentify:identify subIdentify:subIdentify];
+    if (model) {
+        [self deleteNotificationWithModel:model];
+    } else {
+        // 不存在该model
+        NSLog(@"不存在该model");
+    }
 }
 
 // 改
 - (void)updateNotificationWithPropertyDict:(NSDictionary *)propertyDict identify:(NSString *)identify subIdentify:(NSString *)subIdentify {
-
+    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentify:identify subIdentify:subIdentify];
+    if (model) {
+        [self updateNotificationWithPropertyDict:propertyDict notificationModel:model];
+    } else {
+        // 不存在该model
+        NSLog(@"不存在该model");
+    }
 }
 
 - (void)updateNotificationWithPropertyDict:(NSDictionary *)propertyDict notificationModel:(HQLLocalNotificationModel *)model {
-
+    if (model) {
+        // 判断model是否在队列中
+        if (![self.notificationArray containsObject:model]) {
+            // 不在队列中
+            NSLog(@"model 不在队列中");
+            return;
+        }
+        // 先取消通知
+        [self removeNotificationWithIdentify:model.identify subIdentify:model.subIdentify];
+        for (NSString *key in propertyDict.allKeys) {
+            [model setValue:propertyDict[key] forKeyPath:key];
+        }
+        [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
+            if (error) {
+                // 添加错误
+                NSLog(@"add notification error : %@", error);
+            } else {
+                NSLog(@"add notification success");
+            }
+        }];
+        
+        [self saveNotification]; // 保存
+    } else {
+        // model为空
+        NSLog(@"model不能为空");
+    }
 }
 
 // 查
@@ -90,11 +159,39 @@
 
 // 设置通知是否启用
 - (void)setNotificationActivity:(BOOL)isActivity notificationModel:(HQLLocalNotificationModel *)model {
-
+    if (model) {
+        // 判断model是否在队列中
+        if (![self.notificationArray containsObject:model]) {
+            // 不在队列中
+            NSLog(@"model 不在队列中");
+            return;
+        }
+        [self removeNotificationWithIdentify:model.identify subIdentify:model.subIdentify];
+        model.isActivity = isActivity;
+        [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
+            if (error) {
+                // 添加错误
+                NSLog(@"add notification error : %@", error);
+            } else {
+                NSLog(@"add notification success");
+            }
+        }];
+        
+        [self saveNotification]; // 保存
+    } else {
+        // model为空
+        NSLog(@"model不能为空");
+    }
 }
 
 - (void)setNotificationActivity:(BOOL)isActivity identify:(NSString *)identify subIdentify:(NSString *)subIdentify {
-
+    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentify:identify subIdentify:subIdentify];
+    if (model) {
+        [self setNotificationActivity:isActivity notificationModel:model];
+    } else {
+        // 不存在该model
+        NSLog(@"不存在该model");
+    }
 }
 
 #pragma mark - private method
