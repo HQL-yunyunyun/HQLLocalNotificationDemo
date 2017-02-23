@@ -8,6 +8,9 @@
 
 #import "AppDelegate.h"
 
+#import "HQLLocalNotificationConfig.h"
+#import "HQLLocalNotificationManager.h"
+
 @interface AppDelegate ()
 
 @end
@@ -17,9 +20,32 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    
+    if (launchOptions) {
+        // 从通知点击进来
+        UILocalNotification *notification = launchOptions[UIApplicationLaunchOptionsLocalNotificationKey];
+        NSDictionary *userinfo = notification.userInfo;
+        NSString *identifier = userinfo[HQLUserInfoIdentifier];
+        [[HQLLocalNotificationManager shareManger] notificationIsActivity:identifier];
+        
+        NSLog(@"identifier : %@ alertBody:%@ alertTitle:%@ fireDate:%@", identifier, notification.alertBody, notification.alertTitle, notification.fireDate);
+    }
     return YES;
 }
 
+// 收到远程通知才会实现的
+//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+//    
+//}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    NSDictionary *userinfo = notification.userInfo;
+    NSString *identifier = userinfo[HQLUserInfoIdentifier];
+    [[HQLLocalNotificationManager shareManger] notificationIsActivity:identifier];
+    
+    NSLog(@"identifier : %@ alertBody:%@ alertTitle:%@ fireDate:%@", identifier, notification.alertBody, notification.alertTitle, notification.fireDate);
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

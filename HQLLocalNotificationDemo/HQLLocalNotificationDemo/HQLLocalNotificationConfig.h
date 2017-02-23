@@ -17,7 +17,7 @@
 #define iOS8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 #define iOS7_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 
-#define HQLUserInfoIdentify @"HQLUserInfoIdentify"
+#define HQLUserInfoIdentifier @"HQLUserInfoIdentifier"
 
 @class HQLLocalNotificationModel;
 
@@ -44,8 +44,8 @@
 /**
  移除通知
 
- @param identify 通知的标识(一个)
+ @param identifier 通知的标识(一个)
  */
-+ (void)removeNotificationWithNotificationIdentify:(NSString *)identify;
++ (void)removeNotificationWithNotificationIdentifier:(NSString *)identifier;
 
 @end

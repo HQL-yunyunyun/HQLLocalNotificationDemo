@@ -7,10 +7,14 @@
 //
 
 #import "ViewController.h"
-#import "HQLLocalNotificationConfig.h"
-#import "HQLLocalNotificationModel.h"
+#import "HQLLocalNotificationManager.h"
 
-@interface ViewController () <UNUserNotificationCenterDelegate>
+#define HQLNotificationTableViewCell @"HQLNotificationTableViewCell"
+
+@interface ViewController () <UNUserNotificationCenterDelegate, UITableViewDelegate, UITableViewDataSource>
+
+@property (strong, nonatomic) HQLLocalNotificationManager *notificationManager;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
 
@@ -18,40 +22,46 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
-    [HQLLocalNotificationConfig replyNotificationAuthorization:[UIApplication sharedApplication] iOS10NotificationDelegate:self successComplete:^(BOOL isFirstGranted) {
-        
-    } failureComplete:^(BOOL isFirstGranted) {
-        
-    }];
+    [self.tableView reloadData];
 }
 
+#pragma mark - table view data source
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.notificationManager.notificationArray.count;
 }
 
-//- (IBAction)addNotification:(id)sender {
-//    HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
-//    content.alertBody = @"屠龙宝刀,一点就送";
-//    content.alertTitle = @"传奇人物";
-//    HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] initContent:content repeatDateArray:@[[NSDate dateWithTimeIntervalSinceNow:60.0]] identify:@"firtIdentify" subIdentify:@"subIdentify" repeatMode:HQLLocalNotificationNoneRepeat notificationMode:HQLLocalNotificationAlarmMode isActivity:YES];
-//    [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
-//        NSLog(@"%@", error);
-//    }];
-//}
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
-    NSLog(@"收到通知");
-    completionHandler(UNNotificationPresentationOptionBadge|
-                      UNNotificationPresentationOptionSound|
-                      UNNotificationPresentationOptionAlert);
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:HQLNotificationTableViewCell];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:HQLNotificationTableViewCell];
+    }
+    
+    HQLLocalNotificationModel *model = self.notificationManager.notificationArray[indexPath.row];
+    cell.textLabel.text = model.content.alertBody;
+    if (model.isActivity) {
+        cell.detailTextLabel.text = @"启用";
+    } else {
+        cell.detailTextLabel.text = @"不启用";
+    }
+    
+    return cell;
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
-    NSLog(@"收到");
-    completionHandler();
+#pragma mark - table view delegate
+
+
+
+- (HQLLocalNotificationManager *)notificationManager {
+    if (!_notificationManager) {
+        _notificationManager = [HQLLocalNotificationManager shareManger];
+    }
+    return _notificationManager;
 }
 
 @end

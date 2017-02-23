@@ -8,12 +8,18 @@
 
 #import <Foundation/Foundation.h>
 #import "HQLLocalNotificationModel.h"
+#import "HQLLocalNotificationConfig.h"
 
-#define HQLLocalNotificationDefaultIdentify @"HQLLocalNotificationDefaultIdentify"
+#define HQLLocalNotificationDefaultIdentifier @"HQLLocalNotificationDefaultIdentifier"
 
 @protocol HQLLocalNotificationManagerDelegate <NSObject>
 
+@optional
+// iOS10以后的版本 --- 将要收到通知
+- (void)userNotificationDelegateNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification;
 
+// iOS10以后的版本 --- 点击通知
+- (void)userNotificationDelegateNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response;
 
 @end
 
@@ -24,8 +30,8 @@
 
 @property (assign, nonatomic) id <HQLLocalNotificationManagerDelegate>delegate;
 
-// 一级标识, default: HQLLocalNotificationDefaultIdentify
-@property (copy, nonatomic) NSString *identify;
+// 一级标识, default: HQLLocalNotificationDefaultIdentifier
+@property (copy, nonatomic) NSString *identifier;
 
 // 启动图片, default: default
 @property (copy, nonatomic) NSString *alertLaunchImage;
@@ -40,7 +46,7 @@
 - (instancetype)init NS_UNAVAILABLE;
 
 // 增
-- (void)addNotificationWithSubIdentify:(NSString *)subIdentify
+- (void)addNotificationWithSubIdentifier:(NSString *)subIdentifier
                                   notificationMode:(HQLLocalNotificationMode)notificationMode
                                   repeatMode:(HQLLocalNotificationRepeat)repeatMode
                                   alertTitle:(NSString *)alertTitle
@@ -52,20 +58,23 @@
 
 // 删
 - (void)deleteNotificationWithModel:(HQLLocalNotificationModel *)model;
-- (void)deleteNotificationWithIdentify:(NSString *)identify subIdentify:(NSString *)subIdentify;
+- (void)deleteNotificationWithIdentifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier;
 
 // 改, key 为需要改的属性, value 为属性的值 ---> 使用setValueForKey:的形式
-- (void)updateNotificationWithPropertyDict:(NSDictionary *)propertyDict identify:(NSString *)identify subIdentify:(NSString *)subIdentify;
+- (void)updateNotificationWithPropertyDict:(NSDictionary *)propertyDict identifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier;
 - (void)updateNotificationWithPropertyDict:(NSDictionary *)propertyDict notificationModel:(HQLLocalNotificationModel *)model;
 
 // 查
-- (HQLLocalNotificationModel *)getNotificationModelWithIdentify:(NSString *)identify subIdentify:(NSString *)subIdentify;
+- (HQLLocalNotificationModel *)getNotificationModelWithIdentifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier;
 
 // 设置是否启用
 - (void)setNotificationActivity:(BOOL)isActivity notificationModel:(HQLLocalNotificationModel *)model;
-- (void)setNotificationActivity:(BOOL)isActivity identify:(NSString *)identify subIdentify:(NSString *)subIdentify;
+- (void)setNotificationActivity:(BOOL)isActivity identifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier;
 
 // 保存到本机
 - (void)saveNotification;
+
+// 在触发通知后一个要调用这个方法, iOS10以后的版本已经在内部调用了, iOS10以前的版本需要手动调用
+- (void)notificationIsActivity:(NSString *)notificationIdentifier;
 
 @end

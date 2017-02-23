@@ -10,43 +10,55 @@
 
 @implementation HQLLocalNotificationModel
 
-/*- (instancetype)initWithDate:(NSDate *)date content:(HQLLocalNotificationContentModel *)content repeatDateArray:(NSArray *)repeatDateArray identify:(NSString *)identify subIdentify:(NSString *)subIdentify repeatMode:(HQLLocalNotificationRepeat)repeatMode isRepeat:(BOOL)isRepeat {
+/*- (instancetype)initWithDate:(NSDate *)date content:(HQLLocalNotificationContentModel *)content repeatDateArray:(NSArray *)repeatDateArray identifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier repeatMode:(HQLLocalNotificationRepeat)repeatMode isRepeat:(BOOL)isRepeat {
     if (self = [super init]) {
         self.date = date;
         self.content = content;
         self.repeatDateArray = repeatDateArray;
-        self.identify = identify;
-        self.subIdentify = subIdentify;
+        self.identifier = identifier;
+        self.subIdentifier = subIdentifier;
         self.repeatMode = repeatMode;
         self.isRepeat = isRepeat;
     }
     return self;
 }
-- (nullable instancetype)initContent:(nonnull HQLLocalNotificationContentModel *)content repeatDateArray:(nonnull NSArray *)repeatDateArray identify:(nonnull NSString *)identify subIdentify:(nonnull NSString *)subIdentify repeatMode:(HQLLocalNotificationRepeat)repeatMode isRepeat:(BOOL)isRepeat {
+- (nullable instancetype)initContent:(nonnull HQLLocalNotificationContentModel *)content repeatDateArray:(nonnull NSArray *)repeatDateArray identifier:(nonnull NSString *)identifier subIdentifier:(nonnull NSString *)subIdentifier repeatMode:(HQLLocalNotificationRepeat)repeatMode isRepeat:(BOOL)isRepeat {
     if (self = [super init]) {
         self.content = content;
         self.repeatDateArray = repeatDateArray;
-        self.identify = identify;
-        self.subIdentify = subIdentify;
+        self.identifier = identifier;
+        self.subIdentifier = subIdentifier;
         self.repeatMode = repeatMode;
         self.isRepeat = isRepeat;
     }
     return self;
 }*/
 
+- (instancetype)init {
+    if (self = [super init]) {
+        self.content = [[HQLLocalNotificationContentModel alloc] init];
+        self.repeatDateArray = [NSArray array];
+        self.identifier = @"";
+        self.subIdentifier = @"";
+        self.repeatMode = HQLLocalNotificationNoneRepeat;
+        self.isActivity = NO;
+    }
+    return self;
+}
+
 - (nullable instancetype)initContent:(nonnull HQLLocalNotificationContentModel *)content
                                       repeatDateArray:(nonnull NSArray *)repeatDateArray
-                                      identify:(nonnull NSString *)identify
-                                      subIdentify:(nonnull NSString *)subIdentify
+                                      identifier:(nonnull NSString *)identifier
+                                      subIdentifier:(nonnull NSString *)subIdentifier
                                       repeatMode:(HQLLocalNotificationRepeat)repeatMode
                                       notificationMode:(HQLLocalNotificationMode)notificationMode
                                       isActivity:(BOOL)isActivity
 {
-    if (self = [super init]) {
+    if (self = [self init]) {
         self.content = content;
         self.repeatDateArray = repeatDateArray;
-        self.identify = identify;
-        self.subIdentify = subIdentify;
+        self.identifier = identifier;
+        self.subIdentifier = subIdentifier;
         self.repeatMode = repeatMode;
         self.notificationMode = notificationMode;
         self.isActivity = isActivity;
@@ -60,8 +72,8 @@
 //    [aCoder encodeObject:self.date forKey:@"date"];
     [aCoder encodeObject:self.content forKey:@"content"];
     [aCoder encodeObject:self.repeatDateArray forKey:@"repeatDateArray"];
-    [aCoder encodeObject:self.identify forKey:@"identify"];
-    [aCoder encodeObject:self.subIdentify forKey:@"subIdentify"];
+    [aCoder encodeObject:self.identifier forKey:@"identifier"];
+    [aCoder encodeObject:self.subIdentifier forKey:@"subIdentifier"];
     [aCoder encodeInteger:self.repeatMode forKey:@"repeatModel"];
 //    [aCoder encodeBool:self.isRepeat forKey:@"isRepeat"];
     [aCoder encodeInteger:self.notificationMode forKey:@"notificationMode"];
@@ -72,8 +84,8 @@
 //    self.date = [aDecoder decodeObjectForKey:@"date"];
     self.content = [aDecoder decodeObjectForKey:@"content"];
     self.repeatDateArray = [aDecoder decodeObjectForKey:@"repeatDateArray"];
-    self.identify = [aDecoder decodeObjectForKey:@"identify"];
-    self.subIdentify = [aDecoder decodeObjectForKey:@"subIdentify"];
+    self.identifier = [aDecoder decodeObjectForKey:@"identifier"];
+    self.subIdentifier = [aDecoder decodeObjectForKey:@"subIdentifier"];
     self.repeatMode = (HQLLocalNotificationRepeat)[aDecoder decodeIntegerForKey:@"repeatMode"];
 //    self.isRepeat = [aDecoder decodeBoolForKey:@"isRepeat"];
     self.notificationMode = (HQLLocalNotificationMode)[aDecoder decodeObjectForKey:@"notificationMode"];
@@ -81,11 +93,36 @@
     return self;
 }
 
+#pragma mark - setter
+
+- (void)setIdentifier:(NSString *)identifier {
+    NSAssert([identifier rangeOfString:HQLLocalNotificationIdentifierLinkChar].location == NSNotFound, @"标识字符不能有已定义字符");
+    _identifier = identifier;
+}
+
+- (void)setSubIdentifier:(NSString *)subIdentifier {
+    NSAssert([subIdentifier rangeOfString:HQLLocalNotificationIdentifierLinkChar].location == NSNotFound, @"标识字符不能有已定义字符");
+    _subIdentifier = subIdentifier;
+}
+
 @end
 
 #pragma mark - local notification content
 
 @implementation HQLLocalNotificationContentModel
+
+- (instancetype)init {
+    if (self = [super init]) {
+        self.alertBody = @"";
+        self.alertAction = @"";
+        self.alertLaunchImage = @"";
+        self.alertTitle = @"";
+        self.soundName = @"";
+        self.applicationIconBadgeNumber = 0;
+        self.userInfo = [NSDictionary dictionary];
+    }
+    return self;
+}
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.alertBody forKey:@"alertBody"];

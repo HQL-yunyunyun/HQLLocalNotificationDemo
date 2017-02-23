@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define HQLLocalNotificationIdentifierLinkChar @"_"
+
 typedef enum {
     HQLLocalNotificationAlarmMode , // 闹钟模式
     HQLLocalNotificationScheduleMode // 日程模式
@@ -33,12 +35,12 @@ typedef enum {
 /**
  一级标识(通常是用户名)
  */
-@property (copy, nonatomic, nonnull) NSString *identify; // 标识
+@property (copy, nonatomic, nonnull) NSString *identifier; // 标识
 
 /**
  二级标识(通常是提醒组的名字)
  */
-@property (copy, nonatomic, nonnull) NSString *subIdentify; // 二级标识
+@property (copy, nonatomic, nonnull) NSString *subIdentifier; // 二级标识
 
 /**
  多个时间的数组(如:周一,周二 或 一月一日,一月二日) ---> 会根据这个数组生成相应的通知
@@ -62,8 +64,8 @@ typedef enum {
 
 - (nullable instancetype)initContent:(nonnull HQLLocalNotificationContentModel *)content
                                       repeatDateArray:(nonnull NSArray *)repeatDateArray
-                                      identify:(nonnull NSString *)identify
-                                      subIdentify:(nonnull NSString *)subIdentify
+                                      identifier:(nonnull NSString *)identifier
+                                      subIdentifier:(nonnull NSString *)subIdentifier
                                       repeatMode:(HQLLocalNotificationRepeat)repeatMode
                                       notificationMode:(HQLLocalNotificationMode)notificationMode
                                       isActivity:(BOOL)isActivity;
@@ -79,13 +81,13 @@ typedef enum {
 //@property (strong, nonatomic, nonnull) NSDate *date;
 
 /**
- 最终标识(identify_subIdentify_num) -> (一级标识_二级标识_序号)
+ 最终标识(identifier_subIdentifier_num) -> (一级标识_二级标识_序号)
  */
-//@property (copy, nonatomic, readonly, nonnull) NSString *HQLIdentify;
+//@property (copy, nonatomic, readonly, nonnull) NSString *HQLIdentifier;
 
-/*- (nullable instancetype)initWithDate:(nonnull NSDate *)date content:(nonnull HQLLocalNotificationContentModel *)content repeatDateArray:(nonnull NSArray *)repeatDateArray identify:(nonnull NSString *)identify subIdentify:(nonnull NSString *)subIdentify repeatMode:(HQLLocalNotificationRepeat)repeatMode isRepeat:(BOOL)isRepeat;
+/*- (nullable instancetype)initWithDate:(nonnull NSDate *)date content:(nonnull HQLLocalNotificationContentModel *)content repeatDateArray:(nonnull NSArray *)repeatDateArray identifier:(nonnull NSString *)identifier subIdentifier:(nonnull NSString *)subIdentifier repeatMode:(HQLLocalNotificationRepeat)repeatMode isRepeat:(BOOL)isRepeat;
 
-- (nullable instancetype)initContent:(nonnull HQLLocalNotificationContentModel *)content repeatDateArray:(nonnull NSArray *)repeatDateArray identify:(nonnull NSString *)identify subIdentify:(nonnull NSString *)subIdentify repeatMode:(HQLLocalNotificationRepeat)repeatMode isRepeat:(BOOL)isRepeat;*/
+- (nullable instancetype)initContent:(nonnull HQLLocalNotificationContentModel *)content repeatDateArray:(nonnull NSArray *)repeatDateArray identifier:(nonnull NSString *)identifier subIdentifier:(nonnull NSString *)subIdentifier repeatMode:(HQLLocalNotificationRepeat)repeatMode isRepeat:(BOOL)isRepeat;*/
 
 @end
 

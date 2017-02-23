@@ -7,7 +7,6 @@
 //
 
 #import "HQLLocalNotificationManager.h"
-#import "HQLLocalNotificationConfig.h"
 #import "HQLLocalNotificationModel.h"
 
 #define HQLLocalNotificationArray @"HQLLocalNotificationArray"
@@ -36,7 +35,7 @@
         } failureComplete:^(BOOL isFirstGranted) {
             // 授权失败
         }];
-        self.identify = HQLLocalNotificationDefaultIdentify;
+        self.identifier = HQLLocalNotificationDefaultIdentifier;
         self.alertLaunchImage = @"Default";
         self.soundName = @""; // 设置的时候有默认的
         
@@ -48,7 +47,7 @@
 #pragma mark - notificationModel operation method
 
 // 增
-- (void)addNotificationWithSubIdentify:(NSString *)subIdentify
+- (void)addNotificationWithSubIdentifier:(NSString *)subIdentifier
                                   notificationMode:(HQLLocalNotificationMode)notificationMode
                                   repeatMode:(HQLLocalNotificationRepeat)repeatMode
                                   alertTitle:(NSString *)alertTitle
@@ -61,9 +60,16 @@
     HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
     content.alertBody = alertBody;
     content.alertTitle = alertTitle;
-    content.userInfo = userInfo;
+    
+    NSMutableDictionary *aUserInfo = [NSMutableDictionary dictionary];
+    if (userInfo) {
+        aUserInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+    }
+    [aUserInfo setValue:@"holdPlace" forKey:@"holdPlace"];
+    content.userInfo = aUserInfo.copy;
+    
     content.applicationIconBadgeNumber = badgeNumber;
-    HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] initContent:content repeatDateArray:repeatDateArray identify:self.identify subIdentify:subIdentify repeatMode:repeatMode notificationMode:notificationMode isActivity:isActivity];
+    HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] initContent:content repeatDateArray:repeatDateArray identifier:self.identifier subIdentifier:subIdentifier repeatMode:repeatMode notificationMode:notificationMode isActivity:isActivity];
     
     [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
         if (error) {
@@ -88,7 +94,7 @@
             NSLog(@"model 不在队列中");
             return;
         }
-        [self removeNotificationWithIdentify:model.identify subIdentify:model.subIdentify];
+        [self removeNotificationWithIdentifier:model.identifier subIdentifier:model.subIdentifier];
         [self.notificationArray removeObject:model];
         [self saveNotification];
     } else {
@@ -97,8 +103,8 @@
     }
 }
 
-- (void)deleteNotificationWithIdentify:(NSString *)identify subIdentify:(NSString *)subIdentify {
-    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentify:identify subIdentify:subIdentify];
+- (void)deleteNotificationWithIdentifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier {
+    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentifier:identifier subIdentifier:subIdentifier];
     if (model) {
         [self deleteNotificationWithModel:model];
     } else {
@@ -108,8 +114,8 @@
 }
 
 // 改
-- (void)updateNotificationWithPropertyDict:(NSDictionary *)propertyDict identify:(NSString *)identify subIdentify:(NSString *)subIdentify {
-    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentify:identify subIdentify:subIdentify];
+- (void)updateNotificationWithPropertyDict:(NSDictionary *)propertyDict identifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier {
+    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentifier:identifier subIdentifier:subIdentifier];
     if (model) {
         [self updateNotificationWithPropertyDict:propertyDict notificationModel:model];
     } else {
@@ -127,7 +133,7 @@
             return;
         }
         // 先取消通知
-        [self removeNotificationWithIdentify:model.identify subIdentify:model.subIdentify];
+        [self removeNotificationWithIdentifier:model.identifier subIdentifier:model.subIdentifier];
         for (NSString *key in propertyDict.allKeys) {
             [model setValue:propertyDict[key] forKeyPath:key];
         }
@@ -148,9 +154,9 @@
 }
 
 // 查
-- (HQLLocalNotificationModel *)getNotificationModelWithIdentify:(NSString *)identify subIdentify:(NSString *)subIdentify {
+- (HQLLocalNotificationModel *)getNotificationModelWithIdentifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier {
     for (HQLLocalNotificationModel *model in self.notificationArray) {
-        if ([model.subIdentify isEqualToString:subIdentify] && [model.identify isEqualToString:identify]) {
+        if ([model.subIdentifier isEqualToString:subIdentifier] && [model.identifier isEqualToString:identifier]) {
             return model;
         }
     }
@@ -166,7 +172,7 @@
             NSLog(@"model 不在队列中");
             return;
         }
-        [self removeNotificationWithIdentify:model.identify subIdentify:model.subIdentify];
+        [self removeNotificationWithIdentifier:model.identifier subIdentifier:model.subIdentifier];
         model.isActivity = isActivity;
         [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
             if (error) {
@@ -184,8 +190,8 @@
     }
 }
 
-- (void)setNotificationActivity:(BOOL)isActivity identify:(NSString *)identify subIdentify:(NSString *)subIdentify {
-    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentify:identify subIdentify:subIdentify];
+- (void)setNotificationActivity:(BOOL)isActivity identifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier {
+    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentifier:identifier subIdentifier:subIdentifier];
     if (model) {
         [self setNotificationActivity:isActivity notificationModel:model];
     } else {
@@ -194,12 +200,63 @@
     }
 }
 
+#pragma mark - user notification center delegate
+
+// App处于前台接收通知时
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+    // 判断是否还是 活动
+    [self notificationIsActivity:notification.request.identifier];
+    if ([self.delegate respondsToSelector:@selector(userNotificationDelegateNotificationCenter:willPresentNotification:)]) {
+        [self.delegate userNotificationDelegateNotificationCenter:center willPresentNotification:notification];
+    }
+    completionHandler(UNNotificationPresentationOptionAlert |
+                                   UNNotificationPresentationOptionBadge |
+                                   UNNotificationPresentationOptionSound);
+}
+
+// 点击通知进入app或者
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
+    // 判断是否还是 活动
+    [self notificationIsActivity:response.notification.request.identifier];
+    if ([self.delegate respondsToSelector:@selector(userNotificationDelegateNotificationCenter:didReceiveNotificationResponse:)]) {
+        [self.delegate userNotificationDelegateNotificationCenter:center didReceiveNotificationResponse:response];
+    }
+    completionHandler();
+}
+
+// 通知触发后,判断该通知组是否还活动 isActivity
+- (void)notificationIsActivity:(NSString *)notificationIdentifier {
+    NSArray *identifierArray = [notificationIdentifier componentsSeparatedByString:HQLLocalNotificationIdentifierLinkChar];
+    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentifier:identifierArray[0] subIdentifier:identifierArray[1]];
+    if (model) {
+        if (model.repeatMode == HQLLocalNotificationNoneRepeat) { // 不重复
+            if (model.notificationMode == HQLLocalNotificationAlarmMode) {
+                model.isActivity = NO; // 只要是 闹钟模式, 一旦触发了,就会变成不启用(闹钟模式的不循环只有一个通知)
+            } else if (model.notificationMode == HQLLocalNotificationScheduleMode) {
+                // 日程模式, 因为日程模式可以有好几个日期,所以所有的通知都触发了才能变成不启用
+                for (NSDate *date in model.repeatDateArray) {
+                    if ([date compare:[NSDate date]] == NSOrderedDescending) {
+                        model.isActivity = YES;
+                        break; // 跳出循环
+                    } else {
+                        model.isActivity = NO;
+                    }
+                }
+            }
+        }
+        
+        [self saveNotification]; // 保存修改
+    } else {
+        NSLog(@"不存在该model");
+    }
+}
+
 #pragma mark - private method
 
-- (void)removeNotificationWithIdentify:(NSString *)identify subIdentify:(NSString *)subIdentify {
-    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentify:identify subIdentify:subIdentify];
+- (void)removeNotificationWithIdentifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier {
+    HQLLocalNotificationModel *model = [self getNotificationModelWithIdentifier:identifier subIdentifier:subIdentifier];
     for (int i = 0; i < model.repeatDateArray.count; i++) {
-        [HQLLocalNotificationConfig removeNotificationWithNotificationIdentify:[NSString stringWithFormat:@"%@_%@_%d", model.identify, model.subIdentify, i]];
+        [HQLLocalNotificationConfig removeNotificationWithNotificationIdentifier:[NSString stringWithFormat:@"%@%@%@%@%d", model.identifier, HQLLocalNotificationIdentifierLinkChar, model.subIdentifier, HQLLocalNotificationIdentifierLinkChar, i]];
     }
 }
 

@@ -86,6 +86,7 @@
             for (NSDate *date in model.repeatDateArray) {
                 if ([date compare:[NSDate date]] == NSOrderedDescending) { // 日期大于现在
                     model.isActivity = YES;
+                    break;
                 } else {
                     model.isActivity = NO;
                 }
@@ -99,12 +100,12 @@
         NSInteger index = 0;
         for (NSDate *date in model.repeatDateArray) {
             // iOS 10 新增了UserNotification类,该类与之前的通知都不一样
-            NSString *identify = [NSString stringWithFormat:@"%@_%@_%ld", model.identify, model.subIdentify, index];
+            NSString *identifier = [NSString stringWithFormat:@"%@%@%@%@%ld", model.identifier, HQLLocalNotificationIdentifierLinkChar, model.subIdentifier, HQLLocalNotificationIdentifierLinkChar, index];
             // 取消已存在的通知
-            [self removeNotificationWithNotificationIdentify:identify];
+            [self removeNotificationWithNotificationIdentifier:identifier];
             if (iOS10_OR_LATER) {
                 UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-                [center addNotificationRequest:[self setupUNNotificationRequestWithModel:model date:date identify:identify] withCompletionHandler:^(NSError * _Nullable error) {
+                [center addNotificationRequest:[self setupUNNotificationRequestWithModel:model date:date identifier:identifier] withCompletionHandler:^(NSError * _Nullable error) {
                     if (error) {
                         NSLog(@"设置错误");
                     } else {
@@ -123,7 +124,7 @@
                 
             } else {
                 UIApplication *application = [UIApplication sharedApplication];
-                [application presentLocalNotificationNow:[self setupUILocalNotificationWithModel:model date:date identify:identify]];
+                [application presentLocalNotificationNow:[self setupUILocalNotificationWithModel:model date:date identifier:identifier]];
             }
             index++;
         }
@@ -132,16 +133,16 @@
     }
 }
 
-+ (void)removeNotificationWithNotificationIdentify:(NSString *)identify {
++ (void)removeNotificationWithNotificationIdentifier:(NSString *)identifier {
     if (iOS10_OR_LATER) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        [center removePendingNotificationRequestsWithIdentifiers:@[identify]]; // 移除还没有
-        [center removeDeliveredNotificationsWithIdentifiers:@[identify]];
+        [center removePendingNotificationRequestsWithIdentifiers:@[identifier]]; // 移除还没有
+        [center removeDeliveredNotificationsWithIdentifiers:@[identifier]];
     } else {
         UIApplication *application = [UIApplication sharedApplication];
         UILocalNotification *targetNotification = nil;
         for (UILocalNotification *notification in [application scheduledLocalNotifications]) {
-            if ([(NSString *)[notification.userInfo valueForKey:HQLUserInfoIdentify] isEqualToString:identify]) {
+            if ([(NSString *)[notification.userInfo valueForKey:HQLUserInfoIdentifier] isEqualToString:identifier]) {
                 targetNotification = notification;
                 break; // 查找目标通知
             }
@@ -155,7 +156,7 @@
 #pragma mark - private method
 
 // iOS10 以前的做法
-+ (UILocalNotification *)setupUILocalNotificationWithModel:(HQLLocalNotificationModel *)model date:(NSDate *)date identify:(NSString *)identify {
++ (UILocalNotification *)setupUILocalNotificationWithModel:(HQLLocalNotificationModel *)model date:(NSDate *)date identifier:(NSString *)identifier {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.alertBody = model.content.alertBody; // 主要内容
     notification.alertAction = model.content.alertAction; // 按钮
@@ -168,8 +169,12 @@
     } else {
         notification.soundName = UILocalNotificationDefaultSoundName; // 默认声音
     }
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo];
-    [userInfo setValue:identify forKey:HQLUserInfoIdentify];
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    if (model.content.userInfo) {
+        userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo];
+    }
+    [userInfo setValue:identifier forKey:HQLUserInfoIdentifier];
     notification.userInfo = userInfo; // userInfo
     
     switch (model.notificationMode) {
@@ -249,7 +254,7 @@
 }
 
 // iOS10 以后的做法
-+ (UNNotificationRequest *)setupUNNotificationRequestWithModel:(HQLLocalNotificationModel *)model date:(NSDate *)date identify:(NSString *)identify {
++ (UNNotificationRequest *)setupUNNotificationRequestWithModel:(HQLLocalNotificationModel *)model date:(NSDate *)date identifier:(NSString *)identifier {
     
     UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
     content.badge = @(model.content.applicationIconBadgeNumber); // 角标暂时为0
@@ -262,8 +267,12 @@
         content.sound = [UNNotificationSound defaultSound]; // 声音
     }
     content.title = model.content.alertTitle; // 标题
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo]; 
-    [userInfo setValue:identify forKey:HQLUserInfoIdentify];
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    if (model.content.userInfo) {
+        userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo];
+    }
+    [userInfo setValue:identifier forKey:HQLUserInfoIdentifier];
     content.userInfo = userInfo; // userInfo
     
     // 触发时机
@@ -352,7 +361,7 @@
         default: { break; }
     }
     
-    return [UNNotificationRequest requestWithIdentifier:identify content:content trigger:trigger];
+    return [UNNotificationRequest requestWithIdentifier:identifier content:content trigger:trigger];
 }
 
 + (NSDate *)getPriusDateFromDate:(NSDate *)date withDay:(NSInteger)day {
