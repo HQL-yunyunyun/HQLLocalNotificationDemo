@@ -110,18 +110,30 @@
                             <button opaque="NO" tag="8000" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bJe-t3-aOb">
                                 <rect key="frame" x="16" y="226" width="105" height="30"/>
                                 <state key="normal" title="2.19九点不重复"/>
+                                <connections>
+                                    <action selector="scheduleModeNotification:" destination="9w2-9S-b74" eventType="touchUpInside" id="F1z-Ic-LlU"/>
+                                </connections>
                             </button>
                             <button opaque="NO" tag="8001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yne-Uk-AIh">
                                 <rect key="frame" x="131" y="226" width="93" height="30"/>
                                 <state key="normal" title="每月19号九点"/>
+                                <connections>
+                                    <action selector="scheduleModeNotification:" destination="9w2-9S-b74" eventType="touchUpInside" id="MjV-SS-Nkd"/>
+                                </connections>
                             </button>
                             <button opaque="NO" tag="8002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C2p-7m-UnP">
                                 <rect key="frame" x="234" y="226" width="121" height="30"/>
                                 <state key="normal" title="每年2.19九点重复"/>
+                                <connections>
+                                    <action selector="scheduleModeNotification:" destination="9w2-9S-b74" eventType="touchUpInside" id="BSu-77-P4e"/>
+                                </connections>
                             </button>
                             <button opaque="NO" tag="8003" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bPR-A8-WyG">
                                 <rect key="frame" x="16" y="266" width="107" height="30"/>
                                 <state key="normal" title="2.22九点不重复"/>
+                                <connections>
+                                    <action selector="scheduleModeNotification:" destination="9w2-9S-b74" eventType="touchUpInside" id="jEN-3N-9J5"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

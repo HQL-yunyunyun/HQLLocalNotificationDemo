@@ -40,6 +40,12 @@
         self.soundName = @""; // 设置的时候有默认的
         
         [self getNotification];
+        
+        [[UNUserNotificationCenter currentNotificationCenter] getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
+            for (UNNotificationRequest *request in requests) {
+                NSLog(@"%@", request);
+            }
+        }];
     }
     return self;
 }
@@ -264,16 +270,23 @@
 
 - (void)getNotification {
     NSArray *array = [[NSUserDefaults standardUserDefaults] valueForKey:HQLLocalNotificationArray];
-    if (!array) {
-        self.notificationArray = [NSMutableArray arrayWithArray:array];
+    self.notificationArray = [NSMutableArray array];
+    if (array) {
+        for (NSData *data in array) {
+            [self.notificationArray addObject:[NSKeyedUnarchiver unarchiveObjectWithData:data]];
+        }
     } else {
-        self.notificationArray = [NSMutableArray array];
+        [HQLLocalNotificationConfig removeAllNotification];
     }
 }
 
 - (void)saveNotification {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:self.notificationArray forKey:HQLLocalNotificationArray];
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:self.notificationArray.count];
+    for (HQLLocalNotificationModel *model in self.notificationArray) {
+        [array addObject:[NSKeyedArchiver archivedDataWithRootObject:model]];
+    }
+    [defaults setObject:array forKey:HQLLocalNotificationArray];
     [defaults synchronize];
 }
 

@@ -25,7 +25,7 @@ typedef enum {
 
 @class HQLLocalNotificationContentModel;
 
-@interface HQLLocalNotificationModel : NSObject <NSCoding>
+@interface HQLLocalNotificationModel : NSObject <NSCoding, NSCopying>
 
 /**
  提醒的主要内容

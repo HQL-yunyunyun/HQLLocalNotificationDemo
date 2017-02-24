@@ -33,6 +33,7 @@
     HQLLocalNotificationRepeat repeat = HQLLocalNotificationNoneRepeat;
     
     NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    calendar.timeZone = [NSTimeZone localTimeZone];
     switch (tag) {
         case 0: { // 早上九点不重复
             repeat = HQLLocalNotificationNoneRepeat;
@@ -55,8 +56,7 @@
         case 2: { // 工作日九点
             repeat = HQLLocalNotificationWeekRepeat;
             for (int i = 1; i <= 5; i++) {
-                NSDateComponents *components = [[NSDateComponents alloc] init];
-                components.weekday = i+1;
+                NSDateComponents *components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday fromDate:[HQLLocalNotificationConfig getWeekdayDateWithWeekday:(i+1)]];
                 components.hour = 9;
                 NSDate *date = [calendar dateFromComponents:components];
                 NSLog(@"星期%d九点 : %@", i, date);
@@ -67,12 +67,13 @@
         case 3: { // 周末九点
             repeat = HQLLocalNotificationWeekRepeat;
             for (int i = 0; i < 2; i++) {
-                NSDateComponents *components = [[NSDateComponents alloc] init];
+                int weekday = 0;
                 if (i == 0) {
-                    components.weekday = 1; // 周日
+                    weekday = 1; // 周日
                 } else if (i == 1) {
-                    components.weekday = 7; // 周六
+                    weekday = 7; // 周六
                 }
+                NSDateComponents *components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday fromDate:[HQLLocalNotificationConfig getWeekdayDateWithWeekday:weekday]];
                 components.hour = 9;
                 NSDate *date = [calendar dateFromComponents:components];
                 if (i == 0) {

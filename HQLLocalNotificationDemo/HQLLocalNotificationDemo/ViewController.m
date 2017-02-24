@@ -11,7 +11,7 @@
 
 #define HQLNotificationTableViewCell @"HQLNotificationTableViewCell"
 
-@interface ViewController () <UNUserNotificationCenterDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface ViewController () <UNUserNotificationCenterDelegate, UITableViewDelegate, UITableViewDataSource, HQLLocalNotificationManagerDelegate>
 
 @property (strong, nonatomic) HQLLocalNotificationManager *notificationManager;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -22,11 +22,29 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+//    NSLog(@"星期日 : %@", [self getWeekdayDateWithWeekday:1]);
+//    NSLog(@"星期一 : %@", [self getWeekdayDateWithWeekday:2]);
+//    NSLog(@"星期二 : %@", [self getWeekdayDateWithWeekday:3]);
+//    NSLog(@"星期三 : %@", [self getWeekdayDateWithWeekday:4]);
+//    NSLog(@"星期四 : %@", [self getWeekdayDateWithWeekday:5]);
+//    NSLog(@"星期五 : %@", [self getWeekdayDateWithWeekday:6]);
+//    NSLog(@"星期六 : %@", [self getWeekdayDateWithWeekday:7]);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    [self.tableView reloadData];
+}
+
+#pragma mark - HQLLocalNotification delegate
+
+- (void)userNotificationDelegateNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification {
+    [self.tableView reloadData];
+}
+
+- (void)userNotificationDelegateNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response {
     [self.tableView reloadData];
 }
 
@@ -55,11 +73,28 @@
 
 #pragma mark - table view delegate
 
+- (NSDate *)getWeekdayDateWithWeekday:(NSInteger)weekday {
+    if (weekday < 1 || weekday > 7) {
+            return nil;
+    }
+    NSDate *nowDate = [NSDate date];
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    NSInteger nowWeekday = [calendar component:NSCalendarUnitWeekday fromDate:nowDate];
+    return [self getPriusDateFromDate:nowDate withDay:(weekday - nowWeekday)];
+}
 
+- (NSDate *)getPriusDateFromDate:(NSDate *)date withDay:(NSInteger)day {
+    NSDateComponents *comps = [[NSDateComponents alloc] init];
+    [comps setDay:day];
+    NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDate *mDate = [calender dateByAddingComponents:comps toDate:date options:0];
+    return mDate;
+}
 
 - (HQLLocalNotificationManager *)notificationManager {
     if (!_notificationManager) {
         _notificationManager = [HQLLocalNotificationManager shareManger];
+        _notificationManager.delegate = self;
     }
     return _notificationManager;
 }

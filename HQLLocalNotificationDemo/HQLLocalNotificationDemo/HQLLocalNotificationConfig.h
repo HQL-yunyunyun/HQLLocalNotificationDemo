@@ -48,4 +48,26 @@
  */
 + (void)removeNotificationWithNotificationIdentifier:(NSString *)identifier;
 
+/**
+ 移除所有的本地通知
+ */
++ (void)removeAllNotification;
+
+/**
+ 获取date的前后日期
+
+ @param date date
+ @param day 相加的数据
+ @return targetDate
+ */
++ (NSDate *)getPriusDateFromDate:(NSDate *)date withDay:(NSInteger)day;
+
+/**
+ 获取weekday的NSDate
+
+ @param weekday 1-7
+ @return 获取weekday的NSDate
+ */
++ (NSDate *)getWeekdayDateWithWeekday:(NSInteger)weekday;
+
 @end

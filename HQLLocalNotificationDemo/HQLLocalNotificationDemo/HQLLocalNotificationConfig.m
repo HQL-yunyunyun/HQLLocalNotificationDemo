@@ -9,6 +9,9 @@
 #import "HQLLocalNotificationConfig.h"
 #import "HQLLocalNotificationModel.h"
 
+// 所有的通知的userInfo都将添加这个key,用来标识区分别的通知
+#define HQLNotificationsDefaultIdentifier @"HQLNotificationsDefaultIdentifier"
+
 @implementation HQLLocalNotificationConfig
 
 #pragma mark - authorization method
@@ -153,6 +156,56 @@
     }
 }
 
++ (void)removeAllNotification {
+    if (iOS10_OR_LATER) { // iOS10 以上
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        
+        typeof(self) weakSelf = self;
+        [center getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
+            NSMutableArray *deliveredArray = [NSMutableArray array];
+            for (UNNotification *notification in notifications) {
+                if ([weakSelf isHQLNotificationWithUserInfo:notification.request.content.userInfo]) {
+                    [deliveredArray addObject:notification.request.identifier];
+                }
+            }
+            [center removeDeliveredNotificationsWithIdentifiers:deliveredArray];
+        }];
+        
+        [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
+            NSMutableArray *pendingArray = [NSMutableArray array];
+            for (UNNotificationRequest *request in requests) {
+                if ([weakSelf isHQLNotificationWithUserInfo:request.content.userInfo]) {
+                    [pendingArray addObject:request.identifier];
+                }
+            }
+            [center removePendingNotificationRequestsWithIdentifiers:pendingArray];
+        }];
+//        [center removeAllDeliveredNotifications]; // 移除已触发的通知
+//        [center removeAllPendingNotificationRequests]; // 移除还没触发的通知
+    } else { // iOS10 以下
+//        [[UIApplication sharedApplication] cancelAllLocalNotifications];
+        
+        UIApplication *app = [UIApplication sharedApplication];
+        NSArray *notifications = [app scheduledLocalNotifications];
+        for (UILocalNotification *notification in notifications) {
+            if ([self isHQLNotificationWithUserInfo:notification.userInfo]) {
+                [app cancelLocalNotification:notification];
+            }
+        }
+    }
+}
+
++ (BOOL)isHQLNotificationWithUserInfo:(NSDictionary *)userInfo {
+    for (NSString *key in userInfo.allKeys) {
+        if ([key isEqualToString:HQLNotificationsDefaultIdentifier]) {
+            if ([userInfo[key] isEqualToString:HQLNotificationsDefaultIdentifier]) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
 #pragma mark - private method
 
 // iOS10 以前的做法
@@ -174,6 +227,7 @@
     if (model.content.userInfo) {
         userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo];
     }
+    [userInfo setValue:HQLNotificationsDefaultIdentifier forKey:HQLNotificationsDefaultIdentifier];
     [userInfo setValue:identifier forKey:HQLUserInfoIdentifier];
     notification.userInfo = userInfo; // userInfo
     
@@ -272,6 +326,7 @@
     if (model.content.userInfo) {
         userInfo = [NSMutableDictionary dictionaryWithDictionary:model.content.userInfo];
     }
+    [userInfo setValue:HQLNotificationsDefaultIdentifier forKey:HQLNotificationsDefaultIdentifier];
     [userInfo setValue:identifier forKey:HQLUserInfoIdentifier];
     content.userInfo = userInfo; // userInfo
     
@@ -332,8 +387,7 @@
                     break;
                 }
                 case HQLLocalNotificationMonthRepeat: { // 月循环
-                    targetMoment = [calendar components:NSCalendarUnitMonth |
-                                                                                   NSCalendarUnitDay |
+                    targetMoment = [calendar components:NSCalendarUnitDay |
                                                                                    NSCalendarUnitHour |
                                                                                    NSCalendarUnitMinute
                                                                                    fromDate:date];
@@ -341,8 +395,7 @@
                     break;
                 }
                 case HQLLocalNotificationYearRepeat: { // 年循环
-                    targetMoment = [calendar components:NSCalendarUnitYear |
-                                                                                   NSCalendarUnitMonth |
+                    targetMoment = [calendar components:NSCalendarUnitMonth |
                                                                                    NSCalendarUnitDay |
                                                                                    NSCalendarUnitHour |
                                                                                    NSCalendarUnitMinute
@@ -365,14 +418,21 @@
 }
 
 + (NSDate *)getPriusDateFromDate:(NSDate *)date withDay:(NSInteger)day {
-    if (day < 1) {
-        return date;
-    }
     NSDateComponents *comps = [[NSDateComponents alloc] init];
     [comps setDay:day];
     NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSDate *mDate = [calender dateByAddingComponents:comps toDate:date options:0];
     return mDate;
+}
+
++ (NSDate *)getWeekdayDateWithWeekday:(NSInteger)weekday {
+    if (weekday < 1 || weekday > 7) {
+        return nil;
+    }
+    NSDate *nowDate = [NSDate date];
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    NSInteger nowWeekday = [calendar component:NSCalendarUnitWeekday fromDate:nowDate];
+    return [self getPriusDateFromDate:nowDate withDay:(weekday - nowWeekday)];
 }
 
 /*- (void)test {
