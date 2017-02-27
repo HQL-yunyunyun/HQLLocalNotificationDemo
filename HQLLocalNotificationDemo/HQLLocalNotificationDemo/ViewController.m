@@ -71,6 +71,26 @@
     return cell;
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return UITableViewCellEditingStyleDelete;
+}
+
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // 删除
+        HQLLocalNotificationModel *model = self.notificationManager.notificationArray[indexPath.row];
+        [self.notificationManager deleteNotificationWithModel:model];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        
+        [self.notificationManager showNotification];
+    }
+}
+
 #pragma mark - table view delegate
 
 - (NSDate *)getWeekdayDateWithWeekday:(NSInteger)weekday {

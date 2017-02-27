@@ -17,6 +17,7 @@
 		4A643F021E57071B00F249B2 /* HQLLocalNotificationConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A643F011E57071B00F249B2 /* HQLLocalNotificationConfig.m */; };
 		4A643F051E57FD0700F249B2 /* HQLLocalNotificationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A643F041E57FD0700F249B2 /* HQLLocalNotificationModel.m */; };
 		4A643F081E5C2A7A00F249B2 /* HQLLocalNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A643F071E5C2A7A00F249B2 /* HQLLocalNotificationManager.m */; };
+		4A64B3E41E640CC2005F6B8E /* HQLNotificationSettingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B3E31E640CC1005F6B8E /* HQLNotificationSettingView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,8 @@
 		4A643F041E57FD0700F249B2 /* HQLLocalNotificationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationModel.m; sourceTree = "<group>"; };
 		4A643F061E5C2A7900F249B2 /* HQLLocalNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationManager.h; sourceTree = "<group>"; };
 		4A643F071E5C2A7A00F249B2 /* HQLLocalNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationManager.m; sourceTree = "<group>"; };
+		4A64B3E21E640CC1005F6B8E /* HQLNotificationSettingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLNotificationSettingView.h; sourceTree = "<group>"; };
+		4A64B3E31E640CC1005F6B8E /* HQLNotificationSettingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLNotificationSettingView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +90,8 @@
 				4A643F071E5C2A7A00F249B2 /* HQLLocalNotificationManager.m */,
 				0D3FB1D11E5C954E00E77C0E /* HQLAddNotificationController.h */,
 				0D3FB1D21E5C954E00E77C0E /* HQLAddNotificationController.m */,
+				4A64B3E21E640CC1005F6B8E /* HQLNotificationSettingView.h */,
+				4A64B3E31E640CC1005F6B8E /* HQLNotificationSettingView.m */,
 			);
 			path = HQLLocalNotificationDemo;
 			sourceTree = "<group>";
@@ -175,6 +180,7 @@
 				4A643F021E57071B00F249B2 /* HQLLocalNotificationConfig.m in Sources */,
 				4A643F051E57FD0700F249B2 /* HQLLocalNotificationModel.m in Sources */,
 				4A643EF11E5706D300F249B2 /* ViewController.m in Sources */,
+				4A64B3E41E640CC2005F6B8E /* HQLNotificationSettingView.m in Sources */,
 				4A643EEE1E5706D300F249B2 /* AppDelegate.m in Sources */,
 				0D3FB1D41E5C954E00E77C0E /* HQLAddNotificationController.m in Sources */,
 				4A643EEB1E5706D300F249B2 /* main.m in Sources */,

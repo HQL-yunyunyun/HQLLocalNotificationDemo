@@ -77,4 +77,7 @@
 // 在触发通知后一个要调用这个方法, iOS10以后的版本已经在内部调用了, iOS10以前的版本需要手动调用
 - (void)notificationIsActivity:(NSString *)notificationIdentifier;
 
+// 显示所有notification
+- (void)showNotification;
+
 @end

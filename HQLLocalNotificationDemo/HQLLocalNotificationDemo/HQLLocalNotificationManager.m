@@ -41,11 +41,7 @@
         
         [self getNotification];
         
-        [[UNUserNotificationCenter currentNotificationCenter] getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
-            for (UNNotificationRequest *request in requests) {
-                NSLog(@"%@", request);
-            }
-        }];
+        [self showNotification];
     }
     return self;
 }
@@ -258,6 +254,20 @@
 }
 
 #pragma mark - private method
+
+- (void)showNotification {
+    if (iOS10_OR_LATER) {
+        [[UNUserNotificationCenter currentNotificationCenter] getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
+            for (UNNotificationRequest *request in requests) {
+                NSLog(@"%@", request);
+            }
+        }];
+    } else {
+        for (UILocalNotification *notification in [[UIApplication sharedApplication] scheduledLocalNotifications]) {
+            NSLog(@"%@", notification);
+        }
+    }
+}
 
 - (void)removeNotificationWithIdentifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier {
     HQLLocalNotificationModel *model = [self getNotificationModelWithIdentifier:identifier subIdentifier:subIdentifier];

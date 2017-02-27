@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="2Kk-sB-8eh">
-    <device id="retina4_7" orientation="portrait">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12106.1" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="2Kk-sB-8eh">
+    <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12074.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -18,11 +18,11 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="f7U-iY-EUs">
-                                <rect key="frame" x="0.0" y="64" width="375" height="559"/>
+                                <rect key="frame" x="0.0" y="64" width="320" height="460"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <outlet property="dataSource" destination="BYZ-38-t0r" id="3cE-EZ-RJj"/>
@@ -64,7 +64,7 @@
                         <viewControllerLayoutGuide type="bottom" id="JvX-F4-4Fc"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="MTx-7i-xLI">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" tag="9000" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bjW-3o-lRo">
@@ -135,6 +135,13 @@
                                     <action selector="scheduleModeNotification:" destination="9w2-9S-b74" eventType="touchUpInside" id="jEN-3N-9J5"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" tag="9004" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I3R-lG-cnY">
+                                <rect key="frame" x="16" y="153" width="77" height="30"/>
+                                <state key="normal" title="一个分钟后"/>
+                                <connections>
+                                    <action selector="alarmModeNotification:" destination="9w2-9S-b74" eventType="touchUpInside" id="XkZ-Vl-BzF"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -147,6 +154,7 @@
                             <constraint firstItem="bjW-3o-lRo" firstAttribute="leading" secondItem="MTx-7i-xLI" secondAttribute="leading" constant="16" id="KGZ-jf-fIF"/>
                             <constraint firstItem="kQe-Ya-OXf" firstAttribute="centerY" secondItem="ORR-6F-KKS" secondAttribute="centerY" id="NAc-tv-5Za"/>
                             <constraint firstItem="ORR-6F-KKS" firstAttribute="leading" secondItem="0rO-TC-QC0" secondAttribute="trailing" constant="10" id="OVT-wj-jVP"/>
+                            <constraint firstItem="I3R-lG-cnY" firstAttribute="top" secondItem="bjW-3o-lRo" secondAttribute="bottom" constant="8" id="UcI-Qz-96x"/>
                             <constraint firstItem="bPR-A8-WyG" firstAttribute="leading" secondItem="bJe-t3-aOb" secondAttribute="leading" id="VEl-DI-3fB"/>
                             <constraint firstItem="kQe-Ya-OXf" firstAttribute="leading" secondItem="ORR-6F-KKS" secondAttribute="trailing" constant="10" id="XJO-zh-njA"/>
                             <constraint firstItem="bJe-t3-aOb" firstAttribute="top" secondItem="9vx-DY-BCh" secondAttribute="bottom" constant="10" id="Z5O-Xk-C1S"/>
@@ -158,6 +166,7 @@
                             <constraint firstItem="bPR-A8-WyG" firstAttribute="top" secondItem="bJe-t3-aOb" secondAttribute="bottom" constant="10" id="lHE-ON-5fu"/>
                             <constraint firstItem="C2p-7m-UnP" firstAttribute="centerY" secondItem="yne-Uk-AIh" secondAttribute="centerY" id="rMq-uk-JiO"/>
                             <constraint firstItem="dZq-TV-vje" firstAttribute="leading" secondItem="MTx-7i-xLI" secondAttribute="leading" constant="16" id="wdk-AJ-z3r"/>
+                            <constraint firstItem="I3R-lG-cnY" firstAttribute="leading" secondItem="bjW-3o-lRo" secondAttribute="leading" id="xcC-x1-Doc"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="添加通知" id="6y4-3f-x2E"/>

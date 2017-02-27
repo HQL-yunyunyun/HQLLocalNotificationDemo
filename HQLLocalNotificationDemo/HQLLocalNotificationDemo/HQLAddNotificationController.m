@@ -86,6 +86,11 @@
             }
             break;
         }
+        case 4: {
+            [dateArray addObject:[NSDate dateWithTimeIntervalSinceNow:60]];
+            repeat = HQLLocalNotificationNoneRepeat;
+            break;
+        }
         default: { break; }
     }
     
