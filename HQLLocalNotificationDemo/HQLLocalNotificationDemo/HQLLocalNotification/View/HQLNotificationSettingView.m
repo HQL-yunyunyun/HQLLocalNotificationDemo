@@ -9,12 +9,20 @@
 #import "HQLNotificationSettingView.h"
 #import "HQLSelectButton.h"
 #import "HQLLocalNotificationModel.h"
+#import "HQLLocalNotificationConfig.h"
 
 #define HQLScreenHeight [UIScreen mainScreen].bounds.size.height
 #define HQLScreenWidth [UIScreen mainScreen].bounds.size.width
 
-#define HQLDateButtonWidth 40
+//#define HQLDateButtonWidth 40
 #define HQLDateButtonConstTag 278
+
+#define HQLWeekdayButtonConstTag 8820
+
+#define HQLWorkdayButtonTag 9394
+#define HQLWeekendButtonTag 9233
+#define HQLEverydayButtonTag 9555
+#define HQLEverymonthButtonTag 9333
 
 @interface HQLNotificationSettingView ()
 
@@ -68,15 +76,21 @@
     // 获取当前月份的
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSInteger dayCount = [calendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:self.currentDate].length;
-    
     NSDateComponents *compon = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth fromDate:self.currentDate];
+    
+    HQLSelectButton *lastButton = nil;
+    CGFloat margin = 3;
+    HQLSelectButton *todayButton = nil;
     
     for (int i = 1; i <= dayCount ; i++) {
         HQLSelectButton *button = [HQLSelectButton buttonWithType:UIButtonTypeCustom];
         [button setTitle:[NSString stringWithFormat:@"%d", i] forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(dateButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
         compon.day = i;
-        if ([self isToday:[calendar dateFromComponents:compon]]) {
+        NSDate *buttonDate = [calendar dateFromComponents:compon];
+        if ([self compareDay:buttonDate compareDay:[NSDate date]]) {
             button.defaultMode = HQLSelectButtonCircle;
+            todayButton = button;
         } else {
             button.defaultMode = HQLSelectButtonNone;
         }
@@ -85,24 +99,147 @@
         [self.dateChooseView addSubview:button];
         
         // 再判断当前日期是否有选中
+        for (NSDate *date in self.selectedDates) {
+            if ([self compareDay:date compareDay:buttonDate]) {
+                [button setSelected:YES];
+            }
+        }
+        
+        // 配对button的frame
+        CGFloat buttonW = 40;
+        CGFloat buttonH = buttonW;
+        CGFloat buttonX = CGRectGetMaxX(lastButton.frame) + margin;
+        CGFloat buttonY = (self.dateChooseView.frame.size.height - buttonH) * 0.5;
+        [button setFrame:CGRectMake(buttonX, buttonY, buttonW, buttonH)];
+        lastButton = button;
+    }
+    // 设置contentSize
+    [self.dateChooseView setContentSize:CGSizeMake(CGRectGetMaxX(lastButton.frame) + margin, self.dateChooseView.frame.size.height)];
+    if (todayButton) {
+        CGFloat x = todayButton.frame.origin.x - self.dateChooseView.frame.size.width * 0.5;
+        CGFloat y = 0;
+        [self.dateChooseView setContentOffset:CGPointMake( x, y) animated:YES];
     }
 }
 
-- (BOOL)isToday:(NSDate *)date {
+- (BOOL)compareDay:(NSDate *)date compareDay:(NSDate *)compareDay{
     NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *todayCom = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay fromDate:[NSDate date]];
+    NSDateComponents *compareCom = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay fromDate:compareDay];
     NSDateComponents *dateCom = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay fromDate:date];
-    return ((todayCom.year == dateCom.year) && (todayCom.month == dateCom.month) && (todayCom.day == dateCom.day));
+    return ((compareCom.year == dateCom.year) && (compareCom.month == dateCom.month) && (compareCom.day == dateCom.day));
 }
 
-#pragma mark - event 
+#pragma mark - event
+
+- (IBAction)weekdayButtonDidClick:(HQLSelectButton *)sender {
+    // 取消date的选择
+    if (self.selectedDates.count != 0 ) {
+        [self.selectedDates removeAllObjects];
+        [self.dateButtonArray makeObjectsPerformSelector:@selector(setSelected:) withObject:[NSNumber numberWithBool:NO]];
+    }
+    
+    if (!self.selectedWeekday) {
+        self.selectedWeekday = [NSMutableArray array];
+    }
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSInteger weekday = sender.tag - HQLWeekdayButtonConstTag;
+    if (sender.selected) { // 已选择
+        NSDate *deleDate = nil;
+        for (NSDate *date in self.selectedWeekday) {
+            if (weekday == [calendar component:NSCalendarUnitWeekday fromDate:date]) {
+                deleDate = date;
+                break;
+            }
+        }
+        if (deleDate) {
+            [self.selectedWeekday removeObject:deleDate];
+        }
+    } else { // 没有选择
+        [self.selectedWeekday addObject:[HQLLocalNotificationConfig getWeekdayDateWithWeekday:weekday]];
+    }
+    
+    // 取消所有快捷键
+    [self.workdayButton setSelected:NO];
+    [self.weekendButton setSelected:NO];
+    [self.everydayButton setSelected:NO];
+    [self.everymonthButton setSelected:NO];
+    self.currentRepeat = HQLLocalNotificationWeekRepeat; // 点击了weekdayButton 一定是week的循环
+    
+    // 判断是否点亮快捷键
+    if (self.selectedWeekday.count == 7) { // 一定是every day
+        [self.everydayButton setSelected:YES];
+        self.currentRepeat = HQLLocalNotificationDayRepeat; // 每一天
+    } else if (self.selectedWeekday.count == 5) {
+        BOOL isHighlight = YES;
+        for (NSDate *date in self.selectedWeekday) {
+            NSInteger weekday = [calendar component:NSCalendarUnitWeekday fromDate:date];
+            if (weekday == 7 || weekday == 1) {
+                isHighlight = NO;
+                break;
+            }
+        }
+        [self.workdayButton setSelected:isHighlight];
+    } else if (self.selectedWeekday.count == 2) {
+        BOOL isHighlight = YES;
+        for (NSDate *date in self.selectedWeekday) {
+            NSInteger weekday = [calendar component:NSCalendarUnitWeekday fromDate:date];
+            if (weekday < 7 || weekday > 1) {
+                isHighlight = NO;
+                break;
+            }
+        }
+        [self.workdayButton setSelected:isHighlight];
+    } else {
+    
+    }
+    
+    [sender setSelected:!sender.isSelected];
+}
+
+// 闹钟模式
+- (IBAction)alarmModeShortcut:(HQLSelectButton *)sender {
+    if (sender.tag == HQLWorkdayButtonTag) {
+        
+    } else if (sender.tag == HQLWeekendButtonTag) {
+        
+    } else if (sender.tag == HQLEverydayButtonTag) {
+        
+    } else{
+    
+    }
+}
+
+- (IBAction)scheduleModeShortcut:(HQLSelectButton *)sender {
+    if (sender.tag == HQLEverymonthButtonTag) {
+        
+    } else {
+        
+    }
+}
 
 - (void)dateButtonDidClick:(UIButton *)button {
+    // 清除 周一 周二 的选择 清除已选择的weekdayDate 如果循环模式是 day 或者 week 则都变成 none
+    if (self.selectedWeekday.count != 0) {
+        [self.selectedWeekday removeAllObjects];
+        for (UIView *view in self.weekdayChooseView.subviews) {
+            if ([view isKindOfClass:[HQLSelectButton class]]) {
+                HQLSelectButton *button = (HQLSelectButton *)view;
+                [button setSelected:NO];
+            }
+        }
+    }
+    if (self.currentRepeat != HQLLocalNotificationMonthRepeat && self.currentRepeat != HQLLocalNotificationYearRepeat) {
+        self.currentRepeat = HQLLocalNotificationNoneRepeat;
+    }
+    // 清除快捷键
+    [self.workdayButton setSelected:NO];
+    [self.weekendButton setSelected:NO];
+    [self.everydayButton setSelected:NO];
+    
     if (!self.selectedDates) {
         self.selectedDates = [NSMutableArray array];
     }
-    
-    // 清除 周一 周二 的选择 清除已选择的weekdayDate 如果循环模式是 day 或者 week 则都变成 none
     
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *compon = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth fromDate:self.currentDate];

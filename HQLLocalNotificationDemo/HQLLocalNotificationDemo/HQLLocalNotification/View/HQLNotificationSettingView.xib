@@ -91,33 +91,54 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="67t-iH-JQu" userLabel="Weekday View">
                                     <rect key="frame" x="0.0" y="0.0" width="281" height="140"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r3Y-CB-OlQ" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="8821" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r3Y-CB-OlQ" customClass="HQLSelectButton">
                                             <rect key="frame" x="0.0" y="14" width="39.5" height="112"/>
                                             <state key="normal" title="周日"/>
+                                            <connections>
+                                                <action selector="weekdayButtonDidClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="ebB-Z6-Mhh"/>
+                                            </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ikU-Db-2EI" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="8822" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ikU-Db-2EI" customClass="HQLSelectButton">
                                             <rect key="frame" x="39.5" y="14" width="39.5" height="112"/>
                                             <state key="normal" title="周一"/>
+                                            <connections>
+                                                <action selector="weekdayButtonDidClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="szT-AR-dHg"/>
+                                            </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pKP-GE-tHu" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="8823" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pKP-GE-tHu" customClass="HQLSelectButton">
                                             <rect key="frame" x="79" y="14" width="39.5" height="112"/>
                                             <state key="normal" title="周二"/>
+                                            <connections>
+                                                <action selector="weekdayButtonDidClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="6aY-5J-QZk"/>
+                                            </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eLC-u8-Uzv" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="8824" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eLC-u8-Uzv" customClass="HQLSelectButton">
                                             <rect key="frame" x="118.5" y="14" width="39.5" height="112"/>
                                             <state key="normal" title="周三"/>
+                                            <connections>
+                                                <action selector="weekdayButtonDidClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="8oc-fW-1js"/>
+                                            </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Qa-z1-P2c" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="8825" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Qa-z1-P2c" customClass="HQLSelectButton">
                                             <rect key="frame" x="158" y="14" width="39.5" height="112"/>
                                             <state key="normal" title="周四"/>
+                                            <connections>
+                                                <action selector="weekdayButtonDidClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="d5l-MY-3Q2"/>
+                                            </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jtQ-oN-Cka" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="8826" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jtQ-oN-Cka" customClass="HQLSelectButton">
                                             <rect key="frame" x="197.5" y="14" width="39.5" height="112"/>
                                             <state key="normal" title="周五"/>
+                                            <connections>
+                                                <action selector="weekdayButtonDidClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="ydb-Qu-FdA"/>
+                                            </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fiq-hv-rau" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="8827" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fiq-hv-rau" customClass="HQLSelectButton">
                                             <rect key="frame" x="237" y="14" width="39.5" height="112"/>
                                             <state key="normal" title="周六"/>
+                                            <connections>
+                                                <action selector="weekdayButtonDidClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="3cE-hi-qxa"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -171,21 +192,33 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2kn-2s-Mip" userLabel="Shortcut View">
                                     <rect key="frame" x="0.0" y="327" width="281" height="140"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YZt-VC-1fG" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="9394" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YZt-VC-1fG" customClass="HQLSelectButton">
                                             <rect key="frame" x="0.0" y="14" width="70.5" height="112"/>
                                             <state key="normal" title="工作日"/>
+                                            <connections>
+                                                <action selector="alarmModeShortcut:" destination="iN0-l3-epB" eventType="touchUpInside" id="c54-CC-bNr"/>
+                                            </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y0J-R7-wrc" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="9233" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y0J-R7-wrc" customClass="HQLSelectButton">
                                             <rect key="frame" x="70.5" y="14" width="70.5" height="112"/>
                                             <state key="normal" title="周末"/>
+                                            <connections>
+                                                <action selector="alarmModeShortcut:" destination="iN0-l3-epB" eventType="touchUpInside" id="cFG-Cc-psk"/>
+                                            </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7rc-wx-dQl" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="9555" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7rc-wx-dQl" customClass="HQLSelectButton">
                                             <rect key="frame" x="141" y="14" width="70.5" height="112"/>
                                             <state key="normal" title="每日"/>
+                                            <connections>
+                                                <action selector="alarmModeShortcut:" destination="iN0-l3-epB" eventType="touchUpInside" id="o2x-mB-XUy"/>
+                                            </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0ZF-2J-hkO" customClass="HQLSelectButton">
+                                        <button opaque="NO" tag="9333" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0ZF-2J-hkO" customClass="HQLSelectButton">
                                             <rect key="frame" x="211.5" y="14" width="70.5" height="112"/>
                                             <state key="normal" title="每月"/>
+                                            <connections>
+                                                <action selector="scheduleModeShortcut:" destination="iN0-l3-epB" eventType="touchUpInside" id="AIv-h7-zPl"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
