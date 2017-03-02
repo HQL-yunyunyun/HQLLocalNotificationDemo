@@ -9,6 +9,7 @@
 #import "HQLAddNotificationController.h"
 #import "HQLLocalNotificationModel.h"
 #import "HQLLocalNotificationManager.h"
+#import "HQLTestController.h"
 
 @interface HQLAddNotificationController ()
 
@@ -24,6 +25,11 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)pushToView:(UIBarButtonItem *)sender {
+    HQLTestController *controller = [HQLTestController new];
+    [self.navigationController pushViewController:controller animated:YES];
 }
 
 - (IBAction)alarmModeNotification:(UIButton *)button {

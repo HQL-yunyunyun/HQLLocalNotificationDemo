@@ -21,6 +21,8 @@
 		4A64B3FA1E6553B6005F6B8E /* CALayer+HQLXIBLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B3F91E6553B6005F6B8E /* CALayer+HQLXIBLayer.m */; };
 		4A64B3FD1E655B16005F6B8E /* HQLSelectButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B3FC1E655B16005F6B8E /* HQLSelectButton.m */; };
 		4A64B4001E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B3FF1E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m */; };
+		4A64B4041E67C8F3005F6B8E /* HQLAddNotificationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B4031E67C8F3005F6B8E /* HQLAddNotificationController.m */; };
+		4A64B4071E67C973005F6B8E /* HQLTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B4061E67C973005F6B8E /* HQLTestController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,10 @@
 		4A64B3FC1E655B16005F6B8E /* HQLSelectButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLSelectButton.m; sourceTree = "<group>"; };
 		4A64B3FE1E655DC5005F6B8E /* HQLLayerDrawGeometricShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLayerDrawGeometricShape.h; sourceTree = "<group>"; };
 		4A64B3FF1E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLayerDrawGeometricShape.m; sourceTree = "<group>"; };
+		4A64B4021E67C8F3005F6B8E /* HQLAddNotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLAddNotificationController.h; sourceTree = "<group>"; };
+		4A64B4031E67C8F3005F6B8E /* HQLAddNotificationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLAddNotificationController.m; sourceTree = "<group>"; };
+		4A64B4051E67C973005F6B8E /* HQLTestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLTestController.h; sourceTree = "<group>"; };
+		4A64B4061E67C973005F6B8E /* HQLTestController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLTestController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				4A64B3E61E65212F005F6B8E /* Lib */,
+				4A64B4011E67C8F3005F6B8E /* Controller */,
 				4A64B3EB1E652130005F6B8E /* Model */,
 				4A64B3EE1E652130005F6B8E /* View */,
 			);
@@ -147,6 +154,17 @@
 				4A64B3FC1E655B16005F6B8E /* HQLSelectButton.m */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		4A64B4011E67C8F3005F6B8E /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				4A64B4021E67C8F3005F6B8E /* HQLAddNotificationController.h */,
+				4A64B4031E67C8F3005F6B8E /* HQLAddNotificationController.m */,
+				4A64B4051E67C973005F6B8E /* HQLTestController.h */,
+				4A64B4061E67C973005F6B8E /* HQLTestController.m */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -223,11 +241,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A64B3F41E652130005F6B8E /* HQLNotificationSettingView.m in Sources */,
+				4A64B4041E67C8F3005F6B8E /* HQLAddNotificationController.m in Sources */,
 				4A64B3FA1E6553B6005F6B8E /* CALayer+HQLXIBLayer.m in Sources */,
 				4A64B3F11E652130005F6B8E /* HQLLocalNotificationConfig.m in Sources */,
 				4A64B3F21E652130005F6B8E /* HQLLocalNotificationManager.m in Sources */,
 				4A64B3FD1E655B16005F6B8E /* HQLSelectButton.m in Sources */,
 				4A64B3F31E652130005F6B8E /* HQLLocalNotificationModel.m in Sources */,
+				4A64B4071E67C973005F6B8E /* HQLTestController.m in Sources */,
 				4A643EF11E5706D300F249B2 /* ViewController.m in Sources */,
 				4A64B4001E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m in Sources */,
 				4A643EEE1E5706D300F249B2 /* AppDelegate.m in Sources */,

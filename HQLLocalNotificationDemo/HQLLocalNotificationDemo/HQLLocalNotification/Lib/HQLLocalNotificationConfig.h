@@ -70,4 +70,13 @@
  */
 + (NSDate *)getWeekdayDateWithWeekday:(NSInteger)weekday;
 
+/**
+ 获取date的前后月份
+
+ @param date date
+ @param month 相加的数据(月份)
+ @return targetDate
+ */
++ (NSDate *)getPriusDateFromDate:(NSDate *)date withMonth:(NSInteger)month;
+
 @end

@@ -81,6 +81,7 @@
 
 #pragma mark - method 
 
+// 添加通知
 + (void)addLocalNotificationWithModel:(HQLLocalNotificationModel *)model completeBlock:(void(^)(NSError *error))completeBlock{
     
     // 首先 -> 判断是否可以启用, 如果是日程模式,且不循环,则如果日期都已经过去了,则不启用 isActivity = NO
@@ -136,6 +137,7 @@
     }
 }
 
+// 删除通知
 + (void)removeNotificationWithNotificationIdentifier:(NSString *)identifier {
     if (iOS10_OR_LATER) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
@@ -156,6 +158,7 @@
     }
 }
 
+// 删除通知
 + (void)removeAllNotification {
     if (iOS10_OR_LATER) { // iOS10 以上
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
@@ -195,6 +198,7 @@
     }
 }
 
+// 根据userInfo判断是否是自定义的通知
 + (BOOL)isHQLNotificationWithUserInfo:(NSDictionary *)userInfo {
     for (NSString *key in userInfo.allKeys) {
         if ([key isEqualToString:HQLNotificationsDefaultIdentifier]) {
@@ -205,6 +209,36 @@
     }
     return NO;
 }
+
+// 获取前后日期
++ (NSDate *)getPriusDateFromDate:(NSDate *)date withDay:(NSInteger)day {
+    NSDateComponents *comps = [[NSDateComponents alloc] init];
+    [comps setDay:day];
+    NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDate *mDate = [calender dateByAddingComponents:comps toDate:date options:0];
+    return mDate;
+}
+
+// 获取weekday
++ (NSDate *)getWeekdayDateWithWeekday:(NSInteger)weekday {
+    if (weekday < 1 || weekday > 7) {
+        return nil;
+    }
+    NSDate *nowDate = [NSDate date];
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    NSInteger nowWeekday = [calendar component:NSCalendarUnitWeekday fromDate:nowDate];
+    return [self getPriusDateFromDate:nowDate withDay:(weekday - nowWeekday)];
+}
+
+// 获取前后日期
++ (NSDate *)getPriusDateFromDate:(NSDate *)date withMonth:(NSInteger)month {
+    NSDateComponents *comps = [[NSDateComponents alloc] init];
+    [comps setMonth:month];
+    NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDate *mDate = [calender dateByAddingComponents:comps toDate:date options:0];
+    return mDate;
+}
+
 
 #pragma mark - private method
 
@@ -415,24 +449,6 @@
     }
     
     return [UNNotificationRequest requestWithIdentifier:identifier content:content trigger:trigger];
-}
-
-+ (NSDate *)getPriusDateFromDate:(NSDate *)date withDay:(NSInteger)day {
-    NSDateComponents *comps = [[NSDateComponents alloc] init];
-    [comps setDay:day];
-    NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDate *mDate = [calender dateByAddingComponents:comps toDate:date options:0];
-    return mDate;
-}
-
-+ (NSDate *)getWeekdayDateWithWeekday:(NSInteger)weekday {
-    if (weekday < 1 || weekday > 7) {
-        return nil;
-    }
-    NSDate *nowDate = [NSDate date];
-    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
-    NSInteger nowWeekday = [calendar component:NSCalendarUnitWeekday fromDate:nowDate];
-    return [self getPriusDateFromDate:nowDate withDay:(weekday - nowWeekday)];
 }
 
 /*- (void)test {

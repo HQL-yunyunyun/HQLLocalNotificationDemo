@@ -59,12 +59,23 @@
     [super awakeFromNib];
     
     self.showDate = [NSDate date];
-    // 创建dateButton
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    return [super initWithCoder:aDecoder];
+}
+
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    // 创建dateButton
+    if (self.dateChooseView) {
+        [self createDateButtons]; // 如果xib里面的subView还没有创建,则不创建
+    }
 }
 
 #pragma mark - prepare UI
@@ -82,14 +93,30 @@
     CGFloat margin = 3;
     HQLSelectButton *todayButton = nil;
     
+    // 因为dateChooseViewHeight的高度在刚创建的时候是不能确定的,所以需要手动计算
+    CGFloat dateChooseViewHeight = self.frame.size.height * 0.6 * 0.4;
+    CGFloat dateChooseViewWidth = self.frame.size.width * 0.75;
+    
     for (int i = 1; i <= dayCount ; i++) {
         HQLSelectButton *button = [HQLSelectButton buttonWithType:UIButtonTypeCustom];
         [button setTitle:[NSString stringWithFormat:@"%d", i] forState:UIControlStateNormal];
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [button addTarget:self action:@selector(dateButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
+        
+        // 配对button的frame
+        CGFloat buttonW = dateChooseViewHeight * 0.6;
+        CGFloat buttonH = buttonW;
+        CGFloat buttonX = CGRectGetMaxX(lastButton.frame) + margin;
+        CGFloat buttonY = (dateChooseViewHeight - buttonH) * 0.5;
+        [button setFrame:CGRectMake(buttonX, buttonY, buttonW, buttonH)];
+        lastButton = button;
+        
         compon.day = i;
         NSDate *buttonDate = [calendar dateFromComponents:compon];
         if ([self compareDay:buttonDate compareDay:[NSDate date]]) {
+//            button.defaultShapeColor = [UIColor orangeColor];
             button.defaultMode = HQLSelectButtonCircle;
+            [button setSelected:NO];
             todayButton = button;
         } else {
             button.defaultMode = HQLSelectButtonNone;
@@ -104,21 +131,20 @@
                 [button setSelected:YES];
             }
         }
-        
-        // 配对button的frame
-        CGFloat buttonW = 40;
-        CGFloat buttonH = buttonW;
-        CGFloat buttonX = CGRectGetMaxX(lastButton.frame) + margin;
-        CGFloat buttonY = (self.dateChooseView.frame.size.height - buttonH) * 0.5;
-        [button setFrame:CGRectMake(buttonX, buttonY, buttonW, buttonH)];
-        lastButton = button;
     }
     // 设置contentSize
-    [self.dateChooseView setContentSize:CGSizeMake(CGRectGetMaxX(lastButton.frame) + margin, self.dateChooseView.frame.size.height)];
+    [self.dateChooseView setContentSize:CGSizeMake(CGRectGetMaxX(lastButton.frame) + margin, dateChooseViewHeight)];
     if (todayButton) {
-        CGFloat x = todayButton.frame.origin.x - self.dateChooseView.frame.size.width * 0.5;
+        CGFloat x = todayButton.frame.origin.x - dateChooseViewWidth * 0.5;
+        if (todayButton.frame.origin.x < dateChooseViewWidth) {
+            x = 0;
+        } else if (todayButton.frame.origin.x > (self.dateChooseView.contentSize.width - dateChooseViewWidth)) {
+            x = self.dateChooseView.contentSize.width - dateChooseViewWidth;
+        }
         CGFloat y = 0;
         [self.dateChooseView setContentOffset:CGPointMake( x, y) animated:YES];
+    } else {
+        [self.dateChooseView setContentOffset:CGPointMake(0, 0) animated:YES];
     }
 }
 
@@ -130,6 +156,18 @@
 }
 
 #pragma mark - event
+
+- (IBAction)lastMonth:(UIButton *)sender {
+    // 上个月
+    self.currentDate = [HQLLocalNotificationConfig getPriusDateFromDate:self.currentDate withMonth:-1];
+    [self createDateButtons];
+}
+
+- (IBAction)nextMonth:(UIButton *)sender {
+    // 下个月
+    self.currentDate = [HQLLocalNotificationConfig getPriusDateFromDate:self.currentDate withMonth:1];
+    [self createDateButtons];
+}
 
 - (IBAction)weekdayButtonDidClick:(HQLSelectButton *)sender {
     // 取消date的选择
@@ -184,12 +222,12 @@
         BOOL isHighlight = YES;
         for (NSDate *date in self.selectedWeekday) {
             NSInteger weekday = [calendar component:NSCalendarUnitWeekday fromDate:date];
-            if (weekday < 7 || weekday > 1) {
+            if (weekday < 7 && weekday > 1) {
                 isHighlight = NO;
                 break;
             }
         }
-        [self.workdayButton setSelected:isHighlight];
+        [self.weekendButton setSelected:isHighlight];
     } else {
     
     }
@@ -199,20 +237,82 @@
 
 // 闹钟模式
 - (IBAction)alarmModeShortcut:(HQLSelectButton *)sender {
-    if (sender.tag == HQLWorkdayButtonTag) {
-        
-    } else if (sender.tag == HQLWeekendButtonTag) {
-        
-    } else if (sender.tag == HQLEverydayButtonTag) {
-        
-    } else{
     
+    if (self.selectedWeekday.count != 0) { // 取消weekday
+        [self.selectedWeekday removeAllObjects];
+        for (UIView *view in self.weekdayChooseView.subviews) {
+            if ([view isKindOfClass:[HQLSelectButton class]]) {
+                HQLSelectButton *button = (HQLSelectButton *)view;
+                [button setSelected:NO];
+            }
+        }
+    }
+    
+    if (sender.isSelected) { // 已选择 ---> 取消选择
+        [sender setSelected:NO];
+    } else { // 选择
+        // 先取消 date 的选择 weekday 的选择 和 everymonth 的选择
+        if (self.selectedDates.count != 0 ) { // 取消date
+            [self.selectedDates removeAllObjects];
+            [self.dateButtonArray makeObjectsPerformSelector:@selector(setSelected:) withObject:[NSNumber numberWithBool:NO]];
+        }
+        // 取消快捷键的选择
+        [self.workdayButton setSelected:NO];
+        [self.weekendButton setSelected:NO];
+        [self.everydayButton setSelected:NO];
+        [self.everymonthButton setSelected:NO];
+        
+        if (!self.selectedWeekday) {
+            self.selectedWeekday = [NSMutableArray array];
+        }
+        
+        for (UIView *view in self.weekdayChooseView.subviews) {
+            if ([view isKindOfClass:[HQLSelectButton class]]) {
+                HQLSelectButton *button = (HQLSelectButton *)view;
+                NSInteger weekday = button.tag - HQLWeekdayButtonConstTag;
+                if (sender.tag == HQLWorkdayButtonTag) { // 工作日
+                    if (weekday > 1 && weekday < 7) {
+                        [self weekdayButtonDidClick:button];
+                    }
+                } else if (sender.tag == HQLWeekendButtonTag) { // 周末
+                    if (weekday == 1 || weekday == 7) {
+                        [self weekdayButtonDidClick:button];
+                    }
+                } else if (sender.tag == HQLEverydayButtonTag) { // 每一天
+                    [self weekdayButtonDidClick:button];
+                } else{
+                    
+                }
+            }
+        }
+        
     }
 }
 
 - (IBAction)scheduleModeShortcut:(HQLSelectButton *)sender {
+    
+    // 先取消 weekday 的选择 和 everymonth 的选择
+    if (self.selectedWeekday.count != 0) { // 取消weekday
+        [self.selectedWeekday removeAllObjects];
+        for (UIView *view in self.weekdayChooseView.subviews) {
+            if ([view isKindOfClass:[HQLSelectButton class]]) {
+                HQLSelectButton *button = (HQLSelectButton *)view;
+                [button setSelected:NO];
+            }
+        }
+    }
+    // 取消快捷键的选择
+    [self.workdayButton setSelected:NO];
+    [self.weekendButton setSelected:NO];
+    [self.everydayButton setSelected:NO];
+    
     if (sender.tag == HQLEverymonthButtonTag) {
-        
+        [sender setSelected:!sender.isSelected];
+        if (sender.isSelected) {
+            self.currentRepeat = HQLLocalNotificationMonthRepeat;
+        } else {
+            self.currentRepeat = HQLLocalNotificationNoneRepeat;
+        }
     } else {
         
     }
@@ -249,7 +349,7 @@
     if (button.isSelected) { // 已经选择了
         NSDate *deleDate = nil;
         for (NSDate *date in self.selectedDates) {
-            if ([date compare:selectedDate]) {
+            if ([self compareDay:date compareDay:selectedDate]) {
                 deleDate = date;
                 break;
             }
@@ -265,6 +365,13 @@
 }
 
 #pragma mark - setter
+
+- (void)setCurrentDate:(NSDate *)currentDate {
+    _currentDate = currentDate;
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy年MM月"];
+    [self.monthLabel setText:[formatter stringFromDate:self.currentDate]];
+}
 
 - (void)setShowDate:(NSDate *)showDate {
     _showDate = showDate;

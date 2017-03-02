@@ -169,7 +169,13 @@
                             <constraint firstItem="I3R-lG-cnY" firstAttribute="leading" secondItem="bjW-3o-lRo" secondAttribute="leading" id="xcC-x1-Doc"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="添加通知" id="6y4-3f-x2E"/>
+                    <navigationItem key="navigationItem" title="添加通知" id="6y4-3f-x2E">
+                        <barButtonItem key="rightBarButtonItem" title="pushToView" id="fCF-Bw-Euh">
+                            <connections>
+                                <action selector="pushToView:" destination="9w2-9S-b74" id="Pqu-nB-Fi8"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Typ-tY-LgO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -7,12 +7,23 @@
 //
 
 #import "CALayer+HQLXIBLayer.h"
-#import <UIKit/UIKit.h>
+#import <objc/runtime.h>
+
+static NSString *HQLRuntimeKey;
 
 @implementation CALayer (HQLXIBLayer)
 
-- (void)setHQL_BorderColor:(UIColor *)color {
-    self.borderColor = color.CGColor;
+- (NSInteger)HQLLayerTag {
+    return [objc_getAssociatedObject(self, &HQLRuntimeKey) integerValue];
+}
+
+- (void)setHQLLayerTag:(NSInteger)HQLLayerTag {
+    
+    objc_setAssociatedObject(self, &HQLRuntimeKey, [NSNumber numberWithInteger:HQLLayerTag], OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (void)setHQL_BorderColor:(UIColor *)HQL_BorderColor {
+    self.borderColor = HQL_BorderColor.CGColor;
 }
 
 @end

@@ -15,10 +15,15 @@
 @implementation HQLLayerDrawGeometricShape
 
 + (void)layerDrawGeometricShapeWithLayer:(CALayer *)layer shape:(HQLDrawGeometricShape)shape color:(CGColorRef)color {
+    CALayer *deleteLayer = nil;
     for (CALayer *subLayer in layer.sublayers) {
         if (subLayer.HQLLayerTag == HQLLayerShapeTag) {
-            [subLayer removeFromSuperlayer];
+            deleteLayer = subLayer;
+            break;
         }
+    }
+    if (deleteLayer) {
+        [deleteLayer removeFromSuperlayer];
     }
     CAShapeLayer *shapeLayer = [[CAShapeLayer alloc] init];
     shapeLayer.HQLLayerTag = HQLLayerShapeTag;
@@ -72,7 +77,7 @@
             // 圆环
             path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(width * 0.5 + x, height * 0.5 + y) radius:width * 0.5 startAngle:0 endAngle:M_PI * 2 clockwise:YES];
             shapeLayer.fillColor = nil;
-            shapeLayer.strokeColor = layer.backgroundColor;
+            shapeLayer.strokeColor = color;
             break;
         }
         case drawGeometricShapeNone: {
@@ -83,7 +88,7 @@
     }
     
     shapeLayer.path = path.CGPath;
-    [layer addSublayer:shapeLayer];
+    [layer insertSublayer:shapeLayer atIndex:0];
 }
 
 @end

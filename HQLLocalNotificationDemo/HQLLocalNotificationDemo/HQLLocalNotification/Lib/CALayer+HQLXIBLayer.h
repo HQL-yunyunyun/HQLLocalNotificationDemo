@@ -7,9 +7,14 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+#import <UIKit/UIKit.h>
 
 @interface CALayer (HQLXIBLayer)
 
 @property (assign, nonatomic) NSInteger HQLLayerTag;
+
+- (void)setHQL_BorderColor:(UIColor *)HQL_BorderColor;
+
+//@property (strong, nonatomic) UIColor *HQL_BorderColor;
 
 @end
