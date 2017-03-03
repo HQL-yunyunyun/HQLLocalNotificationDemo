@@ -92,11 +92,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HQLLocalNotificationDemo/HQLLocalNotification/View/HQLNotificationSettingView.m"
-            timestampString = "510143535.39817"
+            timestampString = "510222975.202916"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
             landmarkName = "-createDateButtons"
             landmarkType = "7">
             <Locations>
