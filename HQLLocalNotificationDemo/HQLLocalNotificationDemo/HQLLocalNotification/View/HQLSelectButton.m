@@ -38,4 +38,10 @@
     [HQLLayerDrawGeometricShape layerDrawGeometricShapeWithLayer:self.layer shape:shape color:shapeColor.CGColor];
 }
 
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+//    NSLog(@"%@", NSStringFromCGRect(frame));
+    [self setSelected:self.isSelected];
+}
+
 @end

@@ -18,8 +18,6 @@
 
 @interface HQLNotificationSettingView : UIView
 
-@property (strong, nonatomic) NSDate *showDate;
-
 @property (assign, nonatomic) id <HQLNotificationSettingViewDelegate>delegate;
 
 // 设置默认显示的date
@@ -27,5 +25,7 @@
 
 // 获取当前的目标date
 - (void)notificationContent:(void(^)(NSArray *targetDateArray, HQLLocalNotificationRepeat repeatMode, HQLLocalNotificationMode notificationMode))completeBlock;
+
++ (instancetype)notificationSettingViewWithFrame:(CGRect)frame;
 
 @end

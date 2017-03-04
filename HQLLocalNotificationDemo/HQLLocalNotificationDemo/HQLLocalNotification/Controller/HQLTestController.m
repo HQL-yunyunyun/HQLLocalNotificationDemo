@@ -12,6 +12,8 @@
 
 @interface HQLTestController ()
 
+@property (strong, nonatomic) HQLNotificationSettingView *settingView;
+
 @end
 
 @implementation HQLTestController
@@ -21,15 +23,24 @@
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
-    NSArray *array = [[NSBundle mainBundle] loadNibNamed:@"HQLNotificationSettingView" owner:nil options:nil];
-    HQLNotificationSettingView *settingView = array.firstObject;
-    settingView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height * 0.5);
-    [self.view addSubview:settingView];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)];
+    [self.view addGestureRecognizer:tap];
+    [self settingView];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)tap {
+    [self.settingView notificationContent:^(NSArray *targetDateArray, HQLLocalNotificationRepeat repeatMode, HQLLocalNotificationMode notificationMode) {
+        NSLog(@"dateArray : %@, repeatMode : %d, notificationMode : %d", targetDateArray, repeatMode, notificationMode);
+    }];
+}
+
+- (HQLNotificationSettingView *)settingView {
+    if (!_settingView) {
+        _settingView = [HQLNotificationSettingView notificationSettingViewWithFrame:CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height * 0.5)];
+        [_settingView showDateArray:@[[NSDate date]] repeatMode:HQLLocalNotificationWeekRepeat notificationMode:HQLLocalNotificationAlarmMode];
+        [self.view addSubview:_settingView];
+    }
+    return _settingView;
 }
 
 @end
