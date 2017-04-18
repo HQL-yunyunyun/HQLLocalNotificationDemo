@@ -9,12 +9,13 @@
 #import <QuartzCore/QuartzCore.h>
 
 typedef enum {
-    drawGeometricShapeCircular = 0,                 // 圆形
-    drawGeometricShapeRect ,                           // 长方形
+    drawGeometricShapeNone = 0 ,                    //  空白
+    drawGeometricShapeCircular ,                      // 圆形
+    drawGeometricShapeRect ,                           // 矩形
     drawGeometricShapeLeftHalfCircular,           // 左半圆 右半正方形
     drawGeometricShapeRightHalfCircular,        // 右半圆 左半正方形
     drawGeometricShapeCircularRing  ,             //  圆环
-    drawGeometricShapeNone                           //  空白
+    drawGeometricShapeEllipse ,                       //  椭圆
 } HQLDrawGeometricShape;
 
 @interface HQLLayerDrawGeometricShape : NSObject

@@ -66,6 +66,152 @@
     return self;
 }
 
++ (instancetype)localNotificationModel {
+    HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] init];
+    model.repeatDateArray = @[[NSDate date]];
+    model.notificationMode = HQLLocalNotificationScheduleMode;
+    return model;
+}
+
+#pragma mark - event
+
+- (HQLWeekMode)getModelWeekMode {
+    // 先从数量判断 --- 工作日5天 休息日2天 其他都是平日
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    
+    NSMutableArray *weekArray = [NSMutableArray arrayWithArray:@[@1, @2, @3, @4, @5, @6, @7]]; // 记录一周七天
+    for (NSDate *date in self.repeatDateArray) {
+        NSInteger weekday = [calendar component:NSCalendarUnitWeekday fromDate:date]; // 数字只会是1-7
+        if ([weekArray[weekday - 1] isEqual:@0] ) {
+            // 表示已经有相同的 星期 来过
+            return HQLWeekday;
+        } else {
+            weekArray[weekday - 1] = @0; // 来过的标识
+        }
+    }
+    // 判断 只有两种情况是值得提示的
+    NSArray *weekendArray = @[@0, @2, @3, @4, @5, @6, @0];
+    NSArray *workdayArray = @[@1, @0, @0, @0, @0, @0, @7];
+    if ([self compareArray:weekendArray ortherArray:weekArray]) {
+        return HQLWeekEnd;
+    } else if ([self compareArray:workdayArray ortherArray:weekArray]) {
+        return HQLWorkDay;
+    } else {
+        return HQLWeekday;
+    }
+}
+
+- (BOOL)compareArray:(NSArray *)array ortherArray:(NSArray *)otherArray {
+    // 比较两个array
+    if (array.count != otherArray.count) {
+        return NO;
+    } else {
+        if (![array.firstObject isKindOfClass:[NSNumber class]]) {
+            return NO;
+        }
+        for (int i = 0; i < array.count; i++) {
+            NSNumber *num = array[i];
+            NSNumber *otherNum = otherArray[i];
+            if ([num compare:otherNum] != NSOrderedSame ) {
+                return NO;
+            }
+        }
+        return YES;
+    }
+}
+
+- (NSString *)getModelDateDescription {
+    NSString *targetString = @"";
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    switch (self.repeatMode) {
+        case HQLLocalNotificationDayRepeat: { // 每日
+            targetString = @"每天";
+            break;
+        }
+        case HQLLocalNotificationWeekRepeat: { // 每周
+            switch ([self getModelWeekMode]) {
+                case HQLWeekday: {
+                    // 平时
+                    NSInteger index = 0;
+                    for (NSDate *date in self.repeatDateArray) {
+                        if (index == 0) {
+                            targetString = [targetString stringByAppendingString:@"周 "];
+                        }
+                        NSInteger weekday = [calendar component:NSCalendarUnitWeekday fromDate:date];
+                        targetString = [targetString stringByAppendingString:[NSString stringWithFormat:@"%@ ", [self getWeekdayChineseWithInteger:weekday]]];
+                        index++;
+                    }
+                    break;
+                }
+                case HQLWorkDay: {
+                    // 工作日
+                    targetString = @"工作日";
+                    break;
+                }
+                case HQLWeekEnd: {
+                    // 休息日
+                    targetString = @"休息日";
+                    break;
+                }
+            }
+            break;
+        }
+        case HQLLocalNotificationMonthRepeat: { // 每月
+            NSInteger index = 0;
+            for (NSDate *date in self.repeatDateArray) {
+                if (index == 0) {
+                    targetString = [targetString stringByAppendingString:@"每月 "];
+                }
+                NSInteger weekday = [calendar component:NSCalendarUnitDay fromDate:date];
+                targetString = [targetString stringByAppendingString:[NSString stringWithFormat:@"%ld号 ", weekday]];
+                index++;
+            }
+            break;
+        }
+        case HQLLocalNotificationNoneRepeat: { // 不重复
+            if (self.notificationMode == HQLLocalNotificationScheduleMode) { // 日程模式
+                
+            } else if (self.notificationMode == HQLLocalNotificationAlarmMode) { // 闹钟模式
+            
+            }
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"yyyy.MM.dd"];
+            for (NSDate *date in self.repeatDateArray) {
+                targetString = [targetString stringByAppendingString:[formatter stringFromDate:date]];
+            }
+            break;
+        }
+        case HQLLocalNotificationYearRepeat: { // 每年重复
+            NSInteger index = 0;
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"MM月dd日"];
+            for (NSDate *date in self.repeatDateArray) {
+                if (index == 0) {
+                    targetString = [targetString stringByAppendingString:@"每年"];
+                }
+                targetString = [targetString stringByAppendingString:[formatter stringFromDate:date]];
+                index++;
+            }
+            break;
+        }
+    }
+    return targetString;
+}
+
+- (NSString *)getWeekdayChineseWithInteger:(NSInteger)integer {
+    switch (integer) {
+        case 1: return @"日";
+        case 2: return @"一";
+        case 3: return @"二";
+        case 4: return @"三";
+        case 5: return @"四";
+        case 6: return @"五";
+        case 7: return @"六";
+        default: return @"";
+    }
+}
+
 #pragma mark - NSCodeing delegate
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {

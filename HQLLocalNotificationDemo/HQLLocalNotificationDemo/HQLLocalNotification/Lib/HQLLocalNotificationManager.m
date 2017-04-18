@@ -58,6 +58,7 @@
                                   userInfo:(NSDictionary *)userInfo
                                   badgeNumber:(NSInteger)badgeNumber
                                   isActivity:(BOOL)isActivity
+                                  complete:(void (^)(NSError *))completeBlock
 {
     HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
     content.alertBody = alertBody;
@@ -73,17 +74,37 @@
     content.applicationIconBadgeNumber = badgeNumber;
     HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] initContent:content repeatDateArray:repeatDateArray identifier:self.identifier subIdentifier:subIdentifier repeatMode:repeatMode notificationMode:notificationMode isActivity:isActivity];
     
+    __weak typeof(self) weakSelf = self;
     [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
         if (error) {
             // 添加错误
             NSLog(@"add notification error : %@", error);
         } else {
             NSLog(@"add notification success");
+            [weakSelf.notificationArray addObject:model];
+            [weakSelf saveNotification]; // 保存到本机中
+        }
+        if (completeBlock) {
+            completeBlock(error);
         }
     }];
-    
-    [self.notificationArray addObject:model];
-    [self saveNotification]; // 保存到本机中
+}
+
+- (void)addNotificationWithModel:(HQLLocalNotificationModel *)model complete:(void (^)(NSError *))completeBlock {
+    __weak typeof(self) weakSelf = self;
+    [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
+        if (error) {
+            // 添加错误
+            NSLog(@"add notification error : %@", error);
+        } else {
+            NSLog(@"add notification success");
+            [weakSelf.notificationArray addObject:model];
+            [weakSelf saveNotification];
+        }
+        if (completeBlock) {
+            completeBlock(error);
+        }
+    }];
 }
 
 // 删

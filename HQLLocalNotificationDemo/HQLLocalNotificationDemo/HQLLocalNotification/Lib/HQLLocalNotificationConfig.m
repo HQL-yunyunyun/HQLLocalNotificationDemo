@@ -129,6 +129,9 @@
             } else {
                 UIApplication *application = [UIApplication sharedApplication];
                 [application presentLocalNotificationNow:[self setupUILocalNotificationWithModel:model date:date identifier:identifier]];
+                if (completeBlock) {
+                    completeBlock(nil); // 一定会成功
+                }
             }
             index++;
         }

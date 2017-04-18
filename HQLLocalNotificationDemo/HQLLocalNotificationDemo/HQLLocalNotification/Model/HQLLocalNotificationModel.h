@@ -23,9 +23,15 @@ typedef enum {
     HQLLocalNotificationYearRepeat , // 每年重复
 } HQLLocalNotificationRepeat;
 
+typedef enum {
+    HQLWorkDay , // 工作日
+    HQLWeekEnd , // 休息日
+    HQLWeekday , // 其他时间
+} HQLWeekMode;
+
 @class HQLLocalNotificationContentModel;
 
-@interface HQLLocalNotificationModel : NSObject <NSCoding, NSCopying>
+@interface HQLLocalNotificationModel : NSObject <NSCoding>
 
 /**
  提醒的主要内容
@@ -69,6 +75,22 @@ typedef enum {
                                       repeatMode:(HQLLocalNotificationRepeat)repeatMode
                                       notificationMode:(HQLLocalNotificationMode)notificationMode
                                       isActivity:(BOOL)isActivity;
+
++ (nullable instancetype)localNotificationModel;
+
+/**
+ 根据模型的 repeatDateArray 判断周的模式
+
+ @return 结果 --- 工作日 休息日 平日
+ */
+- (HQLWeekMode)getModelWeekMode;
+
+/**
+ 根据模型的 repeatDateArray 获取日期描述
+
+ @return 日期描述
+ */
+- (nullable NSString *)getModelDateDescription;
 
 /**
  是否重复

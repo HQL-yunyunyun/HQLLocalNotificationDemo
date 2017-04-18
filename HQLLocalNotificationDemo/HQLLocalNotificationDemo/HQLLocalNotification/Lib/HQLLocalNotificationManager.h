@@ -54,7 +54,9 @@
                                   repeatDateArray:(NSArray <NSDate *>*)repeatDateArray
                                   userInfo:(NSDictionary *)userInfo
                                   badgeNumber:(NSInteger)badgeNumber
-                                  isActivity:(BOOL)isActivity;
+                                  isActivity:(BOOL)isActivity
+                                  complete:(void(^)(NSError *error))completeBlock;
+- (void)addNotificationWithModel:(HQLLocalNotificationModel *)model complete:(void(^)(NSError *error))completeBlock;
 
 // 删
 - (void)deleteNotificationWithModel:(HQLLocalNotificationModel *)model;

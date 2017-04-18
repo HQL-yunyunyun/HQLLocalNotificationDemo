@@ -101,7 +101,9 @@
     }
     
     NSString *subIdentifier = [NSString stringWithFormat:@"alarm-%@", [self nowDateString]];
-    [[HQLLocalNotificationManager shareManger] addNotificationWithSubIdentifier:subIdentifier notificationMode:HQLLocalNotificationAlarmMode repeatMode:repeat alertTitle:@"test-test" alertBody:[button currentTitle] repeatDateArray:dateArray userInfo:nil badgeNumber:0 isActivity:YES];
+    [[HQLLocalNotificationManager shareManger] addNotificationWithSubIdentifier:subIdentifier notificationMode:HQLLocalNotificationAlarmMode repeatMode:repeat alertTitle:@"test-test" alertBody:[button currentTitle] repeatDateArray:dateArray userInfo:nil badgeNumber:0 isActivity:YES complete:^(NSError *error) {
+        
+    }];
 }
 
 - (IBAction)scheduleModeNotification:(UIButton *)button {
@@ -183,7 +185,9 @@
     }
     
     NSString *subIdentifier = [NSString stringWithFormat:@"schedule-%@", [self nowDateString]];
-    [[HQLLocalNotificationManager shareManger] addNotificationWithSubIdentifier:subIdentifier notificationMode:HQLLocalNotificationScheduleMode repeatMode:repeat alertTitle:@"test-test-test" alertBody:[button currentTitle] repeatDateArray:dateArray userInfo:nil badgeNumber:0 isActivity:YES];
+    [[HQLLocalNotificationManager shareManger] addNotificationWithSubIdentifier:subIdentifier notificationMode:HQLLocalNotificationScheduleMode repeatMode:repeat alertTitle:@"test-test-test" alertBody:[button currentTitle] repeatDateArray:dateArray userInfo:nil badgeNumber:0 isActivity:YES complete:^(NSError *error) {
+        
+    }];
 }
 
 - (NSString *)nowDateString {

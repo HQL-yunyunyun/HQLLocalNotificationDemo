@@ -7,16 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-
-typedef enum {
-    HQLSelectButtonNone , // 没有
-    HQLSelectButtonCircle // 圆形
-} HQLSelectButtonDefaultMode;
+#import "HQLLayerDrawGeometricShape.h"
 
 @interface HQLSelectButton : UIButton
 
-@property (assign, nonatomic) HQLSelectButtonDefaultMode defaultMode; // 没有选择时的状态
-@property (strong, nonatomic) UIColor *selectedShapeColor; // 圆环的颜色
+@property (assign, nonatomic) HQLDrawGeometricShape defaultMode; // 没有选择时的状态
 @property (strong, nonatomic) UIColor *defaultShapeColor; // 没有选择时的颜色
+
+@property (assign, nonatomic) HQLDrawGeometricShape selectedMode; // 选中时的形状
+@property (strong, nonatomic) UIColor *selectedShapeColor; // 形状颜色
 
 @end

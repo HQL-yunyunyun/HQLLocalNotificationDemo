@@ -66,7 +66,7 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     
-    self.showDate = [NSDate date];
+    [self prepareUI];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -82,6 +82,21 @@
 }
 
 #pragma mark - prepare UI
+
+- (void)prepareUI {
+    for (UIView *view in self.weekdayChooseView.subviews) {
+        if ([view isKindOfClass:[HQLSelectButton class]]) {
+            HQLSelectButton *button = (HQLSelectButton *)view;
+            button.selectedMode = drawGeometricShapeCircular;
+        }
+    }
+    self.workdayButton.selectedMode = drawGeometricShapeEllipse;
+    self.weekendButton.selectedMode = drawGeometricShapeEllipse;
+    self.everydayButton.selectedMode = drawGeometricShapeEllipse;
+    self.everymonthButton.selectedMode = drawGeometricShapeEllipse;
+    
+    self.showDate = [NSDate date];
+}
 
 - (void)createDateButtons {
     [self.dateButtonArray makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -119,12 +134,14 @@
         NSDate *buttonDate = [[self calendar] dateFromComponents:compon];
         if ([self compareDay:buttonDate compareDay:[NSDate date]]) {
             button.defaultShapeColor = [UIColor orangeColor];
-            button.defaultMode = HQLSelectButtonCircle;
+            button.defaultMode = drawGeometricShapeCircularRing;
+            
             [button setSelected:NO];
             todayButton = button;
         } else {
-            button.defaultMode = HQLSelectButtonNone;
+            button.defaultMode = drawGeometricShapeNone;
         }
+        button.selectedMode = drawGeometricShapeCircular;
         button.tag = (HQLDateButtonConstTag * i) + i;
         [self.dateButtonArray addObject:button];
         [self.dateChooseView addSubview:button];
