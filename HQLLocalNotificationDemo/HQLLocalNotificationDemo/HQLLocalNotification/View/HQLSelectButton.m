@@ -14,10 +14,16 @@
 @interface HQLSelectButton ()
 
 @property (strong, nonatomic) CALayer *shapeLayer;
+@property (assign, nonatomic) CGSize xibSize;
 
 @end
 
 @implementation HQLSelectButton
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    self.xibSize = self.frame.size;
+}
 
 #pragma mark - over write
 
@@ -50,10 +56,22 @@
     }
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if (!CGSizeEqualToSize(self.xibSize, CGSizeZero)) { // 判断是否为空
+        if (!CGSizeEqualToSize(self.xibSize, self.frame.size)) {
+            [self setSelected:self.isSelected];
+            self.xibSize = self.frame.size;
+        }
+    }
+}
+
 - (void)setFrame:(CGRect)frame {
     CGFloat originWidth = self.frame.size.width;
     CGFloat originHeight = self.frame.size.height;
     [super setFrame:frame];
+    // 如果是从xib中创建的，不会走这个方法
     if (originWidth != self.frame.size.width || originHeight != self.frame.size.height) {
         [self setSelected:self.isSelected]; // 如果frame值有变 则重新描绘 layer
     }

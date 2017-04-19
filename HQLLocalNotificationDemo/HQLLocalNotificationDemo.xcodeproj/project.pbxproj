@@ -31,6 +31,7 @@
 		4A7493011EA4B53500A672FD /* icon-nextMonth.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A7492FB1EA4B53500A672FD /* icon-nextMonth.png */; };
 		4A7493021EA4B53500A672FD /* icon-nextMonth@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A7492FC1EA4B53500A672FD /* icon-nextMonth@2x.png */; };
 		4A7493031EA4B53500A672FD /* icon-nextMonth@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A7492FD1EA4B53500A672FD /* icon-nextMonth@3x.png */; };
+		4A7493061EA711BA00A672FD /* HQLDayChooseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7493051EA711BA00A672FD /* HQLDayChooseCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +73,8 @@
 		4A7492FB1EA4B53500A672FD /* icon-nextMonth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-nextMonth.png"; sourceTree = "<group>"; };
 		4A7492FC1EA4B53500A672FD /* icon-nextMonth@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-nextMonth@2x.png"; sourceTree = "<group>"; };
 		4A7492FD1EA4B53500A672FD /* icon-nextMonth@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-nextMonth@3x.png"; sourceTree = "<group>"; };
+		4A7493041EA711BA00A672FD /* HQLDayChooseCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLDayChooseCell.h; sourceTree = "<group>"; };
+		4A7493051EA711BA00A672FD /* HQLDayChooseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLDayChooseCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +176,8 @@
 				4A7492F21EA46D4300A672FD /* HQLSetNotificationView.h */,
 				4A7492F31EA46D4300A672FD /* HQLSetNotificationView.m */,
 				4A7492F51EA46D5400A672FD /* HQLSetNotificationView.xib */,
+				4A7493041EA711BA00A672FD /* HQLDayChooseCell.h */,
+				4A7493051EA711BA00A672FD /* HQLDayChooseCell.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -288,6 +293,7 @@
 				4A64B3F21E652130005F6B8E /* HQLLocalNotificationManager.m in Sources */,
 				4A64B3FD1E655B16005F6B8E /* HQLSelectButton.m in Sources */,
 				4A64B3F31E652130005F6B8E /* HQLLocalNotificationModel.m in Sources */,
+				4A7493061EA711BA00A672FD /* HQLDayChooseCell.m in Sources */,
 				4A64B4071E67C973005F6B8E /* HQLTestController.m in Sources */,
 				4A643EF11E5706D300F249B2 /* ViewController.m in Sources */,
 				4A64B4001E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m in Sources */,
