@@ -32,7 +32,7 @@
 - (HQLSelectButton *)button {
     if (!_button) {
         _button = [HQLSelectButton buttonWithType:UIButtonTypeCustom];
-        _button.selectedMode = drawGeometricShapeCircularRing;
+        _button.selectedMode = HQLGeometricShapeCircularRing;
         _button.selectedShapeColor = [UIColor colorWithRed:0 green:(211 / 255.0) blue:(221 / 255.0) alpha:1];
         [_button setTitleColor:[UIColor colorWithRed:(10 / 255.0) green:(40 / 255.0) blue:(80 / 255.0) alpha:1] forState:UIControlStateNormal];
         _button.userInteractionEnabled = NO; // 不能拦截 collectionView didSelectedCellForItem

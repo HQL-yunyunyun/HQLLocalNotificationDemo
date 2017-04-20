@@ -27,9 +27,19 @@
     
     [self.view setBackgroundColor:[UIColor whiteColor]];
     
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)];
+//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)];
 //    [self.view addGestureRecognizer:tap];
 //    [self settingView];
+//    [self setNotificationView];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+//    [self setNotificationView];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     [self setNotificationView];
 }
 

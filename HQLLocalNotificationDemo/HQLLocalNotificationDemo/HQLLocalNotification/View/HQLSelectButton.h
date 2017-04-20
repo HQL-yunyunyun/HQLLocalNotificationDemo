@@ -11,10 +11,10 @@
 
 @interface HQLSelectButton : UIButton
 
-@property (assign, nonatomic) HQLDrawGeometricShape defaultMode; // 没有选择时的状态
+@property (assign, nonatomic) HQLGeometricShape defaultMode; // 没有选择时的状态
 @property (strong, nonatomic) UIColor *defaultShapeColor; // 没有选择时的颜色
 
-@property (assign, nonatomic) HQLDrawGeometricShape selectedMode; // 选中时的形状
+@property (assign, nonatomic) HQLGeometricShape selectedMode; // 选中时的形状
 @property (strong, nonatomic) UIColor *selectedShapeColor; // 形状颜色
 
 @end

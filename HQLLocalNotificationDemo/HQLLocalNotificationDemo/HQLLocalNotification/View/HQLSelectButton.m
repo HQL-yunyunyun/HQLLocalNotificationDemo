@@ -30,7 +30,6 @@
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
     
-    self.shapeLayer.frame = self.layer.bounds;
     if (!self.defaultShapeColor) {
         self.defaultShapeColor = [UIColor orangeColor];
     }
@@ -40,18 +39,10 @@
     
     if (selected) {
         // 选中
-        if (self.selectedMode == drawGeometricShapeEllipse) {
-            CGFloat width = self.layer.frame.size.width;
-            CGFloat height = width * 0.4; // 椭圆形 宽高比为 1 : 0.4 
-            if ((self.titleLabel.frame.size.height + 10) > height) {
-                height = self.titleLabel.frame.size.height + 10;
-            }
-            CGFloat x = (self.layer.frame.size.width - width) * 0.5;
-            CGFloat y = (self.layer.frame.size.height - height) * 0.5;
-            self.shapeLayer.frame = CGRectMake(x, y, width, height);
-        }
+        [self configShapeLayerFrameWithShape:self.selectedMode];
         [HQLLayerDrawGeometricShape layerDrawGeometricShapeWithLayer:self.shapeLayer shape:self.selectedMode color:self.selectedShapeColor.CGColor];
     } else {
+        [self configShapeLayerFrameWithShape:self.defaultMode];
         [HQLLayerDrawGeometricShape layerDrawGeometricShapeWithLayer:self.shapeLayer shape:self.defaultMode color:self.defaultShapeColor.CGColor];
     }
 }
@@ -77,16 +68,40 @@
     }
 }
 
-#pragma mark - setter
-
-- (void)setSelectedMode:(HQLDrawGeometricShape)selectedMode {
-    _selectedMode = selectedMode;
-    if (selectedMode != drawGeometricShapeNone && selectedMode != drawGeometricShapeCircularRing) {
-        [self setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+- (void)configShapeLayerFrameWithShape:(HQLGeometricShape)shapeMode {
+    if (shapeMode == HQLGeometricShapeNone) {
+        return; // 如果为没有形状 则 维持之前的frame
+    }
+    if (shapeMode == HQLGeometricShapeEllipse) {
+        CGFloat width = self.layer.frame.size.width;
+        CGFloat height = width * 0.4; // 椭圆形 宽高比为 1 : 0.4
+        if ((self.titleLabel.frame.size.height + 10) > height) {
+            height = self.titleLabel.frame.size.height + 10;
+        }
+        CGFloat x = (self.layer.frame.size.width - width) * 0.5;
+        CGFloat y = (self.layer.frame.size.height - height) * 0.5;
+        self.shapeLayer.frame = CGRectMake(x, y, width, height);
+    } else {
+        self.shapeLayer.frame = self.bounds;
     }
 }
 
-#pragma mark - getter 
+#pragma mark - setter
+
+- (void)setSelectedMode:(HQLGeometricShape)selectedMode {
+    _selectedMode = selectedMode;
+    if (selectedMode != HQLGeometricShapeNone && selectedMode != HQLGeometricShapeCircularRing) {
+        [self setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+    }
+    [self configShapeLayerFrameWithShape:selectedMode];
+}
+
+- (void)setDefaultMode:(HQLGeometricShape)defaultMode {
+    _defaultMode = defaultMode;
+    [self configShapeLayerFrameWithShape:defaultMode];
+}
+
+#pragma mark - getter
 
 - (CALayer *)shapeLayer {
     if (!_shapeLayer) {

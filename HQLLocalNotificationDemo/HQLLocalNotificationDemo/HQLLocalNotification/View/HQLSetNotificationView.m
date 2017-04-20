@@ -9,7 +9,9 @@
 #import "HQLSetNotificationView.h"
 #import "HQLSelectButton.h"
 #import "HQLDayChooseCell.h"
+#import "HQLCalendarView.h"
 
+#import "HQLDateModel.h"
 #import "HQLLocalNotificationModel.h"
 
 #import "HQLLocalNotificationConfig.h"
@@ -33,7 +35,7 @@
 
 #define HQLDayChooseCellReuseID @"HQLDayChooseCellReuseID"
 
-@interface HQLSetNotificationView () <UICollectionViewDelegate, UICollectionViewDataSource>
+@interface HQLSetNotificationView () <UICollectionViewDelegate, UICollectionViewDataSource, HQLCalendarViewDelegate>
 
 /*========== 通知的基本信息 ==========*/
 @property (weak, nonatomic) IBOutlet UITextField *notificationContentTextField;
@@ -70,7 +72,7 @@
 @property (strong, nonatomic) UIButton *nextMonth;
 // 日期View
 @property (strong, nonatomic) UIView *calendarView; // 显示日历
-@property (strong, nonatomic) NSMutableArray *calendarViewArray; // 保存日历 (三个日历)
+@property (strong, nonatomic) NSMutableArray <HQLCalendarView *>*calendarViewArray; // 保存日历 (三个日历)
 
 // 模式
 @property (assign, nonatomic) HQLLocalNotificationMode currentMode;
@@ -92,18 +94,12 @@
 + (instancetype)setNotificationView {
     NSArray *array = [[NSBundle mainBundle] loadNibNamed:@"HQLSetNotificationView" owner:nil options:nil];
     HQLSetNotificationView *notificationView = array.firstObject;
-//    [notificationView setFrame:[UIScreen mainScreen].bounds]; // 先将初始的的frame改成与屏幕一致
-//    [notificationView layoutIfNeeded];
-    
-//    [notificationView setNotificationAlertTitle:HQLNotificationAlertTitle];
-//    [notificationView setNotificationModel:[HQLLocalNotificationModel localNotificationModel]];
     return notificationView;
 }
 
 - (void)awakeFromNib {
     [super awakeFromNib];
     
-//    [self updateFrame];
     [self prepareConfig];
 }
 
@@ -129,15 +125,17 @@
         if ([view isKindOfClass:[HQLSelectButton class]]) {
             HQLSelectButton *button = (HQLSelectButton *)view;
             [button setSelectedShapeColor:[UIColor colorWithRed:0 green:(211 / 255.0) blue:(221 / 255.0) alpha:1]];
-            [button setSelectedMode:drawGeometricShapeEllipse];
+            [button setSelectedMode:HQLGeometricShapeEllipse];
         }
     }
+    [self.notificationTimePicker setValue:[UIColor colorWithRed:0 green:(211 / 255.0) blue:(221 / 255.0) alpha:1] forKey:@"textColor"];
+    [self.notificationTimePicker setBackgroundColor:[UIColor whiteColor]];
+    
     if (!self.notificationModel) {
         HQLLocalNotificationModel *model = [HQLLocalNotificationModel localNotificationModel];
         model.repeatMode = HQLLocalNotificationDayRepeat;
         self.notificationModel = model;
     }
-    [self.notificationTimePicker setValue:[UIColor colorWithRed:0 green:(211 / 255.0) blue:(221 / 255.0) alpha:1] forKey:@"textColor"];
 }
 
 #pragma mark - event
@@ -160,7 +158,10 @@
 
 // 更新frame
 - (void)updateFrame {
-    
+    // 增加一个条件
+    if (!self.notificationModel) {
+        return; // 保证在设 model 之前不会创建其他控件
+    }
     
     self.lastMonth.hidden = self.currentRepeat != HQLLocalNotificationNoneRepeat;
     self.nextMonth.hidden = self.lastMonth.isHidden;
@@ -207,15 +208,17 @@
             
             // 还要刷新两个button的frame
             CGFloat margin = 5;
-            CGFloat width = 15;
-            CGFloat height = 14;
+            CGFloat width = 30;
+            CGFloat height = 28;
             CGFloat buttonX = (HQLTitleViewWidth - width) * 0.5;
-            CGFloat lastButtonY = CGRectGetMinY(titleLabelFrame) + margin + height;
+            CGFloat lastButtonY = CGRectGetMinY(titleLabelFrame) - margin - height;
             CGFloat nextButtonY = CGRectGetMaxY(titleLabelFrame) + margin;
             self.lastMonth.frame = CGRectMake(buttonX, lastButtonY, width, height);
             self.nextMonth.frame = CGRectMake(buttonX, nextButtonY, width, height);
             
             self.calendarView.frame = CGRectMake(0, 0, (self.frame.size.width - HQLTitleViewWidth), HQLEveryMonthModeHeight);
+            
+            
             
             break;
         }
@@ -349,8 +352,8 @@
             [button setTitleColor:[UIColor colorWithRed:(10 / 255.0) green:(40 / 255.0) blue:(80 / 255.0) alpha:1] forState:UIControlStateNormal];
         }
         [button.titleLabel setFont:[UIFont systemFontOfSize:12]];
-        button.defaultMode = drawGeometricShapeNone;
-        button.selectedMode = drawGeometricShapeCircularRing;
+        button.defaultMode = HQLGeometricShapeNone;
+        button.selectedMode = HQLGeometricShapeCircularRing;
         button.selectedShapeColor = [UIColor colorWithRed:0 green:(211 / 255.0) blue:(211 / 255.0) alpha:1];
         
         [button setTitle:[self getWeekdayChineseWithInteger:i] forState:UIControlStateNormal];
@@ -371,6 +374,44 @@
         case 7: return @"六";
         default: return @"";
     }
+}
+
+// 更新日历的frame
+- (void)updateCalendarViewsFrame {
+    CGFloat width = self.frame.size.width - HQLTitleViewWidth;
+    HQLCalendarView *lastView = nil;
+    for (HQLCalendarView *view in self.calendarViewArray) {
+        view.frame = CGRectMake(0, (CGRectGetMaxY(lastView.frame) - HQLNotRepeatModeHeight), width, HQLNotRepeatModeHeight);
+        lastView = view;
+    }
+}
+
+// 创建日历
+- (void)createCalendarViews {
+    CGFloat width = self.frame.size.width - HQLTitleViewWidth;
+    for (int i = 0; i < 3; i++) {
+        NSDate *month = self.currentMonth;
+        if (i == 0) {
+            month = [HQLLocalNotificationConfig getPriusDateFromDate:month withMonth:-1];
+        } else if (i == 2) {
+            month = [HQLLocalNotificationConfig getPriusDateFromDate:month withMonth:1];
+        }
+        HQLCalendarView *calendar = [[HQLCalendarView alloc] initWithFrame:CGRectMake(0, 0, width, HQLNotRepeatModeHeight) dateModel:[[HQLDateModel alloc] initwithNSDate:month]];
+        calendar.delegate = self;
+        
+        [self.calendarView addSubview:calendar];
+        [self.calendarViewArray addObject:calendar];
+    }
+}
+
+#pragma mark - calendar view delegate
+
+- (void)calendarViewSelectCustom:(HQLCalendarView *)calendarView selectDate:(HQLDateModel *)date {
+
+}
+
+- (void)calendarView:(HQLCalendarView *)calendarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {
+    NSLog(@"");
 }
 
 #pragma mark - collection view delegate
@@ -567,9 +608,9 @@
     return _dayChooseDataSource;
 }
 
-- (NSMutableArray *)calendarViewArray {
+- (NSMutableArray<HQLCalendarView *> *)calendarViewArray {
     if (!_calendarViewArray) {
-        _calendarViewArray = [NSMutableArray array];
+        _calendarViewArray = [NSMutableArray arrayWithCapacity:3];
     }
     return _calendarViewArray;
 }

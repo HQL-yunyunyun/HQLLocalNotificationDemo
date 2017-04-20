@@ -15,7 +15,7 @@
 
 @implementation HQLLayerDrawGeometricShape
 
-+ (void)layerDrawGeometricShapeWithLayer:(CALayer *)layer shape:(HQLDrawGeometricShape)shape color:(CGColorRef)color {
++ (void)layerDrawGeometricShapeWithLayer:(CALayer *)layer shape:(HQLGeometricShape)shape color:(CGColorRef)color {
     CALayer *deleteLayer = nil;
     for (CALayer *subLayer in layer.sublayers) {
         if (subLayer.HQLLayerTag == HQLLayerShapeTag) {
@@ -42,17 +42,17 @@
     CGFloat y = (layer.frame.size.height - height) * 0.5;
     
     switch (shape) {
-        case drawGeometricShapeCircular: {
+        case HQLGeometricShapeCircular: {
             // 圆形
             path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(width * 0.5 + x, height * 0.5 + y) radius:length * 0.5 startAngle:0 endAngle:M_PI * 2 clockwise:YES];
             break;
         }
-        case drawGeometricShapeRect: {
+        case HQLGeometricShapeRect: {
             // 矩形
             path = [UIBezierPath bezierPathWithRect:CGRectMake(x, y, width, height)];
             break;
         }
-        case drawGeometricShapeLeftHalfCircular:{
+        case HQLGeometricShapeLeftHalfCircular:{
             // 左半圆 右半正方形
             x += length * 0.5;
             y += height * 0.5;
@@ -63,7 +63,7 @@
             [path closePath];
             break;
         }
-        case drawGeometricShapeRightHalfCircular: {
+        case HQLGeometricShapeRightHalfCircular: {
             // 右半圆 左半正方形
             x += length * 0.5;
             y += height * 0.5;
@@ -74,14 +74,14 @@
             [path closePath];
             break;
         }
-        case drawGeometricShapeCircularRing: {
+        case HQLGeometricShapeCircularRing: {
             // 圆环
             path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(width * 0.5 + x, height * 0.5 + y) radius:length * 0.5 startAngle:0 endAngle:M_PI * 2 clockwise:YES];
             shapeLayer.fillColor = nil;
             shapeLayer.strokeColor = color;
             break;
         }
-        case drawGeometricShapeEllipse: {
+        case HQLGeometricShapeEllipse: {
             // 椭圆形
             x += length * 0.5;
             y += height * 0.5;
@@ -92,7 +92,7 @@
             [path closePath];
             break;
         }
-        case drawGeometricShapeNone: {
+        case HQLGeometricShapeNone: {
             // 空白就什么都不做
             
             break;
