@@ -24,12 +24,15 @@
 
 #define HQLWeekButtonConstTag 479
 
+#define HQLLastMonthButtontTag 2356
+#define HQLNextMonthButtonTag 6532
+
 #define HQLNotificationAlertTitle @"本地通知"
 
 #define HQLFixedHeight 263
-#define HQLDateButtonSize (self.frame.size.width - 60) / 7.0
-#define HQLEveryMonthModeHeight HQLDateButtonSize * 6.0
-#define HQLNotRepeatModeHeight HQLDateButtonSize * 7.0
+#define HQLDateButtonSize (((self.frame.size.width - 60) / 7.0) - 1)
+#define HQLEveryMonthModeHeight (HQLDateButtonSize * 5.0)
+#define HQLNotRepeatModeHeight ((HQLDateButtonSize * 6.0) + 10)
 #define HQLWeekModeHeight 50
 #define HQLTitleViewWidth 60
 
@@ -216,9 +219,8 @@
             self.lastMonth.frame = CGRectMake(buttonX, lastButtonY, width, height);
             self.nextMonth.frame = CGRectMake(buttonX, nextButtonY, width, height);
             
-            self.calendarView.frame = CGRectMake(0, 0, (self.frame.size.width - HQLTitleViewWidth), HQLEveryMonthModeHeight);
-            
-            
+            self.calendarView.frame = CGRectMake(0, 0, (self.frame.size.width - HQLTitleViewWidth), HQLNotRepeatModeHeight);
+            [self updateCalendarViewsFrame]; // 更新日历的frame
             
             break;
         }
@@ -311,8 +313,6 @@
             
             [self.weekButtonView setHidden:NO];
             
-            // 只有在这几个模式的时候才会重新更新Info
-            [self updateNotificationDateInfo];
             break;
         }
         case HQLEveryMonthButtonTag: { // 每月按钮
@@ -320,6 +320,16 @@
             if (self.currentRepeat != HQLLocalNotificationMonthRepeat) {
                 // 清除已选择日期
                 [self.currentDateArray removeAllObjects];
+                NSCalendar *calendar = [NSCalendar currentCalendar];
+                for (HQLDayChooseModel *model in self.dayChooseDataSource) { // 设置已选择的日期
+                    if (model.isSelected) {
+                        NSDateComponents *component = [[NSDateComponents alloc] init];
+                        component.year = 2017;
+                        component.month = 5;
+                        component.day = model.day;
+                        [self.currentDateArray addObject:[calendar dateFromComponents:component]];
+                    }
+                }
             }
             self.currentRepeat = HQLLocalNotificationMonthRepeat;
             self.currentMode = HQLLocalNotificationScheduleMode;
@@ -330,14 +340,31 @@
             break;
         }
         case HQLNotRepeatButtonTag: { // 不重复按钮
+            
+            if (self.currentRepeat != HQLLocalNotificationNoneRepeat) {
+                [self.currentDateArray removeAllObjects];
+                for (HQLCalendarView *view in self.calendarViewArray) {
+                    for (HQLDateModel *date in [view currentSelectDateArray]) { // 更新日期
+                        [self.currentDateArray addObject:[date changeToNSDate]];
+                    }
+                }
+            }
+            
+            if (self.calendarViewArray.count == 0) {
+                [self createCalendarViews];
+            }
+            
             self.currentRepeat = HQLLocalNotificationNoneRepeat;
             self.currentMode = HQLLocalNotificationScheduleMode;
             [self updateNotRepeatModeTitle];
+            [self.calendarView setHidden:NO];
             
             break;
         }
         default: { break; }
     }
+    // 更新信息
+    [self updateNotificationDateInfo];
     // 更新frame
     [self updateFrame];
 }
@@ -380,9 +407,13 @@
 - (void)updateCalendarViewsFrame {
     CGFloat width = self.frame.size.width - HQLTitleViewWidth;
     HQLCalendarView *lastView = nil;
+    NSInteger index = 0;
     for (HQLCalendarView *view in self.calendarViewArray) {
-        view.frame = CGRectMake(0, (CGRectGetMaxY(lastView.frame) - HQLNotRepeatModeHeight), width, HQLNotRepeatModeHeight);
+        CGFloat sign = index == 0 ? -HQLNotRepeatModeHeight : (index == 1 ? 0 : HQLNotRepeatModeHeight);
+        view.alpha = (index == 1 ? 1 : 0);
+        view.frame = CGRectMake(0, (CGRectGetMaxY(lastView.frame) + sign), width, HQLNotRepeatModeHeight);
         lastView = view;
+        index++;
     }
 }
 
@@ -398,20 +429,113 @@
         }
         HQLCalendarView *calendar = [[HQLCalendarView alloc] initWithFrame:CGRectMake(0, 0, width, HQLNotRepeatModeHeight) dateModel:[[HQLDateModel alloc] initwithNSDate:month]];
         calendar.delegate = self;
+        calendar.hideHeaderView = YES;
+        calendar.allowSelectedMultiDate = YES;
+        calendar.allowSelectedFutureDate = YES;
+        calendar.allowSelectedPassedDate = NO;
+        calendar.cellTintColor = [UIColor colorWithRed:0 green:(211 / 255.0) blue:(211 / 255.0) alpha:1];
+        
+        // 设置已选择日期
+        for (NSDate *date in self.currentDateArray) {
+            // 判断date的month是否等于calendar显示的月份
+            HQLDateModel *targetDate = [[HQLDateModel alloc] initwithNSDate:date];
+            if (targetDate.month == calendar.dateModel.month) {
+                [calendar selectDate:targetDate isTriggerDelegate:NO];
+            }
+        }
         
         [self.calendarView addSubview:calendar];
         [self.calendarViewArray addObject:calendar];
     }
 }
 
-#pragma mark - calendar view delegate
-
-- (void)calendarViewSelectCustom:(HQLCalendarView *)calendarView selectDate:(HQLDateModel *)date {
-
+// 上一月 或 下一月
+- (void)lastOrNextMonthDidClick:(UIButton *)button {
+    if (self.calendarViewArray.count != 3) return;
+    BOOL isLastMonth = button.tag == HQLLastMonthButtontTag;
+    
+    self.currentMonth = [HQLLocalNotificationConfig getPriusDateFromDate:self.currentMonth withMonth:(isLastMonth ? -1 : 1)];
+    [self updateNotRepeatModeTitle];
+    
+    HQLCalendarView *moveView = self.calendarViewArray[(isLastMonth ? 2 : 0)];
+    [self.calendarViewArray removeObject:moveView];
+    [self.calendarViewArray insertObject:moveView atIndex:(isLastMonth ? 0 : 2)];
+    __weak typeof(self) weakSelf = self;
+    [UIView animateWithDuration:0.3 animations:^{
+        [weakSelf updateCalendarViewsFrame];
+    } completion:^(BOOL finished) {
+        [moveView setDateModel:[[HQLDateModel alloc] initwithNSDate:[HQLLocalNotificationConfig getPriusDateFromDate:weakSelf.currentMonth withMonth:(isLastMonth ? -1 : 1)]]];
+        for (NSDate *date in weakSelf.currentDateArray) {
+            // 判断date的month是否等于calendar显示的月份
+            HQLDateModel *targetDate = [[HQLDateModel alloc] initwithNSDate:date];
+            if (targetDate.month == moveView.dateModel.month) {
+                [moveView selectDate:targetDate isTriggerDelegate:NO];
+            }
+        }
+    }];
 }
 
+// 获取当前选中日期数组的date
+- (NSDate *)getDateFromCurrentRepeatDateArray:(NSDate *)date {
+    NSDate *targetDate = nil;
+    for (NSDate *selectDate in self.currentDateArray) {
+        HQLDateModel *selectDateModel = [[HQLDateModel alloc] initwithNSDate:selectDate];
+        HQLDateModel *dateModel = [[HQLDateModel alloc] initwithNSDate:date];
+        if ([selectDateModel compareWithHQLDateWithOutTime:dateModel] == 0) {
+            targetDate = selectDate;
+            break;
+        }
+    }
+    return targetDate;
+}
+
+// 改变了时刻
+- (IBAction)timePickerValueChanged:(UIDatePicker *)sender {
+    [self endEditing:YES];
+    [self updateNotificationDateInfo];
+}
+
+// 获取当前的model
+- (HQLLocalNotificationModel *)getCurrentNotificationModel {
+    HQLLocalNotificationModel *targetModel = [[HQLLocalNotificationModel alloc] initWithModel:self.notificationModel];
+    targetModel.content.alertTitle = self.notificationAlertTitle;
+    targetModel.content.alertBody = [self.notificationContentTextField.text isEqualToString:@""] ? @"自定义名称" : self.notificationContentTextField.text;
+    targetModel.repeatMode = self.currentRepeat;
+    targetModel.notificationMode = self.currentMode;
+    
+    NSMutableArray *array = [NSMutableArray array];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDate *time = self.notificationTimePicker.date;
+    NSDateComponents *timeComponent = [calendar components:NSCalendarUnitHour |
+                                                                                                          NSCalendarUnitMinute
+                                                                                                          fromDate:time]; // 获取time
+    for (NSDate *date in self.currentDateArray) {
+        NSDateComponents *dateComponent = [calendar components:NSCalendarUnitYear |
+                                                                                                              NSCalendarUnitMonth |
+                                                                                                              NSCalendarUnitDay |
+                                                                                                              NSCalendarUnitWeekday
+                                                                                                              fromDate:date];
+        dateComponent.hour = timeComponent.hour;
+        dateComponent.minute = timeComponent.minute;
+        [array addObject:[calendar dateFromComponents:dateComponent]];
+    }
+    targetModel.repeatDateArray = [NSArray arrayWithArray:array];
+    
+    return targetModel;
+}
+
+#pragma mark - calendar view delegate
+
 - (void)calendarView:(HQLCalendarView *)calendarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {
-    NSLog(@"");
+    // 先判断当前时候有该日期
+    NSDate *targetDate = [begin changeToNSDate];
+    NSDate *currentDate = [self getDateFromCurrentRepeatDateArray:targetDate];
+    if (currentDate) { // 已存在
+        [self.currentDateArray removeObject:currentDate];
+    } else {
+        [self.currentDateArray addObject:targetDate];
+    }
+    [self updateNotificationDateInfo];
 }
 
 #pragma mark - collection view delegate
@@ -424,6 +548,7 @@
     NSCalendar *calendar = [NSCalendar currentCalendar];
     if (model.isSelected) { // 选中
         NSDateComponents * components = [calendar components:NSCalendarUnitYear | NSCalendarUnitMonth  fromDate:[NSDate date]];
+        components.month = 5;
         components.day = model.day;
         [self.currentDateArray addObject:[calendar dateFromComponents:components]];
     } else {
@@ -474,6 +599,9 @@
     self.notificationContentTextField.text = contentModel.alertBody;
     [self.currentDateArray removeAllObjects]; // 选择的日期
     [self.currentDateArray addObjectsFromArray:notificationModel.repeatDateArray];
+    if (self.currentDateArray.count != 0) {
+        self.currentMonth = self.currentDateArray.firstObject;
+    }
     [self.notificationTimePicker setDate:notificationModel.repeatDateArray.firstObject]; // 选择的时刻
     [self updateNotificationDateInfo]; // 更新内容
     
@@ -514,10 +642,21 @@
 
 #pragma mark - getter
 
+- (UIView *)calendarView {
+    if (!_calendarView) {
+        _calendarView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+        _calendarView.clipsToBounds = YES;
+        _calendarView.backgroundColor = [UIColor clearColor];
+        
+        [self.notificationDateSettingView insertSubview:_calendarView atIndex:0];
+    }
+    return _calendarView;
+}
+
 - (UICollectionView *)dayChooseView {
     if (!_dayChooseView) {
         _dayChooseView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width - HQLTitleViewWidth, HQLEveryMonthModeHeight) collectionViewLayout:self.dayChooseFlowLayout];
-        _dayChooseView.backgroundColor = [UIColor whiteColor];
+        _dayChooseView.backgroundColor = [UIColor clearColor];
         
         [_dayChooseView setShowsVerticalScrollIndicator:NO];
         [_dayChooseView setShowsHorizontalScrollIndicator:NO];
@@ -546,6 +685,7 @@
     if (!_weekButtonView) {
         _weekButtonView = [[UIView alloc] initWithFrame:self.notificationDateSettingView.bounds];
         [_weekButtonView setHidden:YES];
+        [_weekendButton setBackgroundColor:[UIColor clearColor]];
         [self.notificationDateSettingView addSubview:_weekButtonView];
     }
     return _weekButtonView;
@@ -564,7 +704,9 @@
         [_lastMonth setFrame:CGRectMake(0, 0, 15, 14)];
         [_lastMonth setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon-lastMonth" ofType:@"png"]] forState:UIControlStateNormal];
         [_lastMonth setHidden:YES];
+        _lastMonth.tag = HQLLastMonthButtontTag;
         
+        [_lastMonth addTarget:self action:@selector(lastOrNextMonthDidClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.notificationDateSettingTitleView addSubview:_lastMonth];
     }
     return _lastMonth;
@@ -576,7 +718,9 @@
         [_nextMonth setFrame:CGRectMake(0, 0, 15, 14)];
         [_nextMonth setImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon-nextMonth" ofType:@"png"]] forState:UIControlStateNormal];
         [_nextMonth setHidden:YES];
+        _nextMonth.tag = HQLNextMonthButtonTag;
         
+        [_nextMonth addTarget:self action:@selector(lastOrNextMonthDidClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.notificationDateSettingTitleView addSubview:_nextMonth];
     }
     return _nextMonth;

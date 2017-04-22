@@ -11,6 +11,8 @@
 #import "HQLLocalNotificationManager.h"
 #import "HQLTestController.h"
 
+#import "HQLSetNotificationController.h"
+
 @interface HQLAddNotificationController ()
 
 @end
@@ -28,7 +30,9 @@
 }
 
 - (IBAction)pushToView:(UIBarButtonItem *)sender {
-    HQLTestController *controller = [HQLTestController new];
+//    HQLTestController *controller = [HQLTestController new];
+//    [self.navigationController pushViewController:controller animated:YES];
+    HQLSetNotificationController *controller = [[HQLSetNotificationController alloc] init];
     [self.navigationController pushViewController:controller animated:YES];
 }
 

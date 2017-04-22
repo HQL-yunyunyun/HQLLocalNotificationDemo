@@ -66,6 +66,9 @@
                     <date key="date" timeIntervalSinceReferenceDate="514092998.72702998">
                         <!--2017-04-17 03:36:38 +0000-->
                     </date>
+                    <connections>
+                        <action selector="timePickerValueChanged:" destination="iN0-l3-epB" eventType="valueChanged" id="pDZ-H4-PNa"/>
+                    </connections>
                 </datePicker>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bK2-ae-gHq" userLabel="Line View">
                     <rect key="frame" x="0.0" y="202" width="375" height="0.5"/>
@@ -225,9 +228,16 @@
                                 <constraint firstAttribute="width" constant="0.5" id="VVB-Zz-Rra"/>
                             </constraints>
                         </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sJx-lb-noz" userLabel="Line View">
+                            <rect key="frame" x="0.0" y="404.5" width="375" height="0.5"/>
+                            <color key="backgroundColor" red="0.89019607840000003" green="0.90196078430000004" blue="0.90980392160000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="0.5" id="lNa-Ek-b1g"/>
+                            </constraints>
+                        </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ciw-sM-QUB" userLabel="Date Setting View">
                             <rect key="frame" x="60.5" y="0.0" width="314.5" height="405"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </view>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -237,9 +247,12 @@
                         <constraint firstItem="SOd-P7-Oxn" firstAttribute="leading" secondItem="9xm-3V-3xm" secondAttribute="trailing" id="6kG-Wo-GOB"/>
                         <constraint firstAttribute="bottom" secondItem="9xm-3V-3xm" secondAttribute="bottom" id="79G-Jb-2lh"/>
                         <constraint firstAttribute="trailing" secondItem="ciw-sM-QUB" secondAttribute="trailing" id="7vA-c9-NaA"/>
+                        <constraint firstItem="sJx-lb-noz" firstAttribute="leading" secondItem="4Aa-cJ-azK" secondAttribute="leading" id="Af8-iw-gn0"/>
                         <constraint firstItem="9xm-3V-3xm" firstAttribute="top" secondItem="4Aa-cJ-azK" secondAttribute="top" id="DNQ-Pc-F0Y"/>
+                        <constraint firstAttribute="trailing" secondItem="sJx-lb-noz" secondAttribute="trailing" id="SS5-KQ-OWP"/>
                         <constraint firstItem="ciw-sM-QUB" firstAttribute="top" secondItem="4Aa-cJ-azK" secondAttribute="top" id="aRy-2Z-KNA"/>
                         <constraint firstAttribute="bottom" secondItem="ciw-sM-QUB" secondAttribute="bottom" id="auk-VL-8oZ"/>
+                        <constraint firstAttribute="bottom" secondItem="sJx-lb-noz" secondAttribute="bottom" id="ctZ-48-yID"/>
                         <constraint firstAttribute="bottom" secondItem="SOd-P7-Oxn" secondAttribute="bottom" id="eu7-8K-Mip"/>
                         <constraint firstItem="SOd-P7-Oxn" firstAttribute="top" secondItem="4Aa-cJ-azK" secondAttribute="top" id="yjo-rT-xae"/>
                     </constraints>

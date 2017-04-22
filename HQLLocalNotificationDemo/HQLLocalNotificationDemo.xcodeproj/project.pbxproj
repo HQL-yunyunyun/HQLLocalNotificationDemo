@@ -37,6 +37,13 @@
 		4A74934A1EA86BDB00A672FD /* HQLCalendarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7493321EA86BDB00A672FD /* HQLCalendarCell.m */; };
 		4A74934B1EA86BDB00A672FD /* HQLCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7493341EA86BDB00A672FD /* HQLCalendarView.m */; };
 		4A74934C1EA86BDB00A672FD /* HQLDrawGeometricShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7493361EA86BDB00A672FD /* HQLDrawGeometricShapeView.m */; };
+		4A74934F1EAB3ECA00A672FD /* HQLSetNotificationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A74934E1EAB3ECA00A672FD /* HQLSetNotificationController.m */; };
+		4A7493531EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7493511EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.m */; };
+		4A7493541EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A7493521EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.xib */; };
+		4A7493581EAB5C2000A672FD /* icon-rightArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A7493551EAB5C2000A672FD /* icon-rightArrow@2x.png */; };
+		4A7493591EAB5C2000A672FD /* icon-rightArrow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A7493561EAB5C2000A672FD /* icon-rightArrow@3x.png */; };
+		4A74935A1EAB5C2000A672FD /* icon-rightArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A7493571EAB5C2000A672FD /* icon-rightArrow.png */; };
+		4A74935D1EAB618F00A672FD /* HQLLocalNotificationManagerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A74935C1EAB618F00A672FD /* HQLLocalNotificationManagerController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,6 +97,16 @@
 		4A7493341EA86BDB00A672FD /* HQLCalendarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLCalendarView.m; sourceTree = "<group>"; };
 		4A7493351EA86BDB00A672FD /* HQLDrawGeometricShapeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLDrawGeometricShapeView.h; sourceTree = "<group>"; };
 		4A7493361EA86BDB00A672FD /* HQLDrawGeometricShapeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLDrawGeometricShapeView.m; sourceTree = "<group>"; };
+		4A74934D1EAB3EC900A672FD /* HQLSetNotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLSetNotificationController.h; sourceTree = "<group>"; };
+		4A74934E1EAB3ECA00A672FD /* HQLSetNotificationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLSetNotificationController.m; sourceTree = "<group>"; };
+		4A7493501EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationManagerCell.h; sourceTree = "<group>"; };
+		4A7493511EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationManagerCell.m; sourceTree = "<group>"; };
+		4A7493521EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HQLLocalNotificationManagerCell.xib; sourceTree = "<group>"; };
+		4A7493551EAB5C2000A672FD /* icon-rightArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-rightArrow@2x.png"; sourceTree = "<group>"; };
+		4A7493561EAB5C2000A672FD /* icon-rightArrow@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-rightArrow@3x.png"; sourceTree = "<group>"; };
+		4A7493571EAB5C2000A672FD /* icon-rightArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-rightArrow.png"; sourceTree = "<group>"; };
+		4A74935B1EAB618F00A672FD /* HQLLocalNotificationManagerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationManagerController.h; sourceTree = "<group>"; };
+		4A74935C1EAB618F00A672FD /* HQLLocalNotificationManagerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationManagerController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +211,9 @@
 				4A7492F51EA46D5400A672FD /* HQLSetNotificationView.xib */,
 				4A7493041EA711BA00A672FD /* HQLDayChooseCell.h */,
 				4A7493051EA711BA00A672FD /* HQLDayChooseCell.m */,
+				4A7493501EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.h */,
+				4A7493511EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.m */,
+				4A7493521EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -205,6 +225,10 @@
 				4A64B4031E67C8F3005F6B8E /* HQLAddNotificationController.m */,
 				4A64B4051E67C973005F6B8E /* HQLTestController.h */,
 				4A64B4061E67C973005F6B8E /* HQLTestController.m */,
+				4A74934D1EAB3EC900A672FD /* HQLSetNotificationController.h */,
+				4A74934E1EAB3ECA00A672FD /* HQLSetNotificationController.m */,
+				4A74935B1EAB618F00A672FD /* HQLLocalNotificationManagerController.h */,
+				4A74935C1EAB618F00A672FD /* HQLLocalNotificationManagerController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -218,6 +242,9 @@
 				4A7492FB1EA4B53500A672FD /* icon-nextMonth.png */,
 				4A7492FC1EA4B53500A672FD /* icon-nextMonth@2x.png */,
 				4A7492FD1EA4B53500A672FD /* icon-nextMonth@3x.png */,
+				4A7493551EAB5C2000A672FD /* icon-rightArrow@2x.png */,
+				4A7493561EAB5C2000A672FD /* icon-rightArrow@3x.png */,
+				4A7493571EAB5C2000A672FD /* icon-rightArrow.png */,
 			);
 			path = Image;
 			sourceTree = "<group>";
@@ -324,13 +351,17 @@
 			files = (
 				4A64B3F71E652179005F6B8E /* HQLNotificationSettingView.xib in Resources */,
 				4A7492FE1EA4B53500A672FD /* icon-lastMonth.png in Resources */,
+				4A7493541EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.xib in Resources */,
 				4A643EF91E5706D300F249B2 /* LaunchScreen.storyboard in Resources */,
 				4A7493021EA4B53500A672FD /* icon-nextMonth@2x.png in Resources */,
 				4A7493001EA4B53500A672FD /* icon-lastMonth@3x.png in Resources */,
+				4A7493581EAB5C2000A672FD /* icon-rightArrow@2x.png in Resources */,
 				4A7492F61EA46D5400A672FD /* HQLSetNotificationView.xib in Resources */,
 				4A7493011EA4B53500A672FD /* icon-nextMonth.png in Resources */,
+				4A74935A1EAB5C2000A672FD /* icon-rightArrow.png in Resources */,
 				4A7493031EA4B53500A672FD /* icon-nextMonth@3x.png in Resources */,
 				4A643EF61E5706D300F249B2 /* Assets.xcassets in Resources */,
+				4A7493591EAB5C2000A672FD /* icon-rightArrow@3x.png in Resources */,
 				4A643EF41E5706D300F249B2 /* Main.storyboard in Resources */,
 				4A7492FF1EA4B53500A672FD /* icon-lastMonth@2x.png in Resources */,
 			);
@@ -355,11 +386,14 @@
 				4A64B3FD1E655B16005F6B8E /* HQLSelectButton.m in Sources */,
 				4A64B3F31E652130005F6B8E /* HQLLocalNotificationModel.m in Sources */,
 				4A7493061EA711BA00A672FD /* HQLDayChooseCell.m in Sources */,
+				4A74935D1EAB618F00A672FD /* HQLLocalNotificationManagerController.m in Sources */,
 				4A64B4071E67C973005F6B8E /* HQLTestController.m in Sources */,
 				4A643EF11E5706D300F249B2 /* ViewController.m in Sources */,
+				4A7493531EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.m in Sources */,
 				4A64B4001E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m in Sources */,
 				4A74934B1EA86BDB00A672FD /* HQLCalendarView.m in Sources */,
 				4A643EEE1E5706D300F249B2 /* AppDelegate.m in Sources */,
+				4A74934F1EAB3ECA00A672FD /* HQLSetNotificationController.m in Sources */,
 				4A643EEB1E5706D300F249B2 /* main.m in Sources */,
 				4A7492F41EA46D4300A672FD /* HQLSetNotificationView.m in Sources */,
 			);

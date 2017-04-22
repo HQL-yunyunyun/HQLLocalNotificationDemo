@@ -29,7 +29,7 @@ typedef enum {
     HQLWeekday , // 其他时间
 } HQLWeekMode;
 
-@class HQLLocalNotificationContentModel;
+@class HQLLocalNotificationContentModel, HQLLocalNotificationModel;
 
 @interface HQLLocalNotificationModel : NSObject <NSCoding>
 
@@ -75,6 +75,8 @@ typedef enum {
                                       repeatMode:(HQLLocalNotificationRepeat)repeatMode
                                       notificationMode:(HQLLocalNotificationMode)notificationMode
                                       isActivity:(BOOL)isActivity;
+
+- (nullable instancetype)initWithModel:(nonnull HQLLocalNotificationModel *)model;
 
 + (nullable instancetype)localNotificationModel;
 
@@ -131,6 +133,8 @@ typedef enum {
 
 // user info
 @property(nullable, nonatomic,copy) NSDictionary *userInfo;   // throws if contains non-property list types
+
+- (nullable instancetype)initWithModel:(nonnull HQLLocalNotificationContentModel *)model;
 
 // category identifer of the local notification, as set on a UIUserNotificationCategory and passed to +[UIUserNotificationSettings settingsForTypes:categories:]
 //@property (nullable, nonatomic, copy) NSString *category;

@@ -29,4 +29,6 @@
 
 + (instancetype)setNotificationView;
 
+- (HQLLocalNotificationModel *)getCurrentNotificationModel;
+
 @end

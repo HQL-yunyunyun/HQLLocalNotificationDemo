@@ -46,7 +46,7 @@
 // 记录选中的月
 @property (strong, nonatomic) NSMutableArray <HQLDateModel *>*monthRecordArray;
 
-@property (assign, nonatomic) BOOL isFirstSetFrame;
+//@property (assign, nonatomic) BOOL isFirstSetFrame;
 
 @end
 
@@ -80,23 +80,25 @@
 }
 
 - (void)setFrame:(CGRect)frame {
-    CGFloat originWidth = self.width;
+//    CGFloat originWidth = self.width;
     [super setFrame:frame];
-    if (originWidth != self.width || self.isFirstSetFrame) {
-        self.isFirstSetFrame = NO;
+//    if (originWidth != self.width || self.isFirstSetFrame) {
+//        self.isFirstSetFrame = NO;
         NSInteger itemWidth = self.width / kWeekdayNum;
         self.collectionViewWidth = itemWidth * kWeekdayNum;
-    }
+//    }
 }
 
 #pragma mark - prepare UI
 
 - (void)prepareUI {
-    self.isFirstSetFrame = YES;
+//    self.isFirstSetFrame = YES;
     [self setBackgroundColor:[UIColor whiteColor]];
     [self setAllowSelectedPassedDate:YES];
     [self setAllowSelectedFutureDate:NO];
     [self setAllowSelectedMultiDate:NO];
+    [self setHideHeaderView:NO];
+//    [self setCellTintColor:[UIColor redColor]];
 }
 
 #pragma mark - event
@@ -108,7 +110,8 @@
 
 - (void)calcuateViewFrame {
     // 计算headerView的frame
-    self.headerView.height = self.selectionStyle == calendarViewSelectionStyleMonth ? 0 : (kItemWidth * 0.8);
+    self.headerView.height = self.isHideHeaderView ? 0 : (self.selectionStyle == calendarViewSelectionStyleMonth ? 0 : (kItemWidth * 0.8));
+//    self.headerView.height = self.selectionStyle == calendarViewSelectionStyleMonth ? 0 : (kItemWidth * 0.8);
     self.headerView.width = self.width;
     self.headerViewBottomLine.y = (kItemWidth * 0.8);
     self.headerViewBottomLine.width = self.width;
@@ -222,6 +225,16 @@
         
         [self reloadData];
     }
+}
+
+- (NSMutableArray<HQLDateModel *> *)currentSelectDateArray {
+    NSMutableArray *array = [NSMutableArray array];
+    for (HQLCalendarModel *model in self.dataSource) {
+        if (model.isSelected) {
+            [array addObject:model.date];
+        }
+    }
+    return array;
 }
 
 #pragma mark - record tool method
@@ -606,6 +619,8 @@
     [self setAllowSelectedMultiDate:self.isAllowSelectedMultiDate]; // 是否允许选择多个日期
     [self setSelectedLastWeek:self.selectedLastWeek]; // 选择最后一个星期
     [self setSelectedFirstWeek:self.selectedFirstWeek]; // 选择第一个星期
+    [self setHideHeaderView:self.isHideHeaderView]; // 是否隐藏hideView
+    [self setCellTintColor:self.cellTintColor]; // 设置颜色
     
     if ([self.delegate respondsToSelector:@selector(calendarViewDidSetDataSource:selectionStyle:date:)]) {
         [self.delegate calendarViewDidSetDataSource:self selectionStyle:self.selectionStyle date:dateModel];
@@ -661,13 +676,26 @@
 - (void)setSelectionStyle:(HQLCalendarViewSelectionStyle)selectionStyle {
     _selectionStyle = selectionStyle;
     
-    if (selectionStyle == calendarViewSelectionStyleMonth) {
-        // 重新设置当前dataSource
-        [self.headerView setHidden:YES];
+    [self setHideHeaderView:(selectionStyle == calendarViewSelectionStyleMonth)];
+    if (self.dateModel) {
+        [self setDateModel:self.dateModel];
     } else {
-        [self.headerView setHidden:NO];
+        [self setDateModel:[HQLDateModel HQLDate]];
     }
-    [self setDateModel:[HQLDateModel HQLDate]];
+}
+
+- (void)setHideHeaderView:(BOOL)hideHeaderView {
+    _hideHeaderView = hideHeaderView;
+    self.headerView.hidden = hideHeaderView;
+}
+
+- (void)setCellTintColor:(UIColor *)cellTintColor {
+    _cellTintColor = cellTintColor;
+    if (self.dataSource.count == 0) return;
+    for (HQLCalendarModel *model in self.dataSource) {
+        model.tintColor = cellTintColor;
+    }
+    [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
 }
 
 #pragma mark - getter

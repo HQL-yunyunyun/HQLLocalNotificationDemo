@@ -66,12 +66,26 @@
     return self;
 }
 
+- (instancetype)initWithModel:(HQLLocalNotificationModel *)model {
+    if (self = [self init]) {
+        self.content = [[HQLLocalNotificationContentModel alloc] initWithModel:model.content];
+        self.repeatDateArray = [NSMutableArray arrayWithArray:model.repeatDateArray];
+        self.identifier = model.identifier;
+        self.subIdentifier = model.subIdentifier;
+        self.repeatMode = model.repeatMode;
+        self.notificationMode = model.notificationMode;
+        self.isActivity = model.isActivity;
+    }
+    return self;
+}
+
 + (instancetype)localNotificationModel {
     HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] init];
     model.repeatDateArray = @[[NSDate date]];
     model.notificationMode = HQLLocalNotificationScheduleMode;
     return model;
 }
+
 
 #pragma mark - event
 
@@ -178,7 +192,7 @@
             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
             [formatter setDateFormat:@"yyyy.MM.dd"];
             for (NSDate *date in self.repeatDateArray) {
-                targetString = [targetString stringByAppendingString:[formatter stringFromDate:date]];
+                targetString = [targetString stringByAppendingString:[NSString stringWithFormat:@"%@ ", [formatter stringFromDate:date]]];
             }
             break;
         }
@@ -266,6 +280,19 @@
         self.soundName = @"";
         self.applicationIconBadgeNumber = 0;
         self.userInfo = [NSDictionary dictionary];
+    }
+    return self;
+}
+
+- (instancetype)initWithModel:(HQLLocalNotificationContentModel *)model {
+    if (self = [self init]) {
+        self.alertBody = model.alertBody;
+        self.alertAction = model.alertAction;
+        self.alertLaunchImage = model.alertLaunchImage;
+        self.alertTitle = model.alertTitle;
+        self.soundName = model.soundName;
+        self.applicationIconBadgeNumber = model.applicationIconBadgeNumber;
+        self.userInfo = [NSDictionary dictionaryWithDictionary:model.userInfo];
     }
     return self;
 }

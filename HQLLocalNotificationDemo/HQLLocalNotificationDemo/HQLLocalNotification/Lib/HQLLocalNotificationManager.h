@@ -56,6 +56,7 @@
                                   badgeNumber:(NSInteger)badgeNumber
                                   isActivity:(BOOL)isActivity
                                   complete:(void(^)(NSError *error))completeBlock;
+
 - (void)addNotificationWithModel:(HQLLocalNotificationModel *)model complete:(void(^)(NSError *error))completeBlock;
 
 // 删
