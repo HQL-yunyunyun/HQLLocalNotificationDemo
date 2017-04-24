@@ -234,7 +234,7 @@
     [aCoder encodeObject:self.repeatDateArray forKey:@"repeatDateArray"];
     [aCoder encodeObject:self.identifier forKey:@"identifier"];
     [aCoder encodeObject:self.subIdentifier forKey:@"subIdentifier"];
-    [aCoder encodeInteger:self.repeatMode forKey:@"repeatModel"];
+    [aCoder encodeInteger:self.repeatMode forKey:@"repeatMode"];
 //    [aCoder encodeBool:self.isRepeat forKey:@"isRepeat"];
     [aCoder encodeInteger:self.notificationMode forKey:@"notificationMode"];
     [aCoder encodeBool:self.isActivity forKey:@"isActivity"];
@@ -248,7 +248,7 @@
     self.subIdentifier = [aDecoder decodeObjectForKey:@"subIdentifier"];
     self.repeatMode = (HQLLocalNotificationRepeat)[aDecoder decodeIntegerForKey:@"repeatMode"];
 //    self.isRepeat = [aDecoder decodeBoolForKey:@"isRepeat"];
-    self.notificationMode = (HQLLocalNotificationMode)[aDecoder decodeObjectForKey:@"notificationMode"];
+    self.notificationMode = (HQLLocalNotificationMode)[aDecoder decodeIntegerForKey:@"notificationMode"];
     self.isActivity = [aDecoder decodeBoolForKey:@"isActivity"];
     return self;
 }

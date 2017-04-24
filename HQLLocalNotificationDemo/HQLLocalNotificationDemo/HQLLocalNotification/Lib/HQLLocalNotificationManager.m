@@ -81,9 +81,10 @@
             NSLog(@"add notification error : %@", error);
         } else {
             NSLog(@"add notification success");
-            [weakSelf.notificationArray addObject:model];
-            [weakSelf saveNotification]; // 保存到本机中
         }
+        // 都得添加到当前数组中
+        [weakSelf.notificationArray addObject:model];
+        [weakSelf saveNotification]; // 保存到本机中
         if (completeBlock) {
             completeBlock(error);
         }
@@ -91,20 +92,16 @@
 }
 
 - (void)addNotificationWithModel:(HQLLocalNotificationModel *)model complete:(void (^)(NSError *))completeBlock {
-    __weak typeof(self) weakSelf = self;
-    [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
-        if (error) {
-            // 添加错误
-            NSLog(@"add notification error : %@", error);
-        } else {
-            NSLog(@"add notification success");
-            [weakSelf.notificationArray addObject:model];
-            [weakSelf saveNotification];
-        }
-        if (completeBlock) {
-            completeBlock(error);
-        }
-    }];
+    [self addNotificationWithSubIdentifier:model.subIdentifier
+                                notificationMode:model.notificationMode
+                                repeatMode:model.repeatMode
+                                alertTitle:model.content.alertTitle
+                                alertBody:model.content.alertBody
+                                repeatDateArray:model.repeatDateArray
+                                userInfo:model.content.userInfo
+                                badgeNumber:model.content.applicationIconBadgeNumber
+                                isActivity:model.isActivity
+                                complete:completeBlock];
 }
 
 // 删

@@ -32,6 +32,14 @@
     self.rightArrow.alpha = 0;
 }
 
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
+    [super setEditing:editing animated:animated];
+    [UIView animateWithDuration:0.3 animations:^{
+        self.rightArrow.alpha = editing ? 1 : 0;
+        self.statusSwitch.alpha = editing ? 0 : 1;
+    }];
+}
+
 #pragma mark - event
 
 - (IBAction)statusSwitchDidClick:(UISwitch *)sender {
@@ -39,11 +47,6 @@
     if (self.delegate) {
         [self.delegate localNotificationManagerCellDidClickStatusSwitch:self isOn:sender.isOn];
     }
-}
-
-- (void)cellChangeEditing {
-    self.rightArrow.alpha = self.isEditing ? 1 : 0;
-    self.statusSwitch.alpha = self.isEditing ? 0 : 1;
 }
 
 #pragma mark - setter 

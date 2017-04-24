@@ -10,6 +10,7 @@
 
 #import "HQLLocalNotificationConfig.h"
 #import "HQLLocalNotificationManager.h"
+#import "HQLLocalNotificationManagerController.h"
 
 @interface AppDelegate ()
 
@@ -17,10 +18,12 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+    HQLLocalNotificationManagerController *controller = [[HQLLocalNotificationManagerController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
+    self.window.rootViewController = nav;
     
     if (launchOptions) {
         // 从通知点击进来

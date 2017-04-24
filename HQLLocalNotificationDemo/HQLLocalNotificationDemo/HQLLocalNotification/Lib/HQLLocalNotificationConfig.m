@@ -136,7 +136,9 @@
             index++;
         }
     } else { // 不启用
-        
+        if (completeBlock) {
+            completeBlock([NSError errorWithDomain:HQLLocalNotificationErrorDomain code:HQLLocalNotificationNotActiveFailed userInfo:@{@"通知没有启用" : NSLocalizedDescriptionKey}]);
+        }
     }
 }
 

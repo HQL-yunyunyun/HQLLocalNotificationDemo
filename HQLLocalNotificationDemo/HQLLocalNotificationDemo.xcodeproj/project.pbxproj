@@ -76,6 +76,8 @@
 		4A64B4031E67C8F3005F6B8E /* HQLAddNotificationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLAddNotificationController.m; sourceTree = "<group>"; };
 		4A64B4051E67C973005F6B8E /* HQLTestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLTestController.h; sourceTree = "<group>"; };
 		4A64B4061E67C973005F6B8E /* HQLTestController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLTestController.m; sourceTree = "<group>"; };
+		4A6CDD201EADD2F6003438C0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		4A6CDD221EADD391003438C0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4A7492F21EA46D4300A672FD /* HQLSetNotificationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLSetNotificationView.h; sourceTree = "<group>"; };
 		4A7492F31EA46D4300A672FD /* HQLSetNotificationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLSetNotificationView.m; sourceTree = "<group>"; };
 		4A7492F51EA46D5400A672FD /* HQLSetNotificationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HQLSetNotificationView.xib; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 			children = (
 				4A643EE81E5706D300F249B2 /* HQLLocalNotificationDemo */,
 				4A643EE71E5706D300F249B2 /* Products */,
+				4A6CDD1F1EADD2F6003438C0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -231,6 +234,15 @@
 				4A74935C1EAB618F00A672FD /* HQLLocalNotificationManagerController.m */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		4A6CDD1F1EADD2F6003438C0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4A6CDD221EADD391003438C0 /* Foundation.framework */,
+				4A6CDD201EADD2F6003438C0 /* UIKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		4A7492F71EA4B53500A672FD /* Image */ = {

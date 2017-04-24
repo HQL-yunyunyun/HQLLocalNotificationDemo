@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12106.1" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12074.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -31,13 +31,12 @@
                         <rect key="frame" x="255" y="24" width="51" height="31"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="onTintColor" red="0.0" green="0.82745098039215681" blue="0.8666666666666667" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="thumbTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <connections>
                             <action selector="statusSwitchDidClick:" destination="KGk-i7-Jjw" eventType="valueChanged" id="VdA-Um-gxY"/>
                         </connections>
                     </switch>
                     <label opaque="NO" userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="天天向上，每天" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0ed-HF-zPa">
-                        <rect key="frame" x="16" y="51.5" width="239" height="21"/>
+                        <rect key="frame" x="16" y="52" width="239" height="21"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="78b-KZ-S01"/>
                         </constraints>
@@ -46,7 +45,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-rightArrow.png" translatesAutoresizingMaskIntoConstraints="NO" id="rj9-Pc-1jY">
-                        <rect key="frame" x="294" y="31.5" width="10" height="18"/>
+                        <rect key="frame" x="294" y="31" width="10" height="18"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="17" id="LBf-bj-BUa"/>
                             <constraint firstAttribute="width" constant="10" id="UiK-H9-9WY"/>

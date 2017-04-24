@@ -38,7 +38,7 @@
 
 #define HQLDayChooseCellReuseID @"HQLDayChooseCellReuseID"
 
-@interface HQLSetNotificationView () <UICollectionViewDelegate, UICollectionViewDataSource, HQLCalendarViewDelegate>
+@interface HQLSetNotificationView () <UICollectionViewDelegate, UICollectionViewDataSource, UITextFieldDelegate, HQLCalendarViewDelegate>
 
 /*========== 通知的基本信息 ==========*/
 @property (weak, nonatomic) IBOutlet UITextField *notificationContentTextField;
@@ -137,6 +137,7 @@
     if (!self.notificationModel) {
         HQLLocalNotificationModel *model = [HQLLocalNotificationModel localNotificationModel];
         model.repeatMode = HQLLocalNotificationDayRepeat;
+        model.isActivity = YES;
         self.notificationModel = model;
     }
 }
@@ -248,8 +249,9 @@
 
 // 模式按钮点击
 - (IBAction)modeButtonDidClick:(HQLSelectButton *)sender {
-    // 取消button的选择
+    [self endEditing:YES];
     
+    // 取消button的选择
     for (UIView *view in self.modeButtonView.subviews) {
         if ([view isKindOfClass:[HQLSelectButton class]]) {
             HQLSelectButton *button = (HQLSelectButton *)view;
@@ -522,6 +524,13 @@
     targetModel.repeatDateArray = [NSArray arrayWithArray:array];
     
     return targetModel;
+}
+
+#pragma mark - text field delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
 }
 
 #pragma mark - calendar view delegate
