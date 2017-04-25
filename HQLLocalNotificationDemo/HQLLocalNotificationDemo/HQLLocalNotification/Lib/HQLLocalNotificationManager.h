@@ -62,6 +62,7 @@
 // 删
 - (void)deleteNotificationWithModel:(HQLLocalNotificationModel *)model;
 - (void)deleteNotificationWithIdentifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier;
+- (void)deleteAllNotification; // 删除所有通知
 
 // 改, key 为需要改的属性, value 为属性的值 ---> 使用setValueForKey:的形式
 - (void)updateNotificationWithPropertyDict:(NSDictionary *)propertyDict identifier:(NSString *)identifier subIdentifier:(NSString *)subIdentifier;
@@ -82,5 +83,8 @@
 
 // 显示所有notification
 - (void)showNotification;
+
+// 更新所有通知的状态
+- (void)updateNotificationActivity;
 
 @end

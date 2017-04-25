@@ -140,12 +140,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HQLLocalNotificationDemo/HQLLocalNotification/View/HQLSetNotificationView.m"
-            timestampString = "514722265.140073"
+            timestampString = "514804141.698883"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "417"
-            endingLineNumber = "417"
+            startingLineNumber = "434"
+            endingLineNumber = "434"
             landmarkName = "-updateCalendarViewsFrame"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HQLLocalNotificationDemo/HQLLocalNotification/View/HQLSetNotificationView.m"
+            timestampString = "514804141.698883"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "546"
+            endingLineNumber = "546"
+            landmarkName = "-getCurrentNotificationModel"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

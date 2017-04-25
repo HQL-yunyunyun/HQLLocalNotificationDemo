@@ -323,14 +323,28 @@
                 // 清除已选择日期
                 [self.currentDateArray removeAllObjects];
                 NSCalendar *calendar = [NSCalendar currentCalendar];
+                
+                NSDateComponents *component = [[NSDateComponents alloc] init];
+                component.year = 2017;
+                component.month = 5;
                 for (HQLDayChooseModel *model in self.dayChooseDataSource) { // 设置已选择的日期
                     if (model.isSelected) {
-                        NSDateComponents *component = [[NSDateComponents alloc] init];
-                        component.year = 2017;
-                        component.month = 5;
                         component.day = model.day;
                         [self.currentDateArray addObject:[calendar dateFromComponents:component]];
                     }
+                }
+                if (self.currentDateArray.count == 0) {
+                    component.day = [calendar component:NSCalendarUnitDay fromDate:[NSDate date]];
+                    [self.currentDateArray addObject:[calendar dateFromComponents:component]];
+                    HQLDayChooseModel *model = self.dayChooseDataSource[component.day - 1];
+                    model.isSelected = YES;
+                }
+            } else {
+                // 给model赋值
+                for (NSDate *date in self.currentDateArray) {
+                    NSInteger day = [calendar component:NSCalendarUnitDay fromDate:date];
+                    HQLDayChooseModel *model = self.dayChooseDataSource[day -1];
+                    model.isSelected = YES;
                 }
             }
             self.currentRepeat = HQLLocalNotificationMonthRepeat;
@@ -349,6 +363,9 @@
                     for (HQLDateModel *date in [view currentSelectDateArray]) { // 更新日期
                         [self.currentDateArray addObject:[date changeToNSDate]];
                     }
+                }
+                if (self.currentDateArray.count == 0) {
+                    [self.currentDateArray addObject:[NSDate date]];
                 }
             }
             
@@ -511,6 +528,9 @@
     NSDateComponents *timeComponent = [calendar components:NSCalendarUnitHour |
                                                                                                           NSCalendarUnitMinute
                                                                                                           fromDate:time]; // 获取time
+    if (self.currentDateArray.count == 0) {
+        [self.currentDateArray addObject:[NSDate date]];
+    }
     for (NSDate *date in self.currentDateArray) {
         NSDateComponents *dateComponent = [calendar components:NSCalendarUnitYear |
                                                                                                               NSCalendarUnitMonth |

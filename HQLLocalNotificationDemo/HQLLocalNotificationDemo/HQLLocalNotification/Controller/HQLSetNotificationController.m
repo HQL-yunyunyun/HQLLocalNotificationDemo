@@ -12,7 +12,7 @@
 
 #import "HQLLocalNotificationModel.h"
 
-#define HQLLotificationSubIdentifier @"HQLLotificationSubIdentifier"
+#define HQLNotificationSubIdentifier @"HQLNotificationSubIdentifier"
 
 @interface HQLSetNotificationController () <UIScrollViewDelegate, HQLSetNotificationViewDelegate>
 
@@ -71,12 +71,18 @@
     // 获取model
     HQLLocalNotificationModel *model = [self.setNotificationView getCurrentNotificationModel];
     if (!self.model) {
-        model.subIdentifier = HQLLotificationSubIdentifier;
+        model.subIdentifier = [NSString stringWithFormat:@"%@%@", HQLNotificationSubIdentifier, [self nowDateString]];
     }
     if (self.confirmBlock) {
         self.confirmBlock(model);
     }
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (NSString *)nowDateString {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd-HH-mm-ss-SS"];
+    return [formatter stringFromDate:[NSDate date]];
 }
 
 #pragma mark - scroll view delegate

@@ -22,6 +22,8 @@
 
 #define HQLBackgroundColor [UIColor colorWithRed:(247 / 255.0) green:(248 / 255.0) blue:(250 / 255.0) alpha:1]
 
+#define HQLShowAlertView(Title, Message) [[[UIAlertView alloc] initWithTitle:Title message:Message delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil] show]
+
 @interface HQLLocalNotificationManagerController () <UITableViewDelegate, UITableViewDataSource, HQLLocalNotificationManagerCellDelegate, HQLLocalNotificationManagerDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
@@ -43,7 +45,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self calculateFrame];
+    self.editButton.selected = YES;
+    [self editButtonDidClick:self.editButton];
     [self.tableView reloadData];
 }
 
@@ -54,15 +57,39 @@
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.editButton];
     
+    UIButton *cleanButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cleanButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [cleanButton setTitle:@"清除通知" forState:UIControlStateNormal];
+    [cleanButton sizeToFit];
+    [cleanButton addTarget:self action:@selector(cleanAllNotification) forControlEvents:UIControlEventTouchUpInside];
+    [cleanButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:cleanButton];
+    
     [self.view setBackgroundColor:HQLBackgroundColor];
     [self scrollView];
     [self createButton];
     [self tableView];
     
     self.title = @"提醒";
+    [self calculateFrame];
+    [self.tableView reloadData];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hql_applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
 
 #pragma mark - event
+
+// 当进入前台， 更新通知的状态
+- (void)hql_applicationDidBecomeActive {
+    [self.manager updateNotificationActivity];
+    [self.tableView reloadData];
+}
+
 
 - (void)calculateFrame {
     // 计算tableView的高度
@@ -92,6 +119,10 @@
           } else {
               NSLog(@"添加成功");
           }
+          dispatch_async(dispatch_get_main_queue(), ^{
+              [weakSelf calculateFrame];
+              [weakSelf.tableView reloadData];
+          });
       }];
     };
     
@@ -103,21 +134,38 @@
     [self.tableView setEditing:button.isSelected animated:YES];
 }
 
+- (void)cleanAllNotification {
+    [self.manager deleteAllNotification];
+    [self.tableView reloadData];
+    [self calculateFrame];
+    [self.manager showNotification];
+}
+
 #pragma mark - notification manager delegate
 
 - (void)userNotificationDelegateNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification {
-
+//    NSLog(@"通知1");
+    [self.tableView reloadData];
+    [self calculateFrame];
 }
 
 - (void)userNotificationDelegateNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response {
-
+//    NSLog(@"通知2");
+    [self.tableView reloadData];
+    [self calculateFrame];
 }
 
 #pragma mark - notification manager cell delegate
 
 - (void)localNotificationManagerCellDidClickStatusSwitch:(HQLLocalNotificationManagerCell *)cell isOn:(BOOL)isOn {
-    HQLLocalNotificationModel *model = self.manager.notificationArray[[self.tableView indexPathForCell:cell].row];
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    HQLLocalNotificationModel *model = self.manager.notificationArray[indexPath.row];
     [self.manager setNotificationActivity:isOn notificationModel:model];
+    
+    if (isOn && !model.isActivity) {
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        HQLShowAlertView(@"该提醒不能触发", @"该提醒因超过时间，不能激活");
+    }
 }
 
 #pragma mark - table view delegate
@@ -160,6 +208,10 @@
             [updateProperty setObject:@(targetModel.repeatMode) forKey:@"repeatMode"];
             [updateProperty setObject:@(targetModel.notificationMode) forKey:@"notificationMode"];
             [weakSelf.manager updateNotificationWithPropertyDict:updateProperty notificationModel:model];
+            
+//            [weakSelf calculateFrame];
+//            [weakSelf.tableView reloadData];
+            [weakSelf.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
         };
         [self.navigationController pushViewController:controller animated:YES];
     }

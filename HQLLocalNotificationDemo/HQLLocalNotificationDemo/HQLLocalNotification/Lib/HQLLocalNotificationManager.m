@@ -42,8 +42,14 @@
         [self getNotification];
         
         [self showNotification];
+        
+        
     }
     return self;
+}
+
+- (void)dealloc {
+    NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
 
 #pragma mark - notificationModel operation method
@@ -75,18 +81,24 @@
     HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] initContent:content repeatDateArray:repeatDateArray identifier:self.identifier subIdentifier:subIdentifier repeatMode:repeatMode notificationMode:notificationMode isActivity:isActivity];
     
     __weak typeof(self) weakSelf = self;
+    __block int index = 0;
+    __block NSError *targetError = nil; // 保存最近一次的error
     [HQLLocalNotificationConfig addLocalNotificationWithModel:model completeBlock:^(NSError *error) {
         if (error) {
             // 添加错误
             NSLog(@"add notification error : %@", error);
+            targetError = error;
         } else {
             NSLog(@"add notification success");
         }
         // 都得添加到当前数组中
-        [weakSelf.notificationArray addObject:model];
-        [weakSelf saveNotification]; // 保存到本机中
-        if (completeBlock) {
-            completeBlock(error);
+        index++;
+        if (index == model.repeatDateArray.count || !model.isActivity) {
+            [weakSelf.notificationArray addObject:model];
+            [weakSelf saveNotification]; // 保存到本机中
+            if (completeBlock) {
+                completeBlock(targetError);
+            }
         }
     }];
 }
@@ -131,6 +143,12 @@
         // 不存在该model
         NSLog(@"不存在该model");
     }
+}
+
+- (void)deleteAllNotification {
+    [self.notificationArray removeAllObjects];
+    [self saveNotification];
+    [HQLLocalNotificationConfig removeAllNotification];
 }
 
 // 改
@@ -220,6 +238,14 @@
     }
 }
 
+- (void)updateNotificationActivity {
+    for (HQLLocalNotificationModel *model in self.notificationArray) {
+        if (model.isActivity) {
+            [self notificationIsActivity:[NSString stringWithFormat:@"%@%@%@", model.identifier, HQLLocalNotificationIdentifierLinkChar, model.subIdentifier]];
+        }
+    }
+}
+
 #pragma mark - user notification center delegate
 
 // App处于前台接收通知时
@@ -284,6 +310,16 @@
         for (UILocalNotification *notification in [[UIApplication sharedApplication] scheduledLocalNotifications]) {
             NSLog(@"%@", notification);
         }
+    }
+}
+
+- (void)showDeliveredNotification {
+    if (iOS10_OR_LATER) {
+        [[UNUserNotificationCenter currentNotificationCenter] getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
+            
+        }];
+    } else {
+        
     }
 }
 
