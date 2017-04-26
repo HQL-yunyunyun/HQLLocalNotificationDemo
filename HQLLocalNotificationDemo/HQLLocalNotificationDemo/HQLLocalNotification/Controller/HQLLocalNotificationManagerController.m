@@ -135,6 +135,7 @@
 }
 
 - (void)cleanAllNotification {
+    [self.manager showNotification];
     [self.manager deleteAllNotification];
     [self.tableView reloadData];
     [self calculateFrame];
