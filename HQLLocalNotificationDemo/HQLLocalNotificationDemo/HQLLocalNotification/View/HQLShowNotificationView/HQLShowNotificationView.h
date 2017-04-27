@@ -10,7 +10,7 @@
 
 @class HQLLocalNotificationModel;
 
-//NSString *const HQLShowNotificationViewDidClickNotification = @"HQLShowNotificationViewDidClickNotification";
+static NSString *HQLShowNotificationViewDidClickNotification = @"HQLShowNotificationViewDidClickNotification";
 
 @interface HQLShowNotificationView : UIWindow
 

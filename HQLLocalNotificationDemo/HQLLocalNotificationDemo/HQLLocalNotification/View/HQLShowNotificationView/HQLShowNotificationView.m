@@ -16,7 +16,7 @@ typedef enum {
     HQLDragDirectionDown , // 向下
 } HQLDragDirection;
 
-//#define HQLWeakSelf __weak typeof(self) weakSelf = self
+#define HQLWeakSelf __weak typeof(self) weakSelf = self
 
 #define HQLDefaultWidth [UIScreen mainScreen].bounds.size.width
 
@@ -113,14 +113,13 @@ typedef enum {
 // 点击
 - (void)tap {
     if (!self.notificationModel) return;
-//    [[NSNotificationCenter defaultCenter] postNotificationName:HQLShowNotificationViewDidClickNotification object:self.notificationModel];
+    [[NSNotificationCenter defaultCenter] postNotificationName:HQLShowNotificationViewDidClickNotification object:self.notificationModel];
     [self hideView];
 }
 
 // 隐藏View
 - (void)hideView {
-//    HQLWeakSelf;
-    __weak typeof(self) weakSelf = self;
+    HQLWeakSelf;
     [UIView animateWithDuration:HQLViewAnimateTime animations:^{
         weakSelf.frame = CGRectMake(0, -weakSelf.frame.size.height, weakSelf.frame.size.width, weakSelf.frame.size.height);
     } completion:^(BOOL finished) {
@@ -132,8 +131,7 @@ typedef enum {
 - (void)showView {
     [[self appRootViewController].view addSubview:self];
     
-//    HQLWeakSelf;
-    __weak typeof(self) weakSelf = self;
+    HQLWeakSelf;
     self.frame = CGRectMake(0, -self.frame.size.height, self.frame.size.width, self.frame.size.height);
     [UIView animateWithDuration:HQLViewAnimateTime animations:^{
         weakSelf.frame = CGRectMake(0, 0, weakSelf.frame.size.width, weakSelf.frame.size.height);
