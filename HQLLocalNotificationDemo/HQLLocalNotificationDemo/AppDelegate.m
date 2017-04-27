@@ -12,6 +12,8 @@
 #import "HQLLocalNotificationManager.h"
 #import "HQLLocalNotificationManagerController.h"
 
+#import "HQLShowNotificationView.h"
+
 @interface AppDelegate ()
 
 @end
@@ -46,6 +48,11 @@
     NSDictionary *userinfo = notification.userInfo;
     NSString *identifier = userinfo[HQLUserInfoIdentifier];
     [[HQLLocalNotificationManager shareManger] notificationIsActivity:identifier];
+    
+//    NSArray *identifierArray = [identifier componentsSeparatedByString:HQLLocalNotificationIdentifierLinkChar];
+//    HQLShowNotificationView *notificationView = [HQLShowNotificationView showNotificationViewiOS10BeforeStyle];
+//    notificationView.notificationModel = [[HQLLocalNotificationManager shareManger] getNotificationModelWithIdentifier:identifierArray[0] subIdentifier:identifierArray[1]];
+//    [notificationView showView];
     
     NSLog(@"identifier : %@ alertBody:%@ alertTitle:%@ fireDate:%@", identifier, notification.alertBody, notification.alertTitle, notification.fireDate);
 }
