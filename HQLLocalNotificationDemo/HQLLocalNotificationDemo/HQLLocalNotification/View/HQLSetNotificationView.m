@@ -136,7 +136,8 @@
     
     if (!self.notificationModel) {
         HQLLocalNotificationModel *model = [HQLLocalNotificationModel localNotificationModel];
-        model.repeatMode = HQLLocalNotificationDayRepeat;
+        model.repeatMode = HQLLocalNotificationNoneRepeat;
+        model.notificationMode = HQLLocalNotificationAlarmMode;
         model.isActivity = YES;
         self.notificationModel = model;
     }
@@ -167,7 +168,7 @@
         return; // 保证在设 model 之前不会创建其他控件
     }
     
-    self.lastMonth.hidden = self.currentRepeat != HQLLocalNotificationNoneRepeat;
+    self.lastMonth.hidden = (self.currentRepeat != HQLLocalNotificationNoneRepeat || self.currentMode != HQLLocalNotificationScheduleMode);
     self.nextMonth.hidden = self.lastMonth.isHidden;
     
     // 因为frame的改变只有最后的 选择日期 区域会有所改变,所以根据当前模式更新高度,高度的变化都是固定的
@@ -207,22 +208,42 @@
             break;
         }
         case HQLLocalNotificationNoneRepeat: { // 不重复
-            frame.size.height = HQLFixedHeight + HQLNotRepeatModeHeight;
-            titleLabelFrame.origin.y = (HQLNotRepeatModeHeight - titleLabelFrame.size.height) * 0.5;
             
-            // 还要刷新两个button的frame
-            CGFloat margin = 5;
-            CGFloat width = 30;
-            CGFloat height = 28;
-            CGFloat buttonX = (HQLTitleViewWidth - width) * 0.5;
-            CGFloat lastButtonY = CGRectGetMinY(titleLabelFrame) - margin - height;
-            CGFloat nextButtonY = CGRectGetMaxY(titleLabelFrame) + margin;
-            self.lastMonth.frame = CGRectMake(buttonX, lastButtonY, width, height);
-            self.nextMonth.frame = CGRectMake(buttonX, nextButtonY, width, height);
-            
-            self.calendarView.frame = CGRectMake(0, 0, (self.frame.size.width - HQLTitleViewWidth), HQLNotRepeatModeHeight);
-            [self updateCalendarViewsFrame]; // 更新日历的frame
-            
+            switch (self.currentMode) {
+                case HQLLocalNotificationAlarmMode: {
+                    frame.size.height = HQLFixedHeight + HQLWeekModeHeight;
+                    titleLabelFrame.origin.y = (HQLWeekModeHeight - titleLabelFrame.size.height) * 0.5;
+                    
+                    // 更新weekButtons的frame
+                    UIButton *lastButton = nil;
+                    CGFloat buttonWidth = (self.frame.size.width - HQLTitleViewWidth) / 7;
+                    for (UIButton *button in self.weekButtonArray) {
+                        button.frame = CGRectMake(CGRectGetMaxX(lastButton.frame), 0, buttonWidth, HQLWeekModeHeight);
+                        lastButton = button;
+                    }
+                    
+                    self.weekButtonView.frame = CGRectMake(0, 0, (self.frame.size.width - HQLTitleViewWidth), HQLWeekModeHeight);
+                    break;
+                }
+                case  HQLLocalNotificationScheduleMode: {
+                    frame.size.height = HQLFixedHeight + HQLNotRepeatModeHeight;
+                    titleLabelFrame.origin.y = (HQLNotRepeatModeHeight - titleLabelFrame.size.height) * 0.5;
+                    
+                    // 还要刷新两个button的frame
+                    CGFloat margin = 5;
+                    CGFloat width = 30;
+                    CGFloat height = 28;
+                    CGFloat buttonX = (HQLTitleViewWidth - width) * 0.5;
+                    CGFloat lastButtonY = CGRectGetMinY(titleLabelFrame) - margin - height;
+                    CGFloat nextButtonY = CGRectGetMaxY(titleLabelFrame) + margin;
+                    self.lastMonth.frame = CGRectMake(buttonX, lastButtonY, width, height);
+                    self.nextMonth.frame = CGRectMake(buttonX, nextButtonY, width, height);
+                    
+                    self.calendarView.frame = CGRectMake(0, 0, (self.frame.size.width - HQLTitleViewWidth), HQLNotRepeatModeHeight);
+                    [self updateCalendarViewsFrame]; // 更新日历的frame
+                    break;
+                }
+            }
             break;
         }
         default: {
@@ -251,53 +272,65 @@
 - (IBAction)modeButtonDidClick:(HQLSelectButton *)sender {
     [self endEditing:YES];
     
-    // 取消button的选择
-    for (UIView *view in self.modeButtonView.subviews) {
-        if ([view isKindOfClass:[HQLSelectButton class]]) {
-            HQLSelectButton *button = (HQLSelectButton *)view;
-            [button setSelected:NO];
-        }
-    }
-    
-    [sender setSelected:!sender.isSelected];
-    
     [self.weekButtonView setHidden:YES];
     [self.dayChooseView setHidden:YES];
     [self.calendarView setHidden:YES];
     
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    
-    switch (sender.tag) {
-        case HQLEveryDayButtonTag: // 每日按钮
-        case HQLWorkDayButtonTag: // 工作日按钮
-        case HQLWeekendButtonTag: { // 休息日按钮
-            if (sender.tag == HQLEveryDayButtonTag) {
-                self.currentRepeat = HQLLocalNotificationDayRepeat;
-            } else {
-                self.currentRepeat = HQLLocalNotificationWeekRepeat;
+    if (sender.isSelected) { // 原本就已选择
+        [sender setSelected:NO];
+        
+        [self.weekButtonView setHidden:NO];
+        self.currentMode = HQLLocalNotificationAlarmMode;
+        self.currentRepeat = HQLLocalNotificationNoneRepeat;
+        
+        [self.weekButtonArray enumerateObjectsUsingBlock:^(HQLSelectButton *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [obj setSelected:NO];
+        }];
+        
+        [self.currentDateArray removeAllObjects];
+        [self.titleLabel setText:@"星期"];
+        
+    } else {
+        // 取消button的选择
+        for (UIView *view in self.modeButtonView.subviews) {
+            if ([view isKindOfClass:[HQLSelectButton class]]) {
+                HQLSelectButton *button = (HQLSelectButton *)view;
+                [button setSelected:NO];
             }
-            self.currentMode = HQLLocalNotificationAlarmMode; // 默认闹钟模式
-            self.titleLabel.text = @"星期";
-            
-            // 创建buttons
-            if (self.weekButtonArray.count == 0) {
-                [self createWeekButtons];
-            } else {
-                [self.weekButtonArray enumerateObjectsUsingBlock:^(HQLSelectButton *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    obj.selected = NO;
-                }];
-            }
-            // 清除currentSelectedDate
-            [self.currentDateArray removeAllObjects];
-            // 根据三种情况 设置date
-            if (sender.tag == HQLEveryDayButtonTag) {
-                // 每天
-                [self.currentDateArray addObject:[NSDate date]];
-                [self.weekButtonArray enumerateObjectsUsingBlock:^(HQLSelectButton *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    obj.selected = YES;
-                }];
-            } else {
-                if (sender.tag == HQLWorkDayButtonTag) {
+        }
+        
+        [sender setSelected:YES];
+        
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        
+        switch (sender.tag) {
+            case HQLEveryDayButtonTag: // 每日按钮
+            case HQLWorkDayButtonTag: // 工作日按钮
+            case HQLWeekendButtonTag: { // 休息日按钮
+                if (sender.tag == HQLEveryDayButtonTag) {
+                    self.currentRepeat = HQLLocalNotificationDayRepeat;
+                } else {
+                    self.currentRepeat = HQLLocalNotificationWeekRepeat;
+                }
+                self.currentMode = HQLLocalNotificationAlarmMode; // 默认闹钟模式
+                self.titleLabel.text = @"星期";
+                
+                // 创建buttons
+                if (self.weekButtonArray.count == 0) {
+                    [self createWeekButtons];
+                } else {
+                    [self.weekButtonArray enumerateObjectsUsingBlock:^(HQLSelectButton *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        obj.selected = NO;
+                    }];
+                }
+                // 清除currentSelectedDate
+                [self.currentDateArray removeAllObjects];
+                // 根据三种情况 设置date
+                if (sender.tag == HQLEveryDayButtonTag) {
+                    for (int i = 1; i <= 7; i++) {
+                        [self.currentDateArray addObject:[HQLLocalNotificationConfig getWeekdayDateWithWeekday:i]];
+                    }
+                } else if (sender.tag == HQLWorkDayButtonTag) {
                     for (int i = 2; i <= 6; i++) {
                         [self.currentDateArray addObject:[HQLLocalNotificationConfig getWeekdayDateWithWeekday:i]];
                     }
@@ -305,82 +338,80 @@
                     [self.currentDateArray addObject:[HQLLocalNotificationConfig getWeekdayDateWithWeekday:1]];
                     [self.currentDateArray addObject:[HQLLocalNotificationConfig getWeekdayDateWithWeekday:7]];
                 }
-                
                 for (NSDate *date in self.currentDateArray) {
                     NSInteger weekday = [calendar component:NSCalendarUnitWeekday fromDate:date];
                     HQLSelectButton *button = self.weekButtonArray[weekday - 1];
                     [button setSelected:YES];
                 }
-            }
-            
-            [self.weekButtonView setHidden:NO];
-            
-            break;
-        }
-        case HQLEveryMonthButtonTag: { // 每月按钮
-            // 判断当前的repeat模式是否是每月重复
-            if (self.currentRepeat != HQLLocalNotificationMonthRepeat) {
-                // 清除已选择日期
-                [self.currentDateArray removeAllObjects];
-                NSCalendar *calendar = [NSCalendar currentCalendar];
+                [self.weekButtonView setHidden:NO];
                 
-                NSDateComponents *component = [[NSDateComponents alloc] init];
-                component.year = 2017;
-                component.month = 5;
-                for (HQLDayChooseModel *model in self.dayChooseDataSource) { // 设置已选择的日期
-                    if (model.isSelected) {
-                        component.day = model.day;
+                break;
+            }
+            case HQLEveryMonthButtonTag: { // 每月按钮
+                // 判断当前的repeat模式是否是每月重复
+                if (self.currentRepeat != HQLLocalNotificationMonthRepeat) {
+                    // 清除已选择日期
+                    [self.currentDateArray removeAllObjects];
+                    NSCalendar *calendar = [NSCalendar currentCalendar];
+                    
+                    NSDateComponents *component = [[NSDateComponents alloc] init];
+                    component.year = 2017;
+                    component.month = 5;
+                    for (HQLDayChooseModel *model in self.dayChooseDataSource) { // 设置已选择的日期
+                        if (model.isSelected) {
+                            component.day = model.day;
+                            [self.currentDateArray addObject:[calendar dateFromComponents:component]];
+                        }
+                    }
+                    if (self.currentDateArray.count == 0) {
+                        component.day = [calendar component:NSCalendarUnitDay fromDate:[NSDate date]];
                         [self.currentDateArray addObject:[calendar dateFromComponents:component]];
+                        HQLDayChooseModel *model = self.dayChooseDataSource[component.day - 1];
+                        model.isSelected = YES;
+                    }
+                } else {
+                    // 给model赋值
+                    for (NSDate *date in self.currentDateArray) {
+                        NSInteger day = [calendar component:NSCalendarUnitDay fromDate:date];
+                        HQLDayChooseModel *model = self.dayChooseDataSource[day -1];
+                        model.isSelected = YES;
                     }
                 }
-                if (self.currentDateArray.count == 0) {
-                    component.day = [calendar component:NSCalendarUnitDay fromDate:[NSDate date]];
-                    [self.currentDateArray addObject:[calendar dateFromComponents:component]];
-                    HQLDayChooseModel *model = self.dayChooseDataSource[component.day - 1];
-                    model.isSelected = YES;
-                }
-            } else {
-                // 给model赋值
-                for (NSDate *date in self.currentDateArray) {
-                    NSInteger day = [calendar component:NSCalendarUnitDay fromDate:date];
-                    HQLDayChooseModel *model = self.dayChooseDataSource[day -1];
-                    model.isSelected = YES;
-                }
+                self.currentRepeat = HQLLocalNotificationMonthRepeat;
+                self.currentMode = HQLLocalNotificationScheduleMode;
+                self.titleLabel.text = @"日期";
+                
+                [self.dayChooseView setHidden:NO];
+                
+                break;
             }
-            self.currentRepeat = HQLLocalNotificationMonthRepeat;
-            self.currentMode = HQLLocalNotificationScheduleMode;
-            self.titleLabel.text = @"日期";
-            
-            [self.dayChooseView setHidden:NO];
-            
-            break;
-        }
-        case HQLNotRepeatButtonTag: { // 不重复按钮
-            
-            if (self.currentRepeat != HQLLocalNotificationNoneRepeat) {
-                [self.currentDateArray removeAllObjects];
-                for (HQLCalendarView *view in self.calendarViewArray) {
-                    for (HQLDateModel *date in [view currentSelectDateArray]) { // 更新日期
-                        [self.currentDateArray addObject:[date changeToNSDate]];
+            case HQLNotRepeatButtonTag: { // 不重复按钮
+                
+                if (self.currentRepeat != HQLLocalNotificationNoneRepeat) {
+                    [self.currentDateArray removeAllObjects];
+                    for (HQLCalendarView *view in self.calendarViewArray) {
+                        for (HQLDateModel *date in [view currentSelectDateArray]) { // 更新日期
+                            [self.currentDateArray addObject:[date changeToNSDate]];
+                        }
+                    }
+                    if (self.currentDateArray.count == 0) {
+                        [self.currentDateArray addObject:[NSDate date]];
                     }
                 }
-                if (self.currentDateArray.count == 0) {
-                    [self.currentDateArray addObject:[NSDate date]];
+                
+                if (self.calendarViewArray.count == 0) {
+                    [self createCalendarViews];
                 }
+                
+                self.currentRepeat = HQLLocalNotificationNoneRepeat;
+                self.currentMode = HQLLocalNotificationScheduleMode;
+                [self updateNotRepeatModeTitle];
+                [self.calendarView setHidden:NO];
+                
+                break;
             }
-            
-            if (self.calendarViewArray.count == 0) {
-                [self createCalendarViews];
-            }
-            
-            self.currentRepeat = HQLLocalNotificationNoneRepeat;
-            self.currentMode = HQLLocalNotificationScheduleMode;
-            [self updateNotRepeatModeTitle];
-            [self.calendarView setHidden:NO];
-            
-            break;
+            default: { break; }
         }
-        default: { break; }
     }
     // 更新信息
     [self updateNotificationDateInfo];
@@ -404,8 +435,70 @@
         
         [button setTitle:[self getWeekdayChineseWithInteger:i] forState:UIControlStateNormal];
         
+        [button addTarget:self action:@selector(weekButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
+        
         [self.weekButtonView addSubview:button];
         [self.weekButtonArray addObject:button];
+    }
+}
+
+- (void)weekButtonDidClick:(UIButton *)button {
+    button.selected = !button.isSelected;
+    
+    self.currentRepeat = HQLLocalNotificationWeekRepeat;
+    self.currentMode = HQLLocalNotificationAlarmMode;
+    
+    // 取消button的选择
+    for (UIView *view in self.modeButtonView.subviews) {
+        if ([view isKindOfClass:[HQLSelectButton class]]) {
+            HQLSelectButton *button = (HQLSelectButton *)view;
+            [button setSelected:NO];
+        }
+    }
+    
+    // 获取日期
+    NSDate *targetDate = [HQLLocalNotificationConfig getWeekdayDateWithWeekday:([self.weekButtonArray indexOfObject:button] + 1)];
+    if (button.isSelected) { // 在当前repeatDateArray中一定没有
+        [self.currentDateArray addObject:targetDate];
+    } else {
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        NSDate *deleteDate = nil;
+        for (NSDate *date in self.currentDateArray) {
+            if ([calendar component:NSCalendarUnitWeekday fromDate:date] == [calendar component:NSCalendarUnitWeekday fromDate:targetDate]) {
+                deleteDate = date;
+                break;
+            }
+        }
+        if (deleteDate) {
+            [self.currentDateArray removeObject:deleteDate];
+        }
+        if (self.currentDateArray.count == 0) {
+             // 如果取消了所有的button ---> 就是闹钟模式(不重复)
+            self.currentMode = HQLLocalNotificationAlarmMode;
+            self.currentRepeat = HQLLocalNotificationNoneRepeat;
+        }
+    }
+    HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] init];
+    model.repeatMode = self.currentRepeat;
+    model.notificationMode = self.currentMode;
+    model.repeatDateArray = [NSArray arrayWithArray:self.currentDateArray];
+    HQLWeekMode result = [model getModelWeekMode];
+    switch (result) {
+        case HQLWeekday: { // 如果是七天都会归纳到这里
+            if (self.currentDateArray.count == 7) {
+                [self modeButtonDidClick:self.everydayButton];
+            } else {
+                [self updateNotificationDateInfo];
+            }
+            break;
+        }
+        case HQLWeekEnd: {
+            [self modeButtonDidClick:self.weekendButton];
+            break;
+        }
+        case HQLWorkDay: {
+            [self modeButtonDidClick:self.workdayButton];
+        }
     }
 }
 
@@ -662,7 +755,13 @@
             break;
         }
         case HQLLocalNotificationNoneRepeat: {
-            [self modeButtonDidClick:self.notRepeatButton];
+            if (self.currentMode == HQLLocalNotificationScheduleMode) { // 日程模式
+                [self modeButtonDidClick:self.notRepeatButton];
+            } else if (self.currentMode == HQLLocalNotificationAlarmMode) { // 闹钟模式
+                [self modeButtonDidClick:self.weekendButton];
+                [self weekButtonDidClick:self.weekButtonArray.firstObject];
+                [self weekButtonDidClick:self.weekButtonArray.lastObject];
+            }
             break;
         }
         case HQLLocalNotificationYearRepeat: { break; }

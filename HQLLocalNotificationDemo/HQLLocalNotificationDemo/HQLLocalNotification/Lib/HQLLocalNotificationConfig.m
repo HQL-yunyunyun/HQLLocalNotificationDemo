@@ -86,13 +86,26 @@
     
     // 首先 -> 判断是否可以启用, 如果是日程模式,且不循环,则如果日期都已经过去了,则不启用 isActivity = NO
     if (model.isActivity) {
-        if (model.notificationMode == HQLLocalNotificationScheduleMode && model.repeatMode == HQLLocalNotificationNoneRepeat) {
-            for (NSDate *date in model.repeatDateArray) {
-                if ([date compare:[NSDate date]] == NSOrderedDescending) { // 日期大于现在
-                    model.isActivity = YES;
-                    break;
-                } else {
+        if (model.repeatMode == HQLLocalNotificationNoneRepeat) { // 不重复都有两种状态
+            if (model.notificationMode == HQLLocalNotificationScheduleMode) { // 日程状态
+                for (NSDate *date in model.repeatDateArray) {
+                    if ([date compare:[NSDate date]] == NSOrderedDescending) { // 日期大于现在
+                        model.isActivity = YES;
+                        break;
+                    } else {
+                        model.isActivity = NO;
+                    }
+                }
+            } else if (model.notificationMode == HQLLocalNotificationAlarmMode) { // 闹钟状态
+                // 在这个状态下，只有一个时间
+                if (model.repeatDateArray.count != 1) {
                     model.isActivity = NO;
+                } else {
+                    NSDate *date = model.repeatDateArray.firstObject;
+                    if ([date compare:[NSDate date]] != NSOrderedDescending) { // 如果日期不大于显示时间
+                        // 直接覆盖时间，改变触发日期
+                        model.repeatDateArray = [NSArray arrayWithObject:[self getPriusDateFromDate:date withDay:1]];
+                    }
                 }
             }
         }

@@ -49,10 +49,10 @@
     NSString *identifier = userinfo[HQLUserInfoIdentifier];
     [[HQLLocalNotificationManager shareManger] notificationIsActivity:identifier];
     
-//    NSArray *identifierArray = [identifier componentsSeparatedByString:HQLLocalNotificationIdentifierLinkChar];
-//    HQLShowNotificationView *notificationView = [HQLShowNotificationView showNotificationViewiOS10BeforeStyle];
-//    notificationView.notificationModel = [[HQLLocalNotificationManager shareManger] getNotificationModelWithIdentifier:identifierArray[0] subIdentifier:identifierArray[1]];
-//    [notificationView showView];
+    NSArray *identifierArray = [identifier componentsSeparatedByString:HQLLocalNotificationIdentifierLinkChar];
+    HQLShowNotificationView *notificationView = [HQLShowNotificationView showNotificationViewiOS10BeforeStyle];
+    notificationView.notificationModel = [[HQLLocalNotificationManager shareManger] getNotificationModelWithIdentifier:identifierArray[0] subIdentifier:identifierArray[1]];
+    [notificationView showView];
     
     NSLog(@"identifier : %@ alertBody:%@ alertTitle:%@ fireDate:%@", identifier, notification.alertBody, notification.alertTitle, notification.fireDate);
 }

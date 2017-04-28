@@ -185,14 +185,13 @@
         }
         case HQLLocalNotificationNoneRepeat: { // 不重复
             if (self.notificationMode == HQLLocalNotificationScheduleMode) { // 日程模式
-                
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                [formatter setDateFormat:@"yyyy.MM.dd"];
+                for (NSDate *date in self.repeatDateArray) {
+                    targetString = [targetString stringByAppendingString:[NSString stringWithFormat:@"%@ ", [formatter stringFromDate:date]]];
+                }
             } else if (self.notificationMode == HQLLocalNotificationAlarmMode) { // 闹钟模式
-            
-            }
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            [formatter setDateFormat:@"yyyy.MM.dd"];
-            for (NSDate *date in self.repeatDateArray) {
-                targetString = [targetString stringByAppendingString:[NSString stringWithFormat:@"%@ ", [formatter stringFromDate:date]]];
+                // 闹钟模式没有样式
             }
             break;
         }

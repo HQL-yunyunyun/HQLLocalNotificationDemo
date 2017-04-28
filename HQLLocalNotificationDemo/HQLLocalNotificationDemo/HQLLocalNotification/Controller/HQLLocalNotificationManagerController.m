@@ -13,6 +13,8 @@
 
 #import "HQLLocalNotificationManager.h"
 
+#import "HQLShowNotificationView.h"
+
 #define HQLTableViewCellHeight 80
 
 #define HQLScreenWidth [UIScreen mainScreen].bounds.size.width
@@ -75,6 +77,8 @@
     [self.tableView reloadData];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hql_applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showNotificationViewDidHide:) name:HQLShowNotificationViewDidHideNotification object:nil];
 }
 
 - (void)dealloc {
@@ -83,6 +87,14 @@
 }
 
 #pragma mark - event
+
+- (void)showNotificationViewDidClick {
+
+}
+
+- (void)showNotificationViewDidHide:(NSNotification *)notification {
+    NSLog(@"placeHolder");
+}
 
 // 当进入前台， 更新通知的状态
 - (void)hql_applicationDidBecomeActive {
@@ -140,6 +152,14 @@
     [self.tableView reloadData];
     [self calculateFrame];
     [self.manager showNotification];
+    
+    HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] init];
+    HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
+    content.alertBody = @"alertBody";
+    model.content = content;
+    HQLShowNotificationView *view = [HQLShowNotificationView showNotificationViewiOS10BeforeStyle];
+    view.notificationModel = model;
+    [view showView];
 }
 
 #pragma mark - notification manager delegate

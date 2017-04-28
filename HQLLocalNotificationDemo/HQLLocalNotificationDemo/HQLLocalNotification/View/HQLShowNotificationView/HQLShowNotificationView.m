@@ -45,6 +45,10 @@ typedef enum {
 
 @property (assign, nonatomic) CGFloat contentLabelHeight;
 
+//@property (strong, nonatomic) UIWindow *originWindow;
+
+//@property (assign, nonatomic) BOOL isHideStatusBar;
+
 @end
 
 @implementation HQLShowNotificationView
@@ -108,6 +112,8 @@ typedef enum {
         self.iOS10MaskView.layer.shadowRadius = 10;
         self.iOS10MaskView.layer.shadowOffset = CGSizeMake(0, 0);
     }
+    
+//    self.originWindow = [UIApplication sharedApplication].keyWindow;
 }
 
 // 点击
@@ -123,14 +129,31 @@ typedef enum {
     [UIView animateWithDuration:HQLViewAnimateTime animations:^{
         weakSelf.frame = CGRectMake(0, -weakSelf.frame.size.height, weakSelf.frame.size.width, weakSelf.frame.size.height);
     } completion:^(BOOL finished) {
+        for (UIView *view in weakSelf.subviews) {
+            CGRect frame = view.frame;
+            [view removeConstraints:view.constraints];
+            view.frame = frame;
+            [view removeFromSuperview];
+        }
+        [weakSelf removeConstraints:weakSelf.constraints];
+//        [weakSelf resignKeyWindow];
+//        [weakSelf.originWindow makeKeyAndVisible];
+//        [UIApplication sharedApplication].statusBarHidden = weakSelf.isHideStatusBar;
         [weakSelf removeFromSuperview];
+        [[NSNotificationCenter defaultCenter] postNotificationName:HQLShowNotificationViewDidHideNotification object:weakSelf];
     }];
 }
 
 // 显示View
 - (void)showView {
-    [[self appRootViewController].view addSubview:self];
+    if (!self.superview) {
+        [[self appRootViewController].view addSubview:self];
+//        [self makeKeyAndVisible];
+    }
     
+//    self.isHideStatusBar = [UIApplication sharedApplication].statusBarHidden;
+//    [self appRootViewController].prefersStatusBarHidden = YES;
+//    [UIApplication sharedApplication].statusBarHidden = YES;
     HQLWeakSelf;
     self.frame = CGRectMake(0, -self.frame.size.height, self.frame.size.width, self.frame.size.height);
     [UIView animateWithDuration:HQLViewAnimateTime animations:^{

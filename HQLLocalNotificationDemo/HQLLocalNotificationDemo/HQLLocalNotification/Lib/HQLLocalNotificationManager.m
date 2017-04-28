@@ -73,8 +73,8 @@
     }
     [aUserInfo setValue:@"holdPlace" forKey:@"holdPlace"];
     content.userInfo = aUserInfo.copy;
-    
     content.applicationIconBadgeNumber = badgeNumber;
+    
     HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] initContent:content repeatDateArray:repeatDateArray identifier:self.identifier subIdentifier:subIdentifier repeatMode:repeatMode notificationMode:notificationMode isActivity:isActivity];
     
     __weak typeof(self) weakSelf = self;
