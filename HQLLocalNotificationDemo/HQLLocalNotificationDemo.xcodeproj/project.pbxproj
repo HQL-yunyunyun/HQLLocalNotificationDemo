@@ -52,6 +52,7 @@
 		4A0EF0161EB20C78008C7819 /* HQLShowNotificationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLShowNotificationView.h; sourceTree = "<group>"; };
 		4A0EF0171EB20C78008C7819 /* HQLShowNotificationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLShowNotificationView.m; sourceTree = "<group>"; };
 		4A0EF0181EB20C78008C7819 /* HQLShowNotificationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HQLShowNotificationView.xib; sourceTree = "<group>"; };
+		4A0EF01B1EB891DF008C7819 /* HQLLocalNotificationDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HQLLocalNotificationDemo.entitlements; sourceTree = "<group>"; };
 		4A643EE61E5706D300F249B2 /* HQLLocalNotificationDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HQLLocalNotificationDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A643EEA1E5706D300F249B2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4A643EEC1E5706D300F249B2 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -157,6 +158,7 @@
 		4A643EE81E5706D300F249B2 /* HQLLocalNotificationDemo */ = {
 			isa = PBXGroup;
 			children = (
+				4A0EF01B1EB891DF008C7819 /* HQLLocalNotificationDemo.entitlements */,
 				4A64B3E51E65212F005F6B8E /* HQLLocalNotification */,
 				4A643EEC1E5706D300F249B2 /* AppDelegate.h */,
 				4A643EED1E5706D300F249B2 /* AppDelegate.m */,
@@ -353,7 +355,7 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -550,6 +552,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HQLLocalNotificationDemo/HQLLocalNotificationDemo.entitlements;
 				DEVELOPMENT_TEAM = X8GXYMZ6FW;
 				INFOPLIST_FILE = HQLLocalNotificationDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -563,6 +566,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HQLLocalNotificationDemo/HQLLocalNotificationDemo.entitlements;
 				DEVELOPMENT_TEAM = X8GXYMZ6FW;
 				INFOPLIST_FILE = HQLLocalNotificationDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;

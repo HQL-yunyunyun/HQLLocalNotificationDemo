@@ -155,7 +155,9 @@
     
     HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] init];
     HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
-    content.alertBody = @"alertBody";
+    content.alertBody = @"alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody";
+    content.alertTitle = @"alertTitle";
+    
     model.content = content;
     HQLShowNotificationView *view = [HQLShowNotificationView showNotificationViewiOS10BeforeStyle];
     view.notificationModel = model;

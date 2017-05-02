@@ -19,6 +19,7 @@ typedef enum {
 #define HQLWeakSelf __weak typeof(self) weakSelf = self
 
 #define HQLDefaultWidth [UIScreen mainScreen].bounds.size.width
+#define HQLMaxHeight [UIScreen mainScreen].bounds.size.height
 
 #define HQLiOS10BeforeHeight 70
 #define HQLiOS10DefaultHeight 90
@@ -28,6 +29,8 @@ typedef enum {
 
 #define HQLViewStayTime 4.7
 #define HQLViewAnimateTime 0.3
+
+#define HQLiOS10BeforeFixedHeight 38.5
 
 @interface HQLShowNotificationView ()
 
@@ -45,8 +48,14 @@ typedef enum {
 
 @property (assign, nonatomic) CGFloat contentLabelHeight;
 
-//@property (strong, nonatomic) UIWindow *originWindow;
+@property (assign, nonatomic) CGPoint lastTouchPoint; // 记录最新的touchPoint
 
+// iOS10以前的内容的top的约束
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *iOS10BeforeContentTopConstraint;
+
+@property (assign, nonatomic) BOOL isTap;
+
+//@property (strong, nonatomic) UIWindow *originWindow;
 //@property (assign, nonatomic) BOOL isHideStatusBar;
 
 @end
@@ -104,15 +113,6 @@ typedef enum {
     // 添加点击手势
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)];
     [self addGestureRecognizer:tap];
-    
-    // 设置iOS10下的阴影
-    if (self.iOS10) {
-        self.iOS10MaskView.layer.shadowColor = [UIColor blackColor].CGColor;
-        self.iOS10MaskView.layer.shadowOpacity = 0.4;
-        self.iOS10MaskView.layer.shadowRadius = 10;
-        self.iOS10MaskView.layer.shadowOffset = CGSizeMake(0, 0);
-    }
-    
 //    self.originWindow = [UIApplication sharedApplication].keyWindow;
 }
 
@@ -120,6 +120,7 @@ typedef enum {
 - (void)tap {
     if (!self.notificationModel) return;
     [[NSNotificationCenter defaultCenter] postNotificationName:HQLShowNotificationViewDidClickNotification object:self.notificationModel];
+    self.isTap = YES;
     [self hideView];
 }
 
@@ -141,6 +142,8 @@ typedef enum {
 //        [UIApplication sharedApplication].statusBarHidden = weakSelf.isHideStatusBar;
         [weakSelf removeFromSuperview];
         [[NSNotificationCenter defaultCenter] postNotificationName:HQLShowNotificationViewDidHideNotification object:weakSelf];
+        
+        weakSelf.isTap = NO;
     }];
 }
 
@@ -178,7 +181,9 @@ typedef enum {
     
     CGFloat width = HQLDefaultWidth;
     if (self.iOS10) {
-        width = HQLDefaultWidth - 33;
+        width -= 33;
+    } else {
+        width -= 54;
     }
     CGSize size = CGSizeMake(width, MAXFLOAT);
     NSDictionary *dict = [NSDictionary dictionaryWithObject:[UIFont systemFontOfSize:HQLContentLabelFontSize] forKey:NSFontAttributeName];
@@ -191,32 +196,120 @@ typedef enum {
 // 开始
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     UITouch *touch = touches.anyObject;
-    CGPoint touchPoint = [touch locationInView:self];
-    NSLog(@"touchBegan : %@", NSStringFromCGPoint(touchPoint));
+    self.lastTouchPoint = [touch locationInView:self];
+    self.currentDirection = HQLDragDirectionNone;
+    NSLog(@"touchBegan : %@", NSStringFromCGPoint(self.lastTouchPoint));
 }
 
 // 取消
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    UITouch *touch = touches.anyObject;
-    CGPoint touchPoint = [touch locationInView:self];
-    NSLog(@"touchCancel : %@", NSStringFromCGPoint(touchPoint));
+    [self touchesEnded:touches withEvent:event];
 }
 
 // 结束
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    if (self.isTap) return;
+    
     UITouch *touch = touches.anyObject;
     CGPoint touchPoint = [touch locationInView:self];
+    __weak typeof(self) weakSelf = self;
+    // 根据方向来决定接下来的动画
+    switch (self.currentDirection) {
+        case HQLDragDirectionUp: {
+            // 只要是向上都hide
+            [self hideView];
+            break;
+        }
+        case HQLDragDirectionDown: {
+            if (self.iOS10) {
+                // 滚到原来的位置
+                [UIView animateWithDuration:HQLViewAnimateTime animations:^{
+                    weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, 0, weakSelf.frame.size.width, weakSelf.frame.size.height);
+                } completion:^(BOOL finished) {
+                    
+                }];
+            } else {
+                CGFloat height = HQLiOS10BeforeFixedHeight + [self calculateContentLabelHeightWithContent:self.notificationModel.content.alertBody] + 1;
+                height = height >= HQLMaxHeight ? HQLMaxHeight : height;
+                [UIView animateWithDuration:HQLViewAnimateTime animations:^{
+                    weakSelf.iOS10BeforeContentTopConstraint.constant = 6;
+                    weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, weakSelf.frame.origin.y, weakSelf.frame.size.width, height);
+                    [weakSelf layoutIfNeeded];
+                } completion:^(BOOL finished) {
+                    
+                }];
+            }
+            break;
+        }
+        case HQLDragDirectionNone: { break; }
+    }
     NSLog(@"touchEnd : %@", NSStringFromCGPoint(touchPoint));
 }
 
 // 移动
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    UITouch *touch = touches.anyObject;
-    CGPoint touchPoint = [touch locationInView:self];
-    NSLog(@"touchMove : %@", NSStringFromCGPoint(touchPoint));
+    CGPoint touchPoint = [touches.anyObject locationInView:self];
+    CGFloat distance = touchPoint.y - self.lastTouchPoint.y;
+    if (distance < 0) { // 向上
+        self.currentDirection = HQLDragDirectionUp;
+        if (self.iOS10) { // iOS10 样式 ---> 直接修改y值
+            self.frame = CGRectMake(self.frame.origin.x, (self.frame.origin.y <= -38 ? -38 : self.frame.origin.y + distance), self.frame.size.width, self.frame.size.height);
+            // 更新touchPoint
+            touchPoint.y -= distance;
+        } else {
+            
+        }
+    } else { // 向下
+        self.currentDirection = HQLDragDirectionDown;
+        if (self.iOS10) {
+            CGFloat y = self.frame.origin.y;
+            y += self.frame.origin.y >= 38 ? 0 : (self.frame.origin.y >= 30 ? (distance * 0.001) : self.frame.origin.y >= 20 ? (distance * 0.01) : self.frame.origin.y >= 0 ? (distance * 0.02) : distance);
+            self.frame = CGRectMake(self.frame.origin.x, y, self.frame.size.width, self.frame.size.height);
+            // 更新touchPoint
+            touchPoint.y -= distance;
+        } else {
+            // View变高
+            CGFloat height = self.frame.size.height;
+            // 判断View的height
+            CGFloat fixedHeight = 38.5;
+            CGFloat contentLabelHeight = [self calculateContentLabelHeightWithContent:self.notificationModel.content.alertBody];
+            if (height >= fixedHeight + contentLabelHeight) {
+                if (height >= fixedHeight + contentLabelHeight + 20) {
+                    if (height >= fixedHeight + contentLabelHeight + 40) { // 一级一级递进
+                        height += 0;
+                    } else {
+                        height += distance * 0.01;
+                        self.iOS10BeforeContentTopConstraint.constant += distance * 0.01;
+                    }
+                } else {
+                    height += distance * 0.05;
+                    self.iOS10BeforeContentTopConstraint.constant += distance * 0.05;
+                }
+            } else {
+                height += distance;
+                self.iOS10BeforeContentTopConstraint.constant += 0;
+            }
+            height = height >= HQLMaxHeight ? HQLMaxHeight : height;
+            self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, height);
+        }
+    }
+    
+//    NSLog(@"touchMove : %@, distance : %g, lastPoint : %@", NSStringFromCGPoint(touchPoint), distance, NSStringFromCGPoint(self.lastTouchPoint));
+    self.lastTouchPoint = touchPoint;
 }
 
 #pragma mark - setter
+
+- (void)setIOS10:(BOOL)iOS10 {
+    _iOS10 = iOS10;
+    // 设置iOS10下的阴影
+    if (iOS10) {
+        self.iOS10MaskView.layer.shadowColor = [UIColor blackColor].CGColor;
+//        self.iOS10MaskView.layer.shadowOpacity = 1;
+//        self.iOS10MaskView.layer.shadowRadius = 10;
+//        self.iOS10MaskView.layer.shadowOffset = CGSizeMake(4, 4);
+    }
+}
 
 - (void)setNotificationModel:(HQLLocalNotificationModel *)notificationModel {
     if (!notificationModel) return;

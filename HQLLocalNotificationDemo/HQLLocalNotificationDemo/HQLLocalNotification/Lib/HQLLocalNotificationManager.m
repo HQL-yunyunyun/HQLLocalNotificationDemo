@@ -273,17 +273,13 @@
     HQLLocalNotificationModel *model = [self getNotificationModelWithIdentifier:identifierArray[0] subIdentifier:identifierArray[1]];
     if (model) {
         if (model.repeatMode == HQLLocalNotificationNoneRepeat) { // 不重复
-            if (model.notificationMode == HQLLocalNotificationAlarmMode) {
-                model.isActivity = NO; // 只要是 闹钟模式, 一旦触发了,就会变成不启用(闹钟模式的不循环只有一个通知)
-            } else if (model.notificationMode == HQLLocalNotificationScheduleMode) {
-                // 日程模式, 因为日程模式可以有好几个日期,所以所有的通知都触发了才能变成不启用
-                for (NSDate *date in model.repeatDateArray) {
-                    if ([date compare:[NSDate date]] == NSOrderedDescending) {
-                        model.isActivity = YES;
-                        break; // 跳出循环
-                    } else {
-                        model.isActivity = NO;
-                    }
+            // 不管是日程模式还是闹钟模式
+            for (NSDate *date in model.repeatDateArray) {
+                if ([date compare:[NSDate date]] == NSOrderedDescending) {
+                    model.isActivity = YES;
+                    break; // 跳出循环
+                } else {
+                    model.isActivity = NO;
                 }
             }
         }

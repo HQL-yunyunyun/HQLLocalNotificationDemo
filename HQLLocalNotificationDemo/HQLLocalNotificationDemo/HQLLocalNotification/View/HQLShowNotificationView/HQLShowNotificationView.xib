@@ -102,6 +102,7 @@
             <connections>
                 <outlet property="applicationName" destination="4SM-re-EPN" id="s3y-6q-1T8"/>
                 <outlet property="contentLabel" destination="3E4-Dd-5Tw" id="V26-VO-ELk"/>
+                <outlet property="iOS10BeforeContentTopConstraint" destination="LcR-aq-KkZ" id="q6n-zF-pLN"/>
                 <outlet property="iconView" destination="V2h-6X-mjq" id="zXi-Z2-vcT"/>
                 <outlet property="timeLabel" destination="K8N-oh-TeT" id="gxT-xX-mNF"/>
             </connections>
@@ -157,7 +158,7 @@
                             <constraints>
                                 <constraint firstAttribute="height" constant="31" id="Lu6-3x-fEZ"/>
                             </constraints>
-                            <blurEffect style="extraLight"/>
+                            <blurEffect style="light"/>
                         </visualEffectView>
                         <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n2w-6z-JnR" userLabel="Bottom Visual Effect View">
                             <rect key="frame" x="0.0" y="31" width="359" height="47"/>
@@ -181,20 +182,20 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YIV-GZ-87O" userLabel="Drag Visual Effect View">
-                                        <rect key="frame" x="162" y="40" width="35" height="3"/>
+                                        <rect key="frame" x="162" y="38" width="35" height="5"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="zYo-AI-FQh">
-                                            <rect key="frame" x="0.0" y="0.0" width="35" height="3"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="35" height="5"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         </view>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="35" id="WhH-qH-hav"/>
-                                            <constraint firstAttribute="height" constant="3" id="Wpw-XV-RuN"/>
+                                            <constraint firstAttribute="height" constant="5" id="Wpw-XV-RuN"/>
                                         </constraints>
-                                        <blurEffect style="light"/>
+                                        <blurEffect style="dark"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                <integer key="value" value="1"/>
+                                                <integer key="value" value="2"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </visualEffectView>
@@ -211,7 +212,7 @@
                                     <constraint firstItem="XfS-IW-XWK" firstAttribute="top" secondItem="M7u-zw-Abo" secondAttribute="top" constant="4" id="tJe-el-6L1"/>
                                 </constraints>
                             </view>
-                            <blurEffect style="extraLight"/>
+                            <blurEffect style="light"/>
                         </visualEffectView>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -225,10 +226,10 @@
                         <constraint firstItem="n2w-6z-JnR" firstAttribute="leading" secondItem="BoU-fj-cIh" secondAttribute="leading" id="xbo-qS-Ux9"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                             <integer key="value" value="10"/>
                         </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                     </userDefinedRuntimeAttributes>
                 </view>
             </subviews>
