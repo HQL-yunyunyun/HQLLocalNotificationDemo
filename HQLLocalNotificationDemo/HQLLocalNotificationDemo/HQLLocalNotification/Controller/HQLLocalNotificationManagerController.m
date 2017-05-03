@@ -159,7 +159,7 @@
     content.alertTitle = @"alertTitle";
     
     model.content = content;
-    HQLShowNotificationView *view = [HQLShowNotificationView showNotificationViewiOS10BeforeStyle];
+    HQLShowNotificationView *view = [HQLShowNotificationView showNotificationViewiOS10Style];
     view.notificationModel = model;
     [view showView];
 }

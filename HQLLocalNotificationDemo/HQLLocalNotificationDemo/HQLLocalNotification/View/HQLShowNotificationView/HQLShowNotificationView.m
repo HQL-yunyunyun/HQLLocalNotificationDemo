@@ -53,11 +53,6 @@ typedef enum {
 // iOS10以前的内容的top的约束
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *iOS10BeforeContentTopConstraint;
 
-@property (assign, nonatomic) BOOL isTap;
-
-//@property (strong, nonatomic) UIWindow *originWindow;
-//@property (assign, nonatomic) BOOL isHideStatusBar;
-
 @end
 
 @implementation HQLShowNotificationView
@@ -81,6 +76,7 @@ typedef enum {
 - (void)awakeFromNib {
     [super awakeFromNib];
     [self viewConfig];
+    [self configGestureMethod];
 }
 
 - (void)dealloc {
@@ -110,18 +106,7 @@ typedef enum {
     }
     self.applicationName.text = appName;
     
-    // 添加点击手势
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap)];
-    [self addGestureRecognizer:tap];
-//    self.originWindow = [UIApplication sharedApplication].keyWindow;
-}
-
-// 点击
-- (void)tap {
-    if (!self.notificationModel) return;
-    [[NSNotificationCenter defaultCenter] postNotificationName:HQLShowNotificationViewDidClickNotification object:self.notificationModel];
-    self.isTap = YES;
-    [self hideView];
+    self.currentDirection = HQLDragDirectionDown;
 }
 
 // 隐藏View
@@ -137,13 +122,8 @@ typedef enum {
             [view removeFromSuperview];
         }
         [weakSelf removeConstraints:weakSelf.constraints];
-//        [weakSelf resignKeyWindow];
-//        [weakSelf.originWindow makeKeyAndVisible];
-//        [UIApplication sharedApplication].statusBarHidden = weakSelf.isHideStatusBar;
         [weakSelf removeFromSuperview];
         [[NSNotificationCenter defaultCenter] postNotificationName:HQLShowNotificationViewDidHideNotification object:weakSelf];
-        
-        weakSelf.isTap = NO;
     }];
 }
 
@@ -151,12 +131,7 @@ typedef enum {
 - (void)showView {
     if (!self.superview) {
         [[self appRootViewController].view addSubview:self];
-//        [self makeKeyAndVisible];
     }
-    
-//    self.isHideStatusBar = [UIApplication sharedApplication].statusBarHidden;
-//    [self appRootViewController].prefersStatusBarHidden = YES;
-//    [UIApplication sharedApplication].statusBarHidden = YES;
     HQLWeakSelf;
     self.frame = CGRectMake(0, -self.frame.size.height, self.frame.size.width, self.frame.size.height);
     [UIView animateWithDuration:HQLViewAnimateTime animations:^{
@@ -191,111 +166,173 @@ typedef enum {
     return rect.size.height;
 }
 
-#pragma mark - touch method
+#pragma mark - gesture method
 
-// 开始
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    UITouch *touch = touches.anyObject;
-    self.lastTouchPoint = [touch locationInView:self];
-    self.currentDirection = HQLDragDirectionNone;
-    NSLog(@"touchBegan : %@", NSStringFromCGPoint(self.lastTouchPoint));
-}
-
-// 取消
-- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [self touchesEnded:touches withEvent:event];
-}
-
-// 结束
-- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    if (self.isTap) return;
+- (void)configGestureMethod {
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
+    [tap setNumberOfTapsRequired:1];
+    [tap setNumberOfTouchesRequired:1];
+    [self addGestureRecognizer:tap];
     
-    UITouch *touch = touches.anyObject;
-    CGPoint touchPoint = [touch locationInView:self];
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
+    [pan setMaximumNumberOfTouches:1];
+    [pan setMinimumNumberOfTouches:1];
+    [self addGestureRecognizer:pan];
+}
+
+- (void)tap:(UITapGestureRecognizer *)tap {
+    if (self.notificationModel)  {
+        [[NSNotificationCenter defaultCenter] postNotificationName:HQLShowNotificationViewDidClickNotification object:self.notificationModel];
+        [self hideView];
+    }
+}
+
+- (void)pan:(UIPanGestureRecognizer *)pan {
+    CGPoint point = [pan locationInView:self];
     __weak typeof(self) weakSelf = self;
-    // 根据方向来决定接下来的动画
-    switch (self.currentDirection) {
-        case HQLDragDirectionUp: {
-            // 只要是向上都hide
-            [self hideView];
+    
+    switch (pan.state) {
+        case UIGestureRecognizerStateBegan: { // 开始
+            self.currentDirection = HQLDragDirectionNone;
             break;
         }
-        case HQLDragDirectionDown: {
-            if (self.iOS10) {
-                // 滚到原来的位置
-                [UIView animateWithDuration:HQLViewAnimateTime animations:^{
-                    weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, 0, weakSelf.frame.size.width, weakSelf.frame.size.height);
-                } completion:^(BOOL finished) {
-                    
-                }];
-            } else {
-                CGFloat height = HQLiOS10BeforeFixedHeight + [self calculateContentLabelHeightWithContent:self.notificationModel.content.alertBody] + 1;
-                height = height >= HQLMaxHeight ? HQLMaxHeight : height;
-                [UIView animateWithDuration:HQLViewAnimateTime animations:^{
-                    weakSelf.iOS10BeforeContentTopConstraint.constant = 6;
-                    weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, weakSelf.frame.origin.y, weakSelf.frame.size.width, height);
-                    [weakSelf layoutIfNeeded];
-                } completion:^(BOOL finished) {
-                    
-                }];
-            }
-            break;
-        }
-        case HQLDragDirectionNone: { break; }
-    }
-    NSLog(@"touchEnd : %@", NSStringFromCGPoint(touchPoint));
-}
-
-// 移动
-- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    CGPoint touchPoint = [touches.anyObject locationInView:self];
-    CGFloat distance = touchPoint.y - self.lastTouchPoint.y;
-    if (distance < 0) { // 向上
-        self.currentDirection = HQLDragDirectionUp;
-        if (self.iOS10) { // iOS10 样式 ---> 直接修改y值
-            self.frame = CGRectMake(self.frame.origin.x, (self.frame.origin.y <= -38 ? -38 : self.frame.origin.y + distance), self.frame.size.width, self.frame.size.height);
-            // 更新touchPoint
-            touchPoint.y -= distance;
-        } else {
-            
-        }
-    } else { // 向下
-        self.currentDirection = HQLDragDirectionDown;
-        if (self.iOS10) {
-            CGFloat y = self.frame.origin.y;
-            y += self.frame.origin.y >= 38 ? 0 : (self.frame.origin.y >= 30 ? (distance * 0.001) : self.frame.origin.y >= 20 ? (distance * 0.01) : self.frame.origin.y >= 0 ? (distance * 0.02) : distance);
-            self.frame = CGRectMake(self.frame.origin.x, y, self.frame.size.width, self.frame.size.height);
-            // 更新touchPoint
-            touchPoint.y -= distance;
-        } else {
-            // View变高
-            CGFloat height = self.frame.size.height;
-            // 判断View的height
-            CGFloat fixedHeight = 38.5;
-            CGFloat contentLabelHeight = [self calculateContentLabelHeightWithContent:self.notificationModel.content.alertBody];
-            if (height >= fixedHeight + contentLabelHeight) {
-                if (height >= fixedHeight + contentLabelHeight + 20) {
-                    if (height >= fixedHeight + contentLabelHeight + 40) { // 一级一级递进
-                        height += 0;
+        case UIGestureRecognizerStateChanged: { // 移动中
+            CGFloat distance = point.y - self.lastTouchPoint.y;
+            self.currentDirection = distance >= 0 ? HQLDragDirectionDown : HQLDragDirectionUp;
+            switch (self.currentDirection) {
+                case HQLDragDirectionUp: {
+                    if (self.iOS10) {
+                        // 移动y
+//                        distance = -2;
+                        CGFloat y = self.frame.origin.y;
+                        y = y <= -38 ? -38 : (y + distance);
+                        self.frame = CGRectMake(self.frame.origin.x, y, self.frame.size.width, self.frame.size.height);
+                        // 更新touchPoint
+                        point.y -= distance;
+//                        point.y -= (y <= -38 ? 0 : distance);
                     } else {
-                        height += distance * 0.01;
-                        self.iOS10BeforeContentTopConstraint.constant += distance * 0.01;
+                        // 先判断top约束是否大于6
+                        CGFloat height = self.frame.size.height;
+                        CGFloat y = self.frame.origin.y;
+                        if (self.iOS10BeforeContentTopConstraint.constant > 6) {
+                            CGFloat constant = self.iOS10BeforeContentTopConstraint.constant;
+                            if ((constant + distance) <= 6) {
+                                height -= (constant - 6);
+                                self.iOS10BeforeContentTopConstraint.constant = 6;
+                            } else {
+                                height += distance;
+                                self.iOS10BeforeContentTopConstraint.constant += distance;
+                            }
+                        } else { // 小于等于6
+                            self.iOS10BeforeContentTopConstraint.constant = 6;
+                            height += distance;
+                        }
+                        if (height <= HQLiOS10BeforeHeight) {
+                            height = HQLiOS10BeforeHeight;
+                            y += distance;
+                            point.y -= distance;
+                            if (y <= -38) {
+                                y = -38;
+                                point.y -= (self.frame.origin.y - (-38));
+                            }
+                        }
+                        self.frame = CGRectMake(self.frame.origin.x, y, self.frame.size.width, height);
                     }
-                } else {
-                    height += distance * 0.05;
-                    self.iOS10BeforeContentTopConstraint.constant += distance * 0.05;
+                    break;
                 }
-            } else {
-                height += distance;
-                self.iOS10BeforeContentTopConstraint.constant += 0;
+                case HQLDragDirectionDown: {
+                    if (self.iOS10) {
+                        CGFloat moveDistance = [self calculateMoveDistanceWithCurrentDistance:self.frame.origin.y beginDecelerateDistance:10 maxDistance:40 decelerateRangeCount:5 normalSpeed:distance];
+                        self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y + moveDistance, self.frame.size.width, self.frame.size.height);
+                    } else {
+                        // View变高
+                        CGFloat height = self.frame.size.height;
+                        // 判断View的height
+                        CGFloat fixedHeight = 38.5;
+                        CGFloat contentLabelHeight = [self calculateContentLabelHeightWithContent:self.notificationModel.content.alertBody];
+                        CGFloat y = self.frame.origin.y;
+                        if (y < 0) {
+                            y += distance;
+                            if (y >= 0) {
+                                y = 0;
+                            }
+                        } else {
+                            y = 0;
+                            CGFloat moveDistance = [self calculateMoveDistanceWithCurrentDistance:height beginDecelerateDistance:(fixedHeight + contentLabelHeight) maxDistance:(fixedHeight + contentLabelHeight + 50) decelerateRangeCount:10 normalSpeed:distance];
+                            height += moveDistance;
+                            if (moveDistance != distance) {
+                                self.iOS10BeforeContentTopConstraint.constant += moveDistance;
+                            }
+                            height = height >= HQLMaxHeight ? HQLMaxHeight : height;
+                        }
+                        self.frame = CGRectMake(self.frame.origin.x, y, self.frame.size.width, height);
+                    }
+                    break;
+                }
+                case HQLDragDirectionNone: { break; }
             }
-            height = height >= HQLMaxHeight ? HQLMaxHeight : height;
-            self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, height);
+            
+            break;
         }
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled: { // 结束
+            // 根据方向来决定接下来的动画
+            switch (self.currentDirection) {
+                case HQLDragDirectionUp: { // 只要是向上都hide
+                    [self hideView];
+                    break;
+                }
+                case HQLDragDirectionDown: {
+                    if (self.iOS10) { // 滚到原来的位置
+                        [UIView animateWithDuration:HQLViewAnimateTime animations:^{
+                            weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, 0, weakSelf.frame.size.width, weakSelf.frame.size.height);
+                        }];
+                    } else {
+                        CGFloat height = HQLiOS10BeforeFixedHeight + [self calculateContentLabelHeightWithContent:self.notificationModel.content.alertBody] + 1;
+                        height = height >= HQLMaxHeight ? HQLMaxHeight : height;
+                        [UIView animateWithDuration:HQLViewAnimateTime animations:^{
+                            weakSelf.iOS10BeforeContentTopConstraint.constant = 6;
+                            weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, weakSelf.frame.origin.y, weakSelf.frame.size.width, height);
+                            [weakSelf layoutIfNeeded];
+                        }];
+                    }
+                    break;
+                }
+                case HQLDragDirectionNone: { break; }
+            }
+            break;
+        }
+        default: { break; } // 其他情况
     }
     
-//    NSLog(@"touchMove : %@, distance : %g, lastPoint : %@", NSStringFromCGPoint(touchPoint), distance, NSStringFromCGPoint(self.lastTouchPoint));
-    self.lastTouchPoint = touchPoint;
+    self.lastTouchPoint = point;
+}
+
+/**
+ 计算每次移动的距离
+ 
+ @param currentDistance 当前的距离
+ @param beginDecelerate 开始减速的距离(边界)
+ @param maxDistance 距离的最大值(如果当前距离大于最大距离,返回0)
+ @param rangeCount 减速区间(每个区间的减速速度)
+ @param normalSpeed 正常移动的速度，每个减速区间都会按照这个速度减速下去
+ @return 移动距离
+ */
+- (CGFloat)calculateMoveDistanceWithCurrentDistance:(CGFloat)currentDistance beginDecelerateDistance:(CGFloat)beginDecelerate maxDistance:(CGFloat)maxDistance decelerateRangeCount:(NSInteger)rangeCount normalSpeed:(CGFloat)normalSpeed {
+    if (currentDistance < maxDistance) {
+        if (currentDistance > beginDecelerate) { // 进入减速区间
+            // 计算减速区的长度
+            CGFloat decelerateRange = ((maxDistance - beginDecelerate) / rangeCount);
+            // 计算当前在哪个减速区
+            NSInteger index = ((currentDistance - beginDecelerate) / decelerateRange) + 1;
+            // 计算当前减速区计算速度(移动距离)
+            return (pow(0.5, index) * normalSpeed);
+        } else { // 没有进入减速区间 移动距离就是normalSpeed
+            return normalSpeed;
+        }
+    } else { // 当前距离大于最大距离
+        return 0;
+    }
 }
 
 #pragma mark - setter
