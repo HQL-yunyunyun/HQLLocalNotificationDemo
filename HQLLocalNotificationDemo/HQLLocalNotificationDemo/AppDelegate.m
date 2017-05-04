@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 
+#import "HQLLocalNotificationHeader.h"
 #import "HQLLocalNotificationConfig.h"
 #import "HQLLocalNotificationManager.h"
 #import "HQLLocalNotificationManagerController.h"
@@ -25,7 +26,9 @@
     
     HQLLocalNotificationManagerController *controller = [[HQLLocalNotificationManagerController alloc] init];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.rootViewController = nav;
+    [self.window makeKeyAndVisible];
     
     if (launchOptions) {
         // 从通知点击进来
@@ -51,10 +54,11 @@
     
     NSArray *identifierArray = [identifier componentsSeparatedByString:HQLLocalNotificationIdentifierLinkChar];
     HQLShowNotificationView *notificationView = [HQLShowNotificationView showNotificationViewiOS10BeforeStyle];
-    notificationView.notificationModel = [[HQLLocalNotificationManager shareManger] getNotificationModelWithIdentifier:identifierArray[0] subIdentifier:identifierArray[1]];
+    HQLLocalNotificationModel *model = [[HQLLocalNotificationManager shareManger] getNotificationModelWithIdentifier:identifierArray[0] subIdentifier:identifierArray[1]];
     [notificationView showView];
-    
-    NSLog(@"identifier : %@ alertBody:%@ alertTitle:%@ fireDate:%@", identifier, notification.alertBody, notification.alertTitle, notification.fireDate);
+    notificationView.notificationModel = model;
+    // 获取并更新(使用通知方式)
+    [[NSNotificationCenter defaultCenter] postNotificationName:HQLiOS10BeforeDidReceiveLocalNotification object:model];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -82,7 +86,5 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
-
-#pragma mark - notification Authorization
 
 @end

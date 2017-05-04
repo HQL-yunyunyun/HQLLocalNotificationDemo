@@ -270,7 +270,7 @@
     notification.alertTitle = model.content.alertTitle; // title
     notification.alertLaunchImage = model.content.alertLaunchImage; // 启动图片
     notification.applicationIconBadgeNumber = model.content.applicationIconBadgeNumber; // 角标
-    if (![model.content.soundName isEqualToString:@""] && !model.content.soundName) {
+    if (![model.content.soundName isEqualToString:@""] && model.content.soundName && ![model.content.soundName isEqualToString:HQLLocalNotificationDefaultSoundName]) {
         notification.soundName = model.content.soundName; // 自定义声音 --- 路径
     } else {
         notification.soundName = UILocalNotificationDefaultSoundName; // 默认声音
@@ -367,7 +367,7 @@
     content.badge = @(model.content.applicationIconBadgeNumber); // 角标暂时为0
     content.body = model.content.alertBody; // 内容体
     content.launchImageName = model.content.alertLaunchImage; // 启动图片
-    if (![model.content.soundName isEqualToString:@""] && !model.content.soundName) {
+    if (![model.content.soundName isEqualToString:@""] && model.content.soundName && ![model.content.soundName isEqualToString:HQLLocalNotificationDefaultSoundName]) {
         // 不为空
         content.sound = [UNNotificationSound soundNamed:model.content.soundName]; // 声音
     } else { // 为空,则默认声音

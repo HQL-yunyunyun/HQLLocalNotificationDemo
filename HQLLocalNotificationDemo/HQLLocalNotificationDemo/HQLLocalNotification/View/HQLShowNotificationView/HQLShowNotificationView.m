@@ -7,16 +7,16 @@
 //
 
 #import "HQLShowNotificationView.h"
-
 #import "HQLLocalNotificationModel.h"
+#import "HQLTimer.h"
+#import <AVFoundation/AVFoundation.h>
+#import "HQLLocalNotificationHeader.h"
 
 typedef enum {
     HQLDragDirectionNone , // 没有方向
     HQLDragDirectionUp , // 向上
     HQLDragDirectionDown , // 向下
 } HQLDragDirection;
-
-#define HQLWeakSelf __weak typeof(self) weakSelf = self
 
 #define HQLDefaultWidth [UIScreen mainScreen].bounds.size.width
 #define HQLMaxHeight [UIScreen mainScreen].bounds.size.height
@@ -27,7 +27,7 @@ typedef enum {
 
 #define HQLContentLabelFontSize 13
 
-#define HQLViewStayTime 4.7
+#define HQLViewStayTime 5
 #define HQLViewAnimateTime 0.3
 
 #define HQLiOS10BeforeFixedHeight 38.5
@@ -52,6 +52,10 @@ typedef enum {
 
 // iOS10以前的内容的top的约束
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *iOS10BeforeContentTopConstraint;
+
+@property (strong, nonatomic) HQLTimer *timer;
+
+@property (assign, nonatomic) NSInteger countDown;
 
 @end
 
@@ -115,6 +119,8 @@ typedef enum {
     [UIView animateWithDuration:HQLViewAnimateTime animations:^{
         weakSelf.frame = CGRectMake(0, -weakSelf.frame.size.height, weakSelf.frame.size.width, weakSelf.frame.size.height);
     } completion:^(BOOL finished) {
+        [weakSelf.timer invalidate];
+        weakSelf.timer = nil;
         for (UIView *view in weakSelf.subviews) {
             CGRect frame = view.frame;
             [view removeConstraints:view.constraints];
@@ -132,12 +138,16 @@ typedef enum {
     if (!self.superview) {
         [[self appRootViewController].view addSubview:self];
     }
+    // 播放提示音
+    [self playSoundWithName:self.notificationModel.content.soundName];
     HQLWeakSelf;
     self.frame = CGRectMake(0, -self.frame.size.height, self.frame.size.width, self.frame.size.height);
     [UIView animateWithDuration:HQLViewAnimateTime animations:^{
         weakSelf.frame = CGRectMake(0, 0, weakSelf.frame.size.width, weakSelf.frame.size.height);
     } completion:^(BOOL finished) {
-        
+        // 添加一个timer
+        weakSelf.countDown = HQLViewStayTime;
+        weakSelf.timer = [HQLTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(hideViewWithTimer) userInfo:nil repeats:YES];
     }];
 }
 
@@ -166,8 +176,31 @@ typedef enum {
     return rect.size.height;
 }
 
+// timer要调用的方法
+- (void)hideViewWithTimer {
+    self.countDown--;
+    if (self.countDown <= 0) {
+        [self hideView];
+    }
+}
+
+- (void)playSoundWithName:(NSString *)name {
+    SystemSoundID soundID = 0;
+    if (![name isEqualToString:@""] && name && ![name isEqualToString:HQLLocalNotificationDefaultSoundName]) {
+        // 播放自定义提示音
+        NSURL *soundURL = [NSURL fileURLWithPath:name];
+        // 添加到系统提示音当中，soundID会返回一个id
+        AudioServicesCreateSystemSoundID((__bridge CFURLRef _Nonnull)(soundURL), &soundID);
+    } else {
+        // 系统预设的音效(短信，详情参照 http://iphonedevwiki.net/index.php/AudioServices)
+        soundID = 1312;
+    }
+    AudioServicesPlayAlertSound(soundID);
+}
+
 #pragma mark - gesture method
 
+// 手势
 - (void)configGestureMethod {
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     [tap setNumberOfTapsRequired:1];
@@ -180,6 +213,7 @@ typedef enum {
     [self addGestureRecognizer:pan];
 }
 
+// 手势
 - (void)tap:(UITapGestureRecognizer *)tap {
     if (self.notificationModel)  {
         [[NSNotificationCenter defaultCenter] postNotificationName:HQLShowNotificationViewDidClickNotification object:self.notificationModel];
@@ -187,9 +221,12 @@ typedef enum {
     }
 }
 
+// 手势
 - (void)pan:(UIPanGestureRecognizer *)pan {
     CGPoint point = [pan locationInView:self];
     __weak typeof(self) weakSelf = self;
+    
+    [self.timer stop];
     
     switch (pan.state) {
         case UIGestureRecognizerStateBegan: { // 开始
@@ -283,6 +320,9 @@ typedef enum {
                     break;
                 }
                 case HQLDragDirectionDown: {
+                    
+                    [self.timer reStart];
+                    
                     if (self.iOS10) { // 滚到原来的位置
                         [UIView animateWithDuration:HQLViewAnimateTime animations:^{
                             weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, 0, weakSelf.frame.size.width, weakSelf.frame.size.height);

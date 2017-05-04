@@ -8,23 +8,14 @@
 
 #import "HQLLocalNotificationManagerController.h"
 #import "HQLSetNotificationController.h"
-
 #import "HQLLocalNotificationManagerCell.h"
-
 #import "HQLLocalNotificationManager.h"
-
 #import "HQLShowNotificationView.h"
+#import "HQLLocalNotificationHeader.h"
 
 #define HQLTableViewCellHeight 80
 
-#define HQLScreenWidth [UIScreen mainScreen].bounds.size.width
-#define HQLScreenHeight [UIScreen mainScreen].bounds.size.height
-
 #define HQLNotificationManagerCellReuseID @"HQLNotificationManagerCellReuseID"
-
-#define HQLBackgroundColor [UIColor colorWithRed:(247 / 255.0) green:(248 / 255.0) blue:(250 / 255.0) alpha:1]
-
-#define HQLShowAlertView(Title, Message) [[[UIAlertView alloc] initWithTitle:Title message:Message delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil] show]
 
 @interface HQLLocalNotificationManagerController () <UITableViewDelegate, UITableViewDataSource, HQLLocalNotificationManagerCellDelegate, HQLLocalNotificationManagerDelegate>
 
@@ -79,6 +70,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hql_applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showNotificationViewDidHide:) name:HQLShowNotificationViewDidHideNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:HQLiOS10BeforeDidReceiveLocalNotification object:nil];
 }
 
 - (void)dealloc {
@@ -88,12 +81,19 @@
 
 #pragma mark - event
 
-- (void)showNotificationViewDidClick {
+// 接受到了 本地通知
+- (void)didReceiveLocalNotification:(NSNotification *)notification {
+    [self.tableView reloadData];
+}
+
+// 点击
+- (void)showNotificationViewDidClick:(NSNotification *)notification {
 
 }
 
+// 隐藏
 - (void)showNotificationViewDidHide:(NSNotification *)notification {
-    NSLog(@"placeHolder");
+    
 }
 
 // 当进入前台， 更新通知的状态
@@ -157,9 +157,9 @@
     HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
     content.alertBody = @"alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody";
     content.alertTitle = @"alertTitle";
-    
+//    content.soundName = [[NSBundle mainBundle] pathForResource:@"HQLDefaultSound" ofType:@"mp3"];
     model.content = content;
-    HQLShowNotificationView *view = [HQLShowNotificationView showNotificationViewiOS10Style];
+    HQLShowNotificationView *view = [HQLShowNotificationView showNotificationViewiOS10BeforeStyle];
     view.notificationModel = model;
     [view showView];
 }

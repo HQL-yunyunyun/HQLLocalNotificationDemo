@@ -10,6 +10,9 @@
 
 #define HQLLocalNotificationIdentifierLinkChar @"_"
 
+// 默认的声音
+#define HQLLocalNotificationDefaultSoundName @"HQLLocalNotificationDefaultSoundName"
+
 typedef enum {
     HQLLocalNotificationAlarmMode , // 闹钟模式
     HQLLocalNotificationScheduleMode // 日程模式
@@ -126,7 +129,7 @@ typedef enum {
 @property(nullable, nonatomic,copy) NSString *alertTitle;  // defaults to nil. pass a string or localized string key
 
 // sound
-@property(nullable, nonatomic,copy) NSString *soundName;      // name of resource in app's bundle to play or UILocalNotificationDefaultSoundName
+@property(nullable, nonatomic,copy) NSString *soundName;      // name of resource in app's bundle to play or HQLLocalNotificationDefaultSoundName
 
 // badge
 @property(nonatomic) NSInteger applicationIconBadgeNumber;  // 0 means no change. defaults to 0

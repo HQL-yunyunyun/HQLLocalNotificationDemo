@@ -40,6 +40,7 @@
         self.soundName = @""; // 设置的时候有默认的
         
         [self getNotification];
+        [self updateNotificationActivity]; // 更新状态
 //        [self showNotification];
     }
     return self;

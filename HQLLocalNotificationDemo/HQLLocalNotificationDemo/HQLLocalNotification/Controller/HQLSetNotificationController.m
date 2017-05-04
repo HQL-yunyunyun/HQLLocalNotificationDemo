@@ -7,9 +7,7 @@
 //
 
 #import "HQLSetNotificationController.h"
-
 #import "HQLSetNotificationView.h"
-
 #import "HQLLocalNotificationModel.h"
 
 #define HQLNotificationSubIdentifier @"HQLNotificationSubIdentifier"

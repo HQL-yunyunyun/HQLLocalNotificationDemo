@@ -8,9 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-static NSString *HQLShowNotificationViewDidClickNotification = @"HQLShowNotificationViewDidClickNotification";
-static NSString *HQLShowNotificationViewDidHideNotification = @"HQLShowNotificationViewDidHideNotification";
-
 @class HQLLocalNotificationModel;
 
 @interface HQLShowNotificationView : UIView

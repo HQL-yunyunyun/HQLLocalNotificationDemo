@@ -19,8 +19,6 @@
 
 #define HQLUserInfoIdentifier @"HQLUserInfoIdentifier"
 
-//FOUNDATION_EXPORT NSErrorDomain const HQLLocalNotificationNotActiveErrorDomain;
-
 #define HQLLocalNotificationErrorDomain @"com.hql.hqllocalnotificationdemo"
 typedef enum {
     HQLLocalNotificationNotActiveFailed = -1000, // 设置的通知是没有启用的，不会添加到系统通知中
