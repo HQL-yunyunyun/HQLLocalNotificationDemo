@@ -12,6 +12,7 @@
 #import "HQLLocalNotificationManager.h"
 #import "HQLShowNotificationView.h"
 #import "HQLLocalNotificationHeader.h"
+#import "UIView+emptyView.h"
 
 #define HQLTableViewCellHeight 80
 
@@ -25,6 +26,8 @@
 @property (strong, nonatomic) UIScrollView *scrollView;
 
 @property (strong, nonatomic) HQLLocalNotificationManager *manager;
+
+@property (strong, nonatomic) UIButton *cleanButton;
 
 @end
 
@@ -40,38 +43,7 @@
     [super viewWillAppear:animated];
     self.editButton.selected = YES;
     [self editButtonDidClick:self.editButton];
-    [self.tableView reloadData];
-}
-
-#pragma mark - controller config
-
-- (void)controllerConfig {
-    self.automaticallyAdjustsScrollViewInsets = NO;
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.editButton];
-    
-    UIButton *cleanButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [cleanButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [cleanButton setTitle:@"清除通知" forState:UIControlStateNormal];
-    [cleanButton sizeToFit];
-    [cleanButton addTarget:self action:@selector(cleanAllNotification) forControlEvents:UIControlEventTouchUpInside];
-    [cleanButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:cleanButton];
-    
-    [self.view setBackgroundColor:HQLBackgroundColor];
-    [self scrollView];
-    [self createButton];
-    [self tableView];
-    
-    self.title = @"提醒";
-    [self calculateFrame];
-    [self.tableView reloadData];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hql_applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showNotificationViewDidHide:) name:HQLShowNotificationViewDidHideNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:HQLiOS10BeforeDidReceiveLocalNotification object:nil];
+    [self tableViewReloadData];
 }
 
 - (void)dealloc {
@@ -79,11 +51,48 @@
     NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
 
-#pragma mark - event
+#pragma mark - controller config
+
+- (void)controllerConfig {
+    HQLWeakSelf;
+    
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.editButton];
+    // 在测试时才用 cleanButton
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.cleanButton];
+    
+    [self.view setBackgroundColor:HQLBackgroundColor];
+    [self scrollView];
+    [self createButton];
+    [self tableView];
+    
+    // 设置emptyView
+    self.scrollView.isUseEmptyView = YES;
+    self.scrollView.emptyViewTitle = @"暂时没有设置提醒哦，请点击屏幕设置第一个提醒吧~";
+    self.scrollView.emptyTapBlock = ^ {
+        [weakSelf createButtonDidClick:weakSelf.createButton];
+    };
+    
+    self.title = @"提醒";
+    [self calculateFrame];
+    [self tableViewReloadData];
+    
+    // app进入前台
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hql_applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+    // 显示通知的View did hide
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showNotificationViewDidHide:) name:HQLShowNotificationViewDidHideNotification object:nil];
+    // 显示通知的View did click
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showNotificationViewDidClick:) name:HQLShowNotificationViewDidClickNotification object:nil];
+    // iOS10前在软件中接受到通知的通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:HQLiOS10BeforeDidReceiveLocalNotification object:nil];
+}
+
+#pragma mark - notification method
 
 // 接受到了 本地通知
 - (void)didReceiveLocalNotification:(NSNotification *)notification {
-    [self.tableView reloadData];
+    [self tableViewReloadData];
 }
 
 // 点击
@@ -99,10 +108,26 @@
 // 当进入前台， 更新通知的状态
 - (void)hql_applicationDidBecomeActive {
     [self.manager updateNotificationActivity];
-    [self.tableView reloadData];
+    [self tableViewReloadData];
 }
 
+#pragma mark - event
 
+// tableView reload data
+- (void)tableViewReloadData {
+    [self.tableView reloadData];
+    if (self.manager.notificationArray.count == 0) {
+        [self.scrollView showEmptyView];
+        [self.createButton setHidden:YES];
+        [self.editButton setHidden:YES];
+    } else {
+        [self.scrollView hideEmptyView];
+        [self.createButton setHidden:NO];
+        [self.editButton setHidden:NO];
+    }
+}
+
+// 计算frame
 - (void)calculateFrame {
     // 计算tableView的高度
     CGFloat tableViewHeight = HQLTableViewCellHeight * self.manager.notificationArray.count;
@@ -120,6 +145,7 @@
     self.createButton.frame = CGRectMake(scrollViewWidth * 0.1, contentHeight - 20 - 50, scrollViewWidth * 0.8, 50);
 }
 
+// 新建通知
 - (void)createButtonDidClick:(UIButton *)button {
     // 创建localNotification
     __weak typeof(self) weakSelf = self;
@@ -133,7 +159,7 @@
           }
           dispatch_async(dispatch_get_main_queue(), ^{
               [weakSelf calculateFrame];
-              [weakSelf.tableView reloadData];
+              [weakSelf tableViewReloadData];
           });
       }];
     };
@@ -141,18 +167,22 @@
     [self.navigationController pushViewController:setController animated:YES];
 }
 
+// 编辑button
 - (void)editButtonDidClick:(UIButton *)button {
     button.selected = !button.isSelected;
     [self.tableView setEditing:button.isSelected animated:YES];
 }
 
+// 清除所有通知
 - (void)cleanAllNotification {
     [self.manager showNotification];
     [self.manager deleteAllNotification];
-    [self.tableView reloadData];
     [self calculateFrame];
-    [self.manager showNotification];
-    
+    [self tableViewReloadData];
+}
+
+// 显示 通知View (测试用)
+- (void)customShowNotificationView {
     HQLLocalNotificationModel *model = [[HQLLocalNotificationModel alloc] init];
     HQLLocalNotificationContentModel *content = [[HQLLocalNotificationContentModel alloc] init];
     content.alertBody = @"alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody-alertBody";
@@ -167,15 +197,13 @@
 #pragma mark - notification manager delegate
 
 - (void)userNotificationDelegateNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification {
-//    NSLog(@"通知1");
-    [self.tableView reloadData];
     [self calculateFrame];
+    [self tableViewReloadData];
 }
 
 - (void)userNotificationDelegateNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response {
-//    NSLog(@"通知2");
-    [self.tableView reloadData];
     [self calculateFrame];
+    [self tableViewReloadData];
 }
 
 #pragma mark - notification manager cell delegate
@@ -212,6 +240,12 @@
         [self.manager deleteNotificationWithModel:model];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
         [self calculateFrame];
+        // 删除的时候判断 ---> 因为在删除这里只有一种情况，就是为0的时候
+        if (self.manager.notificationArray.count == 0) {
+            [self.scrollView showEmptyView];
+            [self.createButton setHidden:YES];
+            [self.editButton setHidden:YES];
+        }
     }
 }
 
@@ -231,9 +265,6 @@
             [updateProperty setObject:@(targetModel.repeatMode) forKey:@"repeatMode"];
             [updateProperty setObject:@(targetModel.notificationMode) forKey:@"notificationMode"];
             [weakSelf.manager updateNotificationWithPropertyDict:updateProperty notificationModel:model];
-            
-//            [weakSelf calculateFrame];
-//            [weakSelf.tableView reloadData];
             [weakSelf.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
         };
         [self.navigationController pushViewController:controller animated:YES];
@@ -259,6 +290,20 @@
 }
 
 #pragma mark - getter
+
+- (UIButton *)cleanButton {
+    if (!_cleanButton) {
+        UIButton *cleanButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [cleanButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [cleanButton setTitle:@"清除通知" forState:UIControlStateNormal];
+        [cleanButton sizeToFit];
+        [cleanButton addTarget:self action:@selector(cleanAllNotification) forControlEvents:UIControlEventTouchUpInside];
+        [cleanButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
+        
+        _cleanButton = cleanButton;
+    }
+    return _cleanButton;
+}
 
 - (UIButton *)editButton {
     if (!_editButton) {

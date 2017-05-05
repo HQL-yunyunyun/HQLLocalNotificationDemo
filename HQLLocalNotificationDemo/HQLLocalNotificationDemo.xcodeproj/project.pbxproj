@@ -45,6 +45,10 @@
 		4AB791EA1EBAD3460091C054 /* HQLTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB791E91EBAD3460091C054 /* HQLTimer.m */; };
 		4AB791EC1EBB06AF0091C054 /* HQLDefaultSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4AB791EB1EBB06AF0091C054 /* HQLDefaultSound.mp3 */; };
 		4AB791F21EBC16830091C054 /* iOSDefaultAppIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AB791F11EBC16830091C054 /* iOSDefaultAppIcon.png */; };
+		4AB791FA1EBC4BD80091C054 /* UIImageView+GifAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB791F51EBC4BD80091C054 /* UIImageView+GifAnimation.m */; };
+		4AB791FB1EBC4BD80091C054 /* UITableView+EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB791F71EBC4BD80091C054 /* UITableView+EmptyView.m */; };
+		4AB791FC1EBC4BD80091C054 /* UIView+emptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB791F91EBC4BD80091C054 /* UIView+emptyView.m */; };
+		4AB791FF1EBC4D370091C054 /* HQLEmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB791FE1EBC4D370091C054 /* HQLEmptyView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -111,6 +115,14 @@
 		4AB791EB1EBB06AF0091C054 /* HQLDefaultSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = HQLDefaultSound.mp3; sourceTree = "<group>"; };
 		4AB791F01EBC0F1F0091C054 /* HQLLocalNotificationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationHeader.h; sourceTree = "<group>"; };
 		4AB791F11EBC16830091C054 /* iOSDefaultAppIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iOSDefaultAppIcon.png; sourceTree = "<group>"; };
+		4AB791F41EBC4BD80091C054 /* UIImageView+GifAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+GifAnimation.h"; sourceTree = "<group>"; };
+		4AB791F51EBC4BD80091C054 /* UIImageView+GifAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+GifAnimation.m"; sourceTree = "<group>"; };
+		4AB791F61EBC4BD80091C054 /* UITableView+EmptyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+EmptyView.h"; sourceTree = "<group>"; };
+		4AB791F71EBC4BD80091C054 /* UITableView+EmptyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+EmptyView.m"; sourceTree = "<group>"; };
+		4AB791F81EBC4BD80091C054 /* UIView+emptyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+emptyView.h"; sourceTree = "<group>"; };
+		4AB791F91EBC4BD80091C054 /* UIView+emptyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+emptyView.m"; sourceTree = "<group>"; };
+		4AB791FD1EBC4D370091C054 /* HQLEmptyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLEmptyView.h; sourceTree = "<group>"; };
+		4AB791FE1EBC4D370091C054 /* HQLEmptyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLEmptyView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +197,7 @@
 		4A64B3E61E65212F005F6B8E /* Lib */ = {
 			isa = PBXGroup;
 			children = (
+				4AB791F31EBC4BD80091C054 /* Category */,
 				4AB791E71EBAD3460091C054 /* HQLTimer */,
 				4A64B3E71E65212F005F6B8E /* HQLLocalNotificationConfig.h */,
 				4A64B3E81E65212F005F6B8E /* HQLLocalNotificationConfig.m */,
@@ -337,6 +350,21 @@
 			name = "Other Files";
 			sourceTree = "<group>";
 		};
+		4AB791F31EBC4BD80091C054 /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				4AB791FD1EBC4D370091C054 /* HQLEmptyView.h */,
+				4AB791FE1EBC4D370091C054 /* HQLEmptyView.m */,
+				4AB791F41EBC4BD80091C054 /* UIImageView+GifAnimation.h */,
+				4AB791F51EBC4BD80091C054 /* UIImageView+GifAnimation.m */,
+				4AB791F61EBC4BD80091C054 /* UITableView+EmptyView.h */,
+				4AB791F71EBC4BD80091C054 /* UITableView+EmptyView.m */,
+				4AB791F81EBC4BD80091C054 /* UIView+emptyView.h */,
+				4AB791F91EBC4BD80091C054 /* UIView+emptyView.m */,
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -429,6 +457,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A64B3F41E652130005F6B8E /* HQLNotificationSettingView.m in Sources */,
+				4AB791FB1EBC4BD80091C054 /* UITableView+EmptyView.m in Sources */,
 				4A74934C1EA86BDB00A672FD /* HQLDrawGeometricShapeView.m in Sources */,
 				4A7493481EA86BDB00A672FD /* HQLDateModel.m in Sources */,
 				4AB791EA1EBAD3460091C054 /* HQLTimer.m in Sources */,
@@ -440,14 +469,17 @@
 				4A64B3FD1E655B16005F6B8E /* HQLSelectButton.m in Sources */,
 				4A64B3F31E652130005F6B8E /* HQLLocalNotificationModel.m in Sources */,
 				4A7493061EA711BA00A672FD /* HQLDayChooseCell.m in Sources */,
+				4AB791FF1EBC4D370091C054 /* HQLEmptyView.m in Sources */,
 				4A74935D1EAB618F00A672FD /* HQLLocalNotificationManagerController.m in Sources */,
 				4A7493531EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.m in Sources */,
 				4A64B4001E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m in Sources */,
 				4A74934B1EA86BDB00A672FD /* HQLCalendarView.m in Sources */,
 				4A643EEE1E5706D300F249B2 /* AppDelegate.m in Sources */,
 				4A74934F1EAB3ECA00A672FD /* HQLSetNotificationController.m in Sources */,
+				4AB791FC1EBC4BD80091C054 /* UIView+emptyView.m in Sources */,
 				4A0EF0191EB20C78008C7819 /* HQLShowNotificationView.m in Sources */,
 				4A643EEB1E5706D300F249B2 /* main.m in Sources */,
+				4AB791FA1EBC4BD80091C054 /* UIImageView+GifAnimation.m in Sources */,
 				4A7492F41EA46D4300A672FD /* HQLSetNotificationView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -120,6 +120,7 @@
 
 #pragma mark - prepare config
 
+// 配置
 - (void)prepareConfig {
     if (!self.notificationAlertTitle) {
         self.notificationAlertTitle = HQLNotificationAlertTitle;
@@ -419,6 +420,7 @@
     [self updateFrame];
 }
 
+// 创建 星期button(一/二/三 etc)
 - (void)createWeekButtons {
     [self.weekButtonArray removeAllObjects];
     for (int i = 1; i <= 7; i++) {
@@ -442,6 +444,7 @@
     }
 }
 
+// 星期 按钮点击(一/二/三  等)
 - (void)weekButtonDidClick:(UIButton *)button {
     button.selected = !button.isSelected;
     
@@ -648,6 +651,7 @@
 
 #pragma mark - calendar view delegate
 
+// 不重复(日程模式)
 - (void)calendarView:(HQLCalendarView *)calendarView selectionStyle:(HQLCalendarViewSelectionStyle)style beginDate:(HQLDateModel *)begin endDate:(HQLDateModel *)end {
     // 先判断当前时候有该日期
     NSDate *targetDate = [begin changeToNSDate];
@@ -662,6 +666,7 @@
 
 #pragma mark - collection view delegate
 
+// 点击(每月)
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     HQLDayChooseModel *model = self.dayChooseDataSource[indexPath.item];
     model.isSelected = !model.isSelected;
