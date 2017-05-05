@@ -91,16 +91,15 @@ typedef enum {
 
 // 一些设置
 - (void)viewConfig {
-    
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
     // 设置iconView和applicationName
-    UIImage *appIcon;
-    appIcon = [UIImage imageNamed:@"AppIcon60x60"];
-    if (!appIcon) {
-        appIcon = [UIImage imageNamed:@"AppIcon80x80"];
+    NSString *iconPath = [[infoDictionary valueForKeyPath:@"CFBundleIcons.CFBundlePrimaryIcon.CFBundleIconFiles"] lastObject];
+    if (!iconPath) {
+        iconPath = [[NSBundle mainBundle] pathForResource:@"iOSDefaultAppIcon" ofType:@"png"];
     }
+    UIImage *appIcon = [UIImage imageNamed:iconPath];
     [self.iconView setImage:appIcon];
     // app名称
-    NSDictionary *infoDictionary = [[NSBundle bundleForClass:[self class]] infoDictionary];
     NSString *appName = [infoDictionary objectForKey:@"CFBundleDisplayName"];
     if (!appName) {
         appName = [infoDictionary objectForKey:@"CFBundleName"];
@@ -228,6 +227,8 @@ typedef enum {
     
     [self.timer stop];
     
+    CGFloat yMin = -(self.frame.size.height * 0.5); // y值最少的值
+    
     switch (pan.state) {
         case UIGestureRecognizerStateBegan: { // 开始
             self.currentDirection = HQLDragDirectionNone;
@@ -240,9 +241,8 @@ typedef enum {
                 case HQLDragDirectionUp: {
                     if (self.iOS10) {
                         // 移动y
-//                        distance = -2;
                         CGFloat y = self.frame.origin.y;
-                        y = y <= -38 ? -38 : (y + distance);
+                        y = y <= yMin ? yMin : (y + distance);
                         self.frame = CGRectMake(self.frame.origin.x, y, self.frame.size.width, self.frame.size.height);
                         // 更新touchPoint
                         point.y -= distance;
@@ -268,9 +268,9 @@ typedef enum {
                             height = HQLiOS10BeforeHeight;
                             y += distance;
                             point.y -= distance;
-                            if (y <= -38) {
-                                y = -38;
-                                point.y -= (self.frame.origin.y - (-38));
+                            if (y <= yMin) {
+                                y = yMin;
+                                point.y -= (self.frame.origin.y - (yMin));
                             }
                         }
                         self.frame = CGRectMake(self.frame.origin.x, y, self.frame.size.width, height);
@@ -313,33 +313,28 @@ typedef enum {
         }
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled: { // 结束
-            // 根据方向来决定接下来的动画
-            switch (self.currentDirection) {
-                case HQLDragDirectionUp: { // 只要是向上都hide
-                    [self hideView];
-                    break;
+            // 根据当前 View 的位置来判断是否隐藏或者展开
+            [self.timer reStart];
+            if (self.frame.origin.y <= yMin) {
+                // 小于或等于最少值 ---> 隐藏
+                [self hideView];
+            } else {
+                if (self.iOS10) { // 滚到原来的位置
+                    [UIView animateWithDuration:HQLViewAnimateTime animations:^{
+                        weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, 0, weakSelf.frame.size.width, weakSelf.frame.size.height);
+                    }];
+                } else {
+                    CGFloat height = HQLiOS10BeforeFixedHeight + [self calculateContentLabelHeightWithContent:self.notificationModel.content.alertBody] + 1;
+                    height = height >= HQLMaxHeight ? HQLMaxHeight : height;
+                    [UIView animateWithDuration:HQLViewAnimateTime animations:^{
+                        weakSelf.iOS10BeforeContentTopConstraint.constant = 6;
+                        weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, 0, weakSelf.frame.size.width, height);
+                        // 如果需要改变 约束 ，则一定要调用[layoutIfNeeded]方法，否则动画将不显示
+                        [weakSelf layoutIfNeeded];
+                    }];
                 }
-                case HQLDragDirectionDown: {
-                    
-                    [self.timer reStart];
-                    
-                    if (self.iOS10) { // 滚到原来的位置
-                        [UIView animateWithDuration:HQLViewAnimateTime animations:^{
-                            weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, 0, weakSelf.frame.size.width, weakSelf.frame.size.height);
-                        }];
-                    } else {
-                        CGFloat height = HQLiOS10BeforeFixedHeight + [self calculateContentLabelHeightWithContent:self.notificationModel.content.alertBody] + 1;
-                        height = height >= HQLMaxHeight ? HQLMaxHeight : height;
-                        [UIView animateWithDuration:HQLViewAnimateTime animations:^{
-                            weakSelf.iOS10BeforeContentTopConstraint.constant = 6;
-                            weakSelf.frame = CGRectMake(weakSelf.frame.origin.x, weakSelf.frame.origin.y, weakSelf.frame.size.width, height);
-                            [weakSelf layoutIfNeeded];
-                        }];
-                    }
-                    break;
-                }
-                case HQLDragDirectionNone: { break; }
             }
+            
             break;
         }
         default: { break; } // 其他情况

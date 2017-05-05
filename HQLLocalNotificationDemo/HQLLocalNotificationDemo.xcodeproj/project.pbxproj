@@ -44,13 +44,13 @@
 		4A74935D1EAB618F00A672FD /* HQLLocalNotificationManagerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A74935C1EAB618F00A672FD /* HQLLocalNotificationManagerController.m */; };
 		4AB791EA1EBAD3460091C054 /* HQLTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB791E91EBAD3460091C054 /* HQLTimer.m */; };
 		4AB791EC1EBB06AF0091C054 /* HQLDefaultSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4AB791EB1EBB06AF0091C054 /* HQLDefaultSound.mp3 */; };
+		4AB791F21EBC16830091C054 /* iOSDefaultAppIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AB791F11EBC16830091C054 /* iOSDefaultAppIcon.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		4A0EF0161EB20C78008C7819 /* HQLShowNotificationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLShowNotificationView.h; sourceTree = "<group>"; };
 		4A0EF0171EB20C78008C7819 /* HQLShowNotificationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLShowNotificationView.m; sourceTree = "<group>"; };
 		4A0EF0181EB20C78008C7819 /* HQLShowNotificationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HQLShowNotificationView.xib; sourceTree = "<group>"; };
-		4A0EF01B1EB891DF008C7819 /* HQLLocalNotificationDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HQLLocalNotificationDemo.entitlements; sourceTree = "<group>"; };
 		4A643EE61E5706D300F249B2 /* HQLLocalNotificationDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HQLLocalNotificationDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A643EEA1E5706D300F249B2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4A643EEC1E5706D300F249B2 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -109,7 +109,8 @@
 		4AB791E81EBAD3460091C054 /* HQLTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLTimer.h; sourceTree = "<group>"; };
 		4AB791E91EBAD3460091C054 /* HQLTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLTimer.m; sourceTree = "<group>"; };
 		4AB791EB1EBB06AF0091C054 /* HQLDefaultSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = HQLDefaultSound.mp3; sourceTree = "<group>"; };
-		4AB791EF1EBB37A50091C054 /* HQLLocalNotificationHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationHeader.h; sourceTree = "<group>"; };
+		4AB791F01EBC0F1F0091C054 /* HQLLocalNotificationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationHeader.h; sourceTree = "<group>"; };
+		4AB791F11EBC16830091C054 /* iOSDefaultAppIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iOSDefaultAppIcon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +127,7 @@
 		4A0EF0151EB20C78008C7819 /* HQLShowNotificationView */ = {
 			isa = PBXGroup;
 			children = (
+				4AB791F11EBC16830091C054 /* iOSDefaultAppIcon.png */,
 				4A0EF0161EB20C78008C7819 /* HQLShowNotificationView.h */,
 				4A0EF0171EB20C78008C7819 /* HQLShowNotificationView.m */,
 				4A0EF0181EB20C78008C7819 /* HQLShowNotificationView.xib */,
@@ -153,7 +155,6 @@
 		4A643EE81E5706D300F249B2 /* HQLLocalNotificationDemo */ = {
 			isa = PBXGroup;
 			children = (
-				4A0EF01B1EB891DF008C7819 /* HQLLocalNotificationDemo.entitlements */,
 				4A64B3E51E65212F005F6B8E /* HQLLocalNotification */,
 				4AB791EE1EBB078D0091C054 /* Other Files */,
 				4A643EE91E5706D300F249B2 /* Supporting Files */,
@@ -193,6 +194,7 @@
 				4A64B3F91E6553B6005F6B8E /* CALayer+HQLXIBLayer.m */,
 				4A64B3FE1E655DC5005F6B8E /* HQLLayerDrawGeometricShape.h */,
 				4A64B3FF1E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m */,
+				4AB791F01EBC0F1F0091C054 /* HQLLocalNotificationHeader.h */,
 			);
 			path = Lib;
 			sourceTree = "<group>";
@@ -331,7 +333,6 @@
 				4A643EF71E5706D300F249B2 /* LaunchScreen.storyboard */,
 				4A643EFA1E5706D300F249B2 /* Info.plist */,
 				4AB791EB1EBB06AF0091C054 /* HQLDefaultSound.mp3 */,
-				4AB791EF1EBB37A50091C054 /* HQLLocalNotificationHeader.h */,
 			);
 			name = "Other Files";
 			sourceTree = "<group>";
@@ -371,7 +372,7 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -410,6 +411,7 @@
 				4A7493581EAB5C2000A672FD /* icon-rightArrow@2x.png in Resources */,
 				4AB791EC1EBB06AF0091C054 /* HQLDefaultSound.mp3 in Resources */,
 				4A7492F61EA46D5400A672FD /* HQLSetNotificationView.xib in Resources */,
+				4AB791F21EBC16830091C054 /* iOSDefaultAppIcon.png in Resources */,
 				4A7493011EA4B53500A672FD /* icon-nextMonth.png in Resources */,
 				4A74935A1EAB5C2000A672FD /* icon-rightArrow.png in Resources */,
 				4A7493031EA4B53500A672FD /* icon-nextMonth@3x.png in Resources */,
@@ -558,7 +560,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = HQLLocalNotificationDemo/HQLLocalNotificationDemo.entitlements;
 				DEVELOPMENT_TEAM = X8GXYMZ6FW;
 				INFOPLIST_FILE = HQLLocalNotificationDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -572,7 +573,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = HQLLocalNotificationDemo/HQLLocalNotificationDemo.entitlements;
 				DEVELOPMENT_TEAM = X8GXYMZ6FW;
 				INFOPLIST_FILE = HQLLocalNotificationDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
