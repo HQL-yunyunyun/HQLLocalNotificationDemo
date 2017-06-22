@@ -13,8 +13,6 @@
 		4A643EEE1E5706D300F249B2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A643EED1E5706D300F249B2 /* AppDelegate.m */; };
 		4A643EF61E5706D300F249B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A643EF51E5706D300F249B2 /* Assets.xcassets */; };
 		4A643EF91E5706D300F249B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A643EF71E5706D300F249B2 /* LaunchScreen.storyboard */; };
-		4A64B3F11E652130005F6B8E /* HQLLocalNotificationConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B3E81E65212F005F6B8E /* HQLLocalNotificationConfig.m */; };
-		4A64B3F21E652130005F6B8E /* HQLLocalNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B3EA1E652130005F6B8E /* HQLLocalNotificationManager.m */; };
 		4A64B3F31E652130005F6B8E /* HQLLocalNotificationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B3ED1E652130005F6B8E /* HQLLocalNotificationModel.m */; };
 		4A64B3F41E652130005F6B8E /* HQLNotificationSettingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A64B3F01E652130005F6B8E /* HQLNotificationSettingView.m */; };
 		4A64B3F71E652179005F6B8E /* HQLNotificationSettingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A64B3F61E652179005F6B8E /* HQLNotificationSettingView.xib */; };
@@ -49,6 +47,8 @@
 		4AB791FB1EBC4BD80091C054 /* UITableView+EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB791F71EBC4BD80091C054 /* UITableView+EmptyView.m */; };
 		4AB791FC1EBC4BD80091C054 /* UIView+emptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB791F91EBC4BD80091C054 /* UIView+emptyView.m */; };
 		4AB791FF1EBC4D370091C054 /* HQLEmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB791FE1EBC4D370091C054 /* HQLEmptyView.m */; };
+		4AC132E31EFB720300184999 /* HQLLocalNotificationConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC132DF1EFB720300184999 /* HQLLocalNotificationConfig.m */; };
+		4AC132E41EFB720300184999 /* HQLLocalNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC132E21EFB720300184999 /* HQLLocalNotificationManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,10 +62,6 @@
 		4A643EF51E5706D300F249B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4A643EF81E5706D300F249B2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4A643EFA1E5706D300F249B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4A64B3E71E65212F005F6B8E /* HQLLocalNotificationConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationConfig.h; sourceTree = "<group>"; };
-		4A64B3E81E65212F005F6B8E /* HQLLocalNotificationConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationConfig.m; sourceTree = "<group>"; };
-		4A64B3E91E65212F005F6B8E /* HQLLocalNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationManager.h; sourceTree = "<group>"; };
-		4A64B3EA1E652130005F6B8E /* HQLLocalNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationManager.m; sourceTree = "<group>"; };
 		4A64B3EC1E652130005F6B8E /* HQLLocalNotificationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationModel.h; sourceTree = "<group>"; };
 		4A64B3ED1E652130005F6B8E /* HQLLocalNotificationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationModel.m; sourceTree = "<group>"; };
 		4A64B3EF1E652130005F6B8E /* HQLNotificationSettingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQLNotificationSettingView.h; path = ../HQLNotificationSettingView.h; sourceTree = "<group>"; };
@@ -113,7 +109,6 @@
 		4AB791E81EBAD3460091C054 /* HQLTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLTimer.h; sourceTree = "<group>"; };
 		4AB791E91EBAD3460091C054 /* HQLTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLTimer.m; sourceTree = "<group>"; };
 		4AB791EB1EBB06AF0091C054 /* HQLDefaultSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = HQLDefaultSound.mp3; sourceTree = "<group>"; };
-		4AB791F01EBC0F1F0091C054 /* HQLLocalNotificationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationHeader.h; sourceTree = "<group>"; };
 		4AB791F11EBC16830091C054 /* iOSDefaultAppIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iOSDefaultAppIcon.png; sourceTree = "<group>"; };
 		4AB791F41EBC4BD80091C054 /* UIImageView+GifAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+GifAnimation.h"; sourceTree = "<group>"; };
 		4AB791F51EBC4BD80091C054 /* UIImageView+GifAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+GifAnimation.m"; sourceTree = "<group>"; };
@@ -123,6 +118,11 @@
 		4AB791F91EBC4BD80091C054 /* UIView+emptyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+emptyView.m"; sourceTree = "<group>"; };
 		4AB791FD1EBC4D370091C054 /* HQLEmptyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLEmptyView.h; sourceTree = "<group>"; };
 		4AB791FE1EBC4D370091C054 /* HQLEmptyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLEmptyView.m; sourceTree = "<group>"; };
+		4AC132DE1EFB720300184999 /* HQLLocalNotificationConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationConfig.h; sourceTree = "<group>"; };
+		4AC132DF1EFB720300184999 /* HQLLocalNotificationConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationConfig.m; sourceTree = "<group>"; };
+		4AC132E01EFB720300184999 /* HQLLocalNotificationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationHeader.h; sourceTree = "<group>"; };
+		4AC132E11EFB720300184999 /* HQLLocalNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQLLocalNotificationManager.h; sourceTree = "<group>"; };
+		4AC132E21EFB720300184999 /* HQLLocalNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQLLocalNotificationManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +185,7 @@
 		4A64B3E51E65212F005F6B8E /* HQLLocalNotification */ = {
 			isa = PBXGroup;
 			children = (
+				4AC132DD1EFB720300184999 /* Helper */,
 				4A7492F71EA4B53500A672FD /* Image */,
 				4A64B3E61E65212F005F6B8E /* Lib */,
 				4A64B4011E67C8F3005F6B8E /* Controller */,
@@ -199,15 +200,10 @@
 			children = (
 				4AB791F31EBC4BD80091C054 /* Category */,
 				4AB791E71EBAD3460091C054 /* HQLTimer */,
-				4A64B3E71E65212F005F6B8E /* HQLLocalNotificationConfig.h */,
-				4A64B3E81E65212F005F6B8E /* HQLLocalNotificationConfig.m */,
-				4A64B3E91E65212F005F6B8E /* HQLLocalNotificationManager.h */,
-				4A64B3EA1E652130005F6B8E /* HQLLocalNotificationManager.m */,
 				4A64B3F81E6553B6005F6B8E /* CALayer+HQLXIBLayer.h */,
 				4A64B3F91E6553B6005F6B8E /* CALayer+HQLXIBLayer.m */,
 				4A64B3FE1E655DC5005F6B8E /* HQLLayerDrawGeometricShape.h */,
 				4A64B3FF1E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m */,
-				4AB791F01EBC0F1F0091C054 /* HQLLocalNotificationHeader.h */,
 			);
 			path = Lib;
 			sourceTree = "<group>";
@@ -365,6 +361,18 @@
 			path = Category;
 			sourceTree = "<group>";
 		};
+		4AC132DD1EFB720300184999 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				4AC132DE1EFB720300184999 /* HQLLocalNotificationConfig.h */,
+				4AC132DF1EFB720300184999 /* HQLLocalNotificationConfig.m */,
+				4AC132E01EFB720300184999 /* HQLLocalNotificationHeader.h */,
+				4AC132E11EFB720300184999 /* HQLLocalNotificationManager.h */,
+				4AC132E21EFB720300184999 /* HQLLocalNotificationManager.m */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -463,13 +471,13 @@
 				4AB791EA1EBAD3460091C054 /* HQLTimer.m in Sources */,
 				4A64B3FA1E6553B6005F6B8E /* CALayer+HQLXIBLayer.m in Sources */,
 				4A7493471EA86BDB00A672FD /* UIView+ST.m in Sources */,
-				4A64B3F11E652130005F6B8E /* HQLLocalNotificationConfig.m in Sources */,
 				4A74934A1EA86BDB00A672FD /* HQLCalendarCell.m in Sources */,
-				4A64B3F21E652130005F6B8E /* HQLLocalNotificationManager.m in Sources */,
 				4A64B3FD1E655B16005F6B8E /* HQLSelectButton.m in Sources */,
+				4AC132E41EFB720300184999 /* HQLLocalNotificationManager.m in Sources */,
 				4A64B3F31E652130005F6B8E /* HQLLocalNotificationModel.m in Sources */,
 				4A7493061EA711BA00A672FD /* HQLDayChooseCell.m in Sources */,
 				4AB791FF1EBC4D370091C054 /* HQLEmptyView.m in Sources */,
+				4AC132E31EFB720300184999 /* HQLLocalNotificationConfig.m in Sources */,
 				4A74935D1EAB618F00A672FD /* HQLLocalNotificationManagerController.m in Sources */,
 				4A7493531EAB4C5B00A672FD /* HQLLocalNotificationManagerCell.m in Sources */,
 				4A64B4001E655DC5005F6B8E /* HQLLayerDrawGeometricShape.m in Sources */,

@@ -18,7 +18,7 @@
 
 #define HQLNotificationManagerCellReuseID @"HQLNotificationManagerCellReuseID"
 
-@interface HQLLocalNotificationManagerController () <UITableViewDelegate, UITableViewDataSource, HQLLocalNotificationManagerCellDelegate, HQLLocalNotificationManagerDelegate>
+@interface HQLLocalNotificationManagerController () <UITableViewDelegate, UITableViewDataSource, HQLLocalNotificationManagerCellDelegate, HQLLocalNotificationManagerObserver>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) UIButton *createButton;
@@ -48,6 +48,7 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.manager unregisterLocalNotificationManagerObserver:self];
     NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
 }
 
@@ -364,7 +365,7 @@
 - (HQLLocalNotificationManager *)manager {
     if (!_manager) {
         _manager = [HQLLocalNotificationManager shareManger];
-        _manager.delegate = self;
+        [_manager registerLocalNotificationManagerObserver:self];
     }
     return _manager;
 }

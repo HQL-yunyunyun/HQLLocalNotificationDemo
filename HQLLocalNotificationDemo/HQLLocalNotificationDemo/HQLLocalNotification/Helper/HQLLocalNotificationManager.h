@@ -12,7 +12,7 @@
 
 #define HQLLocalNotificationDefaultIdentifier @"HQLLocalNotificationDefaultIdentifier"
 
-@protocol HQLLocalNotificationManagerDelegate <NSObject>
+@protocol HQLLocalNotificationManagerObserver <NSObject>
 
 @optional
 // iOS10以后的版本 --- 将要收到通知
@@ -28,8 +28,6 @@
 // 所有通知
 @property (strong, nonatomic, readonly) NSMutableArray <HQLLocalNotificationModel *>*notificationArray;
 
-@property (assign, nonatomic) id <HQLLocalNotificationManagerDelegate>delegate;
-
 // 一级标识, default: HQLLocalNotificationDefaultIdentifier
 @property (copy, nonatomic) NSString *identifier;
 
@@ -44,6 +42,10 @@
 
 // 不能从外部使用init初始化
 - (instancetype)init NS_UNAVAILABLE;
+
+/* observer */
+- (void)registerLocalNotificationManagerObserver:(id <HQLLocalNotificationManagerObserver>)observer;
+- (void)unregisterLocalNotificationManagerObserver:(id <HQLLocalNotificationManagerObserver>)observer;
 
 // 增
 - (void)addNotificationWithSubIdentifier:(NSString *)subIdentifier

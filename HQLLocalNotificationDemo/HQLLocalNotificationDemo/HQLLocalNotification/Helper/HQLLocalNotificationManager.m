@@ -14,6 +14,7 @@
 @interface HQLLocalNotificationManager () <UNUserNotificationCenterDelegate>
 
 @property (strong, nonatomic, readwrite) NSMutableArray <HQLLocalNotificationModel *>*notificationArray;
+@property (strong, nonatomic) NSMutableArray <id <HQLLocalNotificationManagerObserver>>*observerArray;
 
 @end
 
@@ -47,7 +48,23 @@
 }
 
 - (void)dealloc {
+    [self.observerArray removeAllObjects];
+    self.observerArray = nil;
     NSLog(@"dealloc ---> %@", NSStringFromClass([self class]));
+}
+
+#pragma mark - observer method
+
+- (void)registerLocalNotificationManagerObserver:(id<HQLLocalNotificationManagerObserver>)observer {
+    if (observer) {
+        [self.observerArray addObject:observer];
+    }
+}
+
+- (void)unregisterLocalNotificationManagerObserver:(id<HQLLocalNotificationManagerObserver>)observer {
+    if (observer) {
+        [self.observerArray removeObject:observer];
+    }
 }
 
 #pragma mark - notificationModel operation method
@@ -250,9 +267,13 @@
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
     // 判断是否还是 活动
     [self notificationIsActivity:notification.request.identifier];
-    if ([self.delegate respondsToSelector:@selector(userNotificationDelegateNotificationCenter:willPresentNotification:)]) {
-        [self.delegate userNotificationDelegateNotificationCenter:center willPresentNotification:notification];
+    // observer
+    for (id <HQLLocalNotificationManagerObserver>observer in self.observerArray) {
+        if ([observer respondsToSelector:@selector(userNotificationDelegateNotificationCenter:willPresentNotification:)]) {
+            [observer userNotificationDelegateNotificationCenter:center willPresentNotification:notification];
+        }
     }
+    
     completionHandler(UNNotificationPresentationOptionAlert |
                                    UNNotificationPresentationOptionBadge |
                                    UNNotificationPresentationOptionSound);
@@ -262,9 +283,13 @@
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
     // 判断是否还是 活动
     [self notificationIsActivity:response.notification.request.identifier];
-    if ([self.delegate respondsToSelector:@selector(userNotificationDelegateNotificationCenter:didReceiveNotificationResponse:)]) {
-        [self.delegate userNotificationDelegateNotificationCenter:center didReceiveNotificationResponse:response];
+    // observer
+    for (id <HQLLocalNotificationManagerObserver>observer in self.observerArray) {
+        if ([observer respondsToSelector:@selector(userNotificationDelegateNotificationCenter:didReceiveNotificationResponse:)]) {
+            [observer userNotificationDelegateNotificationCenter:center didReceiveNotificationResponse:response];
+        }
     }
+    
     completionHandler();
 }
 
@@ -346,6 +371,15 @@
     }
     [defaults setObject:array forKey:HQLLocalNotificationArray];
     [defaults synchronize];
+}
+
+#pragma mark - getter
+
+- (NSMutableArray<id<HQLLocalNotificationManagerObserver>> *)observerArray {
+    if (!_observerArray) {
+        _observerArray = [NSMutableArray array];
+    }
+    return _observerArray;
 }
 
 @end
